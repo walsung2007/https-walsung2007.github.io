@@ -92,6 +92,92 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;bo
 .stance-pill.iron{border-color:#79bce0;background:#1c2e3d;color:#bde6ff}
 @media(max-width:700px){body{padding:6px}.app{padding:9px}.stats{grid-template-columns:repeat(2,1fr)}.hand{grid-template-columns:repeat(3,minmax(0,1fr))}.arena{padding:8px;min-height:175px}.unit .sprite{font-size:42px;width:48px;height:48px}.mapgrid{grid-template-columns:repeat(3,minmax(0,1fr))}.tag{font-size:9px}}
 @media(max-width:420px){.hand{grid-template-columns:repeat(2,minmax(0,1fr))}.logo{font-size:11px}}
+
+@keyframes heroSilverFlash {
+  0% { opacity: 0; transform: scale(0.92); }
+  25% { opacity: 0.95; transform: scale(1.02); }
+  100% { opacity: 0; transform: scale(1.08); }
+}
+@keyframes grailCrossPulse {
+  0% { opacity: 0; transform: scale(0.8); }
+  30% { opacity: 1; transform: scale(1.06); }
+  100% { opacity: 0; transform: scale(1.15); }
+}
+@keyframes bloodVortex {
+  0% { opacity: 0; transform: scale(1.12); }
+  30% { opacity: 0.92; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.95); }
+}
+@keyframes sakuraPetalFall {
+  0% { opacity: 0; transform: translate3d(0, -16px, 0) rotate(0deg); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(28px, 130px, 0) rotate(220deg); }
+}
+.heroic-fx-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 25;
+  overflow: hidden;
+}
+.fx-knight-silver {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 45%, rgba(245, 250, 255, 0.55), rgba(168, 198, 230, 0.22) 48%, transparent 75%);
+  box-shadow: inset 0 0 90px rgba(220, 238, 255, 0.65);
+  animation: heroSilverFlash 0.75s ease-out forwards;
+}
+.fx-grail-cross-v {
+  position: absolute;
+  left: 50%;
+  top: 12%;
+  width: 18px;
+  height: 76%;
+  margin-left: -9px;
+  background: linear-gradient(to bottom, transparent, rgba(255, 244, 196, 0.9), rgba(242, 198, 109, 0.55), transparent);
+  box-shadow: 0 0 28px rgba(255, 232, 150, 0.95);
+  animation: grailCrossPulse 0.85s ease-out forwards;
+}
+.fx-grail-cross-h {
+  position: absolute;
+  left: 24%;
+  top: 44%;
+  width: 52%;
+  height: 18px;
+  margin-top: -9px;
+  background: linear-gradient(to right, transparent, rgba(255, 244, 196, 0.9), rgba(242, 198, 109, 0.55), transparent);
+  box-shadow: 0 0 28px rgba(255, 232, 150, 0.95);
+  animation: grailCrossPulse 0.85s ease-out forwards;
+}
+.fx-mage-element {
+  position: absolute;
+  inset: 0;
+  animation: heroSilverFlash 0.8s ease-out forwards;
+}
+.fx-vampire-blood {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(165, 10, 35, 0.25), rgba(110, 0, 18, 0.68) 72%);
+  box-shadow: inset 0 0 110px rgba(210, 20, 45, 0.85);
+  animation: bloodVortex 0.85s ease-out forwards;
+}
+.fx-sakura-petal {
+  position: absolute;
+  width: 12px;
+  height: 8px;
+  border-radius: 12px 0 12px 0;
+  background: linear-gradient(135deg, #ffd6e5, #ff8fb8);
+  box-shadow: 0 0 8px rgba(255, 165, 200, 0.75);
+  animation: sakuraPetalFall 1.15s ease-in forwards;
+}
+
+
+.collection-photo-frame{background:#151322;border:3px solid #b89456;box-shadow:inset 0 0 0 2px #3b2f24,0 6px 18px #0008;padding:10px;border-radius:4px;margin:8px 0}
+.collection-photo-svg{display:block;width:100%;max-width:240px;height:auto;margin:0 auto;image-rendering:pixelated;border:2px solid #5e4c36}
+.achievement-badge{display:inline-block;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:900;margin-left:6px}
+.achievement-badge.done{background:#203d2c;color:var(--green);border:1px solid #67b082}
+.achievement-badge.todo{background:#2c283d;color:var(--muted);border:1px solid #655d7d}
+
 </style>
 </head>
 <body>
@@ -99,7 +185,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;bo
 <header>
   <div>
     <div class="logo">ASHEN HEROES</div>
-    <div class="subtitle">잿가루 용사단</div>
+    <div class="subtitle">잿가루 용사단 · 회랑 &amp; 기사 스토리</div>
   </div>
   <div class="row">
     <button type="button" class="btn small" id="headerBackupBtn">진행도 백업</button>
@@ -115,6 +201,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;bo
         <h2 class="section-title" style="margin:0">모드 및 용사 선택</h2>
         <button type="button" class="btn small" id="masterySelectBtn">숙련도 · 해금</button>
         <button type="button" class="btn small" id="banListSelectBtn">카드 밴 (0/7)</button>
+        <button type="button" class="btn small" id="collectionVaultBtn">업적 · 수집품</button>
       </div>
       <div class="tabs" id="modeTabs" style="margin:0">
         <button type="button" class="tab active" data-mode="corridor">회랑 모드</button>
@@ -255,7 +342,7 @@ const elements={
 };
 const APP_VERSION='0.7';
 const PATCH_HISTORY=[
- {version:'0.7',date:'2026-11',notes:['캐릭터별 숙련도 및 해금 시스템 추가','캐릭터별 카드 밴(최대 7장) 시스템 추가','마법사 속성별 고유 스킬 15종 확장','업데이트 시에도 숙련도·해금·카드 밴이 유지되는 통합 저장/백업/복원 시스템 추가']},
+ {version:'0.7',date:'2026-11',notes:['첫 번째 업적(기사 스토리 완주하기) 및 수집품 [한때의 이상] 도트 사진·보관소 추가','보스 7종 전용 16x16 도트 스프라이트 디자인 및 보스전 도트 렌더링 추가','신규 직업군(성배기사·혈귀·검무가) 추가 및 전용 스킬·해금 연동','직업군별 영웅 등급 카드 전용 연출 이펙트 추가','캐릭터별 숙련도 및 해금 시스템 추가','캐릭터별 카드 밴(최대 7장) 시스템 추가','마법사 속성별 고유 스킬 15종 확장','업데이트 시에도 숙련도·해금·카드 밴이 유지되는 통합 저장/백업/복원 시스템 추가']},
  {version:'0.6',date:'2026-11',notes:['적 체력·공격력 배율 상향 및 보스 기믹 강화','층 이동 체력 회복량 조정(35% 회복) 및 보상/상점 밸런스 조정']},
  {version:'0.5',date:'2026-11',notes:['층별 스테이지 구성 변경(1층 10 · 2층 15 · 3층 17 스테이지)','신규 캐릭터 [혈귀] 및 전용 스킬 15종 추가','3층 보스 처치 후 4층 회랑의 끝 [무한의 불] 초기화 연출 추가']},
  {version:'0.4',date:'2026-11',notes:['기사 스토리 모드 추가 및 완주 시 [성배기사] 해금','엘리트 전투 승리 시 아이템 1개 확정 드롭 및 기보유 아이템 제외']}
@@ -352,6 +439,284 @@ function getHeroPixelArt(charKey){
  return heroPixelArtData[charKey] || heroPixelArtData.knight;
 }
 
+// --- ACHIEVEMENTS & COLLECTION VAULT (한때의 이상) ---
+const ACHIEVEMENT_STORAGE_KEY='ashen_heroes_achievements_v1';
+const COLLECTION_STORAGE_KEY='ashen_heroes_collections_v1';
+
+const ACHIEVEMENTS=[
+ {
+  id:'knight_story_clear',
+  title:'첫 번째 업적 · 기사 스토리 완주하기',
+  desc:'기사 스토리 모드를 완주하고 은퇴 노기사의 여정을 마무리하세요.',
+  rewardLabel:'수집품 [한때의 이상] 획득'
+ }
+];
+
+const ONETIME_IDEAL_PIXEL_PHOTO=`<svg class="collection-photo-svg hero-pixel-art" viewBox="0 0 32 24" width="100%" height="100%" shape-rendering="crispEdges">
+ <rect x="0" y="0" width="32" height="16" fill="#3a2f4d"/>
+ <rect x="0" y="16" width="32" height="8" fill="#2c2438"/>
+ <rect x="4" y="3" width="4" height="4" fill="#f7e6a1"/>
+ <rect x="5" y="2" width="2" height="6" fill="#fff6cc"/>
+ <rect x="4" y="4" width="4" height="2" fill="#fff6cc"/>
+ <rect x="2" y="2" width="10" height="13" fill="#e8dcc4"/>
+ <rect x="3" y="3" width="8" height="11" fill="#242033"/>
+ <rect x="4" y="5" width="2" height="2" fill="#d9c7a3"/>
+ <rect x="8" y="6" width="2" height="2" fill="#9bc4e2"/>
+ <rect x="4" y="8" width="6" height="4" fill="#5c6f8c"/>
+ <rect x="6" y="10" width="2" height="3" fill="#e69db8"/>
+ <rect x="14" y="4" width="6" height="2" fill="#95a5a6"/>
+ <rect x="15" y="6" width="4" height="2" fill="#f2d3b8"/>
+ <rect x="16" y="6" width="1" height="1" fill="#2c3e50"/>
+ <rect x="18" y="6" width="1" height="1" fill="#2c3e50"/>
+ <rect x="13" y="8" width="8" height="7" fill="#7f8c8d"/>
+ <rect x="15" y="9" width="4" height="5" fill="#bdc3c7"/>
+ <rect x="14" y="15" width="2" height="3" fill="#34495e"/>
+ <rect x="18" y="15" width="2" height="3" fill="#34495e"/>
+ <rect x="22" y="7" width="4" height="2" fill="#ff9ebb"/>
+ <rect x="21" y="9" width="6" height="2" fill="#ffd1dc"/>
+ <rect x="22" y="11" width="4" height="2" fill="#f2d3b8"/>
+ <rect x="23" y="11" width="1" height="1" fill="#2c3e50"/>
+ <rect x="25" y="11" width="1" height="1" fill="#2c3e50"/>
+ <rect x="22" y="13" width="4" height="3" fill="#f8bbd0"/>
+ <rect x="21" y="16" width="6" height="2" fill="#fff0f5"/>
+ <rect x="23" y="18" width="2" height="1" fill="#f2d3b8"/>
+ <rect x="18" y="11" width="5" height="1" fill="#f2d3b8"/>
+ <rect x="1" y="1" width="30" height="22" fill="none" stroke="#c9a66b" stroke-width="1"/>
+</svg>`;
+
+const COLLECTIONS={
+ oneTimeIdeal:{
+  id:'oneTimeIdeal',
+  name:'한때의 이상',
+  subtitle:'빛바랜 도트 사진 · 기사와 딸의 모습',
+  desc:'잿가루가 마을을 덮치기 전, 은퇴 노기사가 품에 지니고 있던 따뜻한 기억의 도트 사진입니다. 사진 속 기사와 딸이 나란히 미소 짓고 있습니다.',
+  art:ONETIME_IDEAL_PIXEL_PHOTO
+ }
+};
+
+function loadUnlockedAchievements(){
+ try{
+  const raw=readStorageSafe(ACHIEVEMENT_STORAGE_KEY);
+  const arr=raw?JSON.parse(raw):[];
+  return Array.isArray(arr)?arr:[];
+ }catch(e){return [];}
+}
+
+function saveUnlockedAchievements(list){
+ writeStorageSafe(ACHIEVEMENT_STORAGE_KEY,JSON.stringify([...new Set(list)]));
+ exportProgressSnapshot();
+}
+
+function loadUnlockedCollections(){
+ try{
+  const raw=readStorageSafe(COLLECTION_STORAGE_KEY);
+  const arr=raw?JSON.parse(raw):[];
+  return Array.isArray(arr)?arr:[];
+ }catch(e){return [];}
+}
+
+function saveUnlockedCollections(list){
+ writeStorageSafe(COLLECTION_STORAGE_KEY,JSON.stringify([...new Set(list)]));
+ exportProgressSnapshot();
+}
+
+function grantAchievementAndCollection(achId, colId){
+ const achs=loadUnlockedAchievements();
+ const cols=loadUnlockedCollections();
+ const newlyUnlockedAch=!achs.includes(achId);
+ const newlyUnlockedCol=colId && !cols.includes(colId);
+ if(newlyUnlockedAch){
+  achs.push(achId);
+  saveUnlockedAchievements(achs);
+ }
+ if(colId && newlyUnlockedCol){
+  cols.push(colId);
+  saveUnlockedCollections(cols);
+ }
+ return {newlyUnlockedAch,newlyUnlockedCol};
+}
+
+function openAchievementAndCollectionModal(initialTab='collections'){
+ const unlockedAchs=loadUnlockedAchievements();
+ const unlockedCols=loadUnlockedCollections();
+ showModal('업적 & 수집품 보관소','',[]);
+ $('modalTitle').textContent='업적 · 수집품 보관소';
+ $('modalText').innerHTML=`
+  <div class="tabs" id="vaultTabs">
+   <button type="button" class="tab ${initialTab==='collections'?'active':''}" data-vtab="collections">수집품 보관소 (${unlockedCols.length}/${Object.keys(COLLECTIONS).length})</button>
+   <button type="button" class="tab ${initialTab==='achievements'?'active':''}" data-vtab="achievements">업적 목록 (${unlockedAchs.length}/${ACHIEVEMENTS.length})</button>
+  </div>
+  <div id="vaultBody"></div>
+ `;
+ const root=$('modalChoices');
+ root.innerHTML='';
+
+ const renderVaultBody=(tabName)=>{
+  const body=$('vaultBody');
+  if(!body)return;
+  if(tabName==='collections'){
+   const col=COLLECTIONS.oneTimeIdeal;
+   const owned=unlockedCols.includes(col.id);
+   body.innerHTML=`
+    <div class="reward">
+     <h3>${col.name} <span class="achievement-badge ${owned?'done':'todo'}">${owned?'보유 중':'미획득'}</span></h3>
+     <p>${col.subtitle}</p>
+     ${owned?`
+      <div class="collection-photo-frame">
+       ${col.art}
+      </div>
+      <p style="color:var(--text)">${col.desc}</p>
+     `:`
+      <div class="collection-photo-frame" style="opacity:.45;text-align:center;padding:24px">
+       <p style="margin:0;color:var(--muted)">🔒 첫 번째 업적 [기사 스토리 완주하기] 달성 시 도트 사진이 해금됩니다.</p>
+      </div>
+     `}
+    </div>
+   `;
+  }else{
+   body.innerHTML=ACHIEVEMENTS.map(a=>{
+    const done=unlockedAchs.includes(a.id);
+    return `
+     <div class="reward">
+      <h3>${a.title} <span class="achievement-badge ${done?'done':'todo'}">${done?'달성 완료':'미달성'}</span></h3>
+      <p>${a.desc}</p>
+      <p style="color:var(--gold);margin-top:4px">보상: ${a.rewardLabel}</p>
+     </div>
+    `;
+   }).join('');
+  }
+ };
+
+ renderVaultBody(initialTab);
+ $('modalOverlay').querySelectorAll('[data-vtab]').forEach(btn=>{
+  btn.onclick=()=>{
+   $('modalOverlay').querySelectorAll('[data-vtab]').forEach(b=>b.classList.remove('active'));
+   btn.classList.add('active');
+   renderVaultBody(btn.dataset.vtab);
+  };
+ });
+ $('modalOverlay').classList.add('show');
+}
+
+
+// --- UNIFORM 16x16 PIXEL ART SPRITES FOR BOSSES ---
+const bossPixelArtData = {
+ '회랑의 문지기': `<svg class="hero-pixel-art" viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="4" y="1" width="2" height="2" fill="#f1c40f"/>
+  <rect x="7" y="0" width="2" height="3" fill="#f39c12"/>
+  <rect x="10" y="1" width="2" height="2" fill="#f1c40f"/>
+  <rect x="4" y="3" width="8" height="3" fill="#5d6d7e"/>
+  <rect x="6" y="4" width="4" height="1" fill="#e74c3c"/>
+  <rect x="3" y="6" width="10" height="7" fill="#34495e"/>
+  <rect x="5" y="7" width="6" height="5" fill="#7f8c8d"/>
+  <rect x="7" y="7" width="2" height="5" fill="#f1c40f"/>
+  <rect x="1" y="6" width="2" height="6" fill="#5d6d7e"/>
+  <rect x="13" y="5" width="2" height="9" fill="#d5dbdb"/>
+  <rect x="12" y="10" width="4" height="1" fill="#f1c40f"/>
+  <rect x="4" y="13" width="3" height="3" fill="#2c3e50"/>
+  <rect x="9" y="13" width="3" height="3" fill="#2c3e50"/>
+ </svg>`,
+ '잿빛 군주': `<svg class="hero-pixel-art" viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="3" y="1" width="2" height="2" fill="#9b59b6"/>
+  <rect x="6" y="0" width="4" height="2" fill="#f2c66d"/>
+  <rect x="11" y="1" width="2" height="2" fill="#9b59b6"/>
+  <rect x="4" y="2" width="8" height="4" fill="#2c2538"/>
+  <rect x="5" y="4" width="2" height="1" fill="#ff5e7e"/>
+  <rect x="9" y="4" width="2" height="1" fill="#ff5e7e"/>
+  <rect x="2" y="6" width="12" height="7" fill="#4a3b5c"/>
+  <rect x="5" y="7" width="6" height="5" fill="#1d1826"/>
+  <rect x="7" y="8" width="2" height="3" fill="#e87979"/>
+  <rect x="1" y="7" width="2" height="5" fill="#8e44ad"/>
+  <rect x="13" y="7" width="2" height="5" fill="#8e44ad"/>
+  <rect x="4" y="13" width="3" height="3" fill="#1d1826"/>
+  <rect x="9" y="13" width="3" height="3" fill="#1d1826"/>
+ </svg>`,
+ '회랑의 종언자': `<svg class="hero-pixel-art" viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="7" y="0" width="2" height="2" fill="#ffffff"/>
+  <rect x="5" y="2" width="6" height="2" fill="#b99ae8"/>
+  <rect x="3" y="4" width="10" height="2" fill="#79bce0"/>
+  <rect x="5" y="6" width="6" height="5" fill="#181528"/>
+  <rect x="6" y="7" width="4" height="3" fill="#f2c66d"/>
+  <rect x="7" y="8" width="2" height="1" fill="#ffffff"/>
+  <rect x="2" y="7" width="2" height="4" fill="#9b59b6"/>
+  <rect x="12" y="7" width="2" height="4" fill="#9b59b6"/>
+  <rect x="4" y="11" width="8" height="3" fill="#2e2445"/>
+  <rect x="6" y="14" width="4" height="2" fill="#b99ae8"/>
+ </svg>`,
+ '잿빛 검수': `<svg class="hero-pixel-art" viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="5" y="1" width="6" height="1" fill="#c0392b"/>
+  <rect x="4" y="2" width="8" height="4" fill="#2c3e50"/>
+  <rect x="5" y="4" width="6" height="1" fill="#e74c3c"/>
+  <rect x="3" y="6" width="10" height="7" fill="#34495e"/>
+  <rect x="5" y="7" width="6" height="5" fill="#5d6d7e"/>
+  <rect x="1" y="3" width="2" height="10" fill="#ecf0f1"/>
+  <rect x="13" y="4" width="2" height="10" fill="#e87979"/>
+  <rect x="4" y="13" width="3" height="3" fill="#1c2833"/>
+  <rect x="9" y="13" width="3" height="3" fill="#1c2833"/>
+ </svg>`,
+ '겸손의 수호자': `<svg class="hero-pixel-art" viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="5" y="1" width="6" height="2" fill="#7f8c8d"/>
+  <rect x="6" y="3" width="4" height="2" fill="#bdc3c7"/>
+  <rect x="3" y="5" width="10" height="8" fill="#546e7a"/>
+  <rect x="5" y="6" width="6" height="6" fill="#90a4ae"/>
+  <rect x="7" y="6" width="2" height="6" fill="#eceff1"/>
+  <rect x="6" y="8" width="4" height="2" fill="#eceff1"/>
+  <rect x="1" y="6" width="2" height="6" fill="#455a64"/>
+  <rect x="13" y="6" width="2" height="6" fill="#455a64"/>
+  <rect x="4" y="13" width="3" height="3" fill="#37474f"/>
+  <rect x="9" y="13" width="3" height="3" fill="#37474f"/>
+ </svg>`,
+ '용기의 시험관': `<svg class="hero-pixel-art" viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="5" y="0" width="6" height="2" fill="#f1c40f"/>
+  <rect x="4" y="2" width="8" height="4" fill="#d35400"/>
+  <rect x="6" y="3" width="4" height="2" fill="#ffeaa7"/>
+  <rect x="3" y="6" width="10" height="7" fill="#e67e22"/>
+  <rect x="5" y="7" width="6" height="5" fill="#f39c12"/>
+  <rect x="7" y="7" width="2" height="5" fill="#fff3cd"/>
+  <rect x="1" y="5" width="2" height="8" fill="#f5f6fa"/>
+  <rect x="13" y="6" width="2" height="6" fill="#c0392b"/>
+  <rect x="4" y="13" width="3" height="3" fill="#a04000"/>
+  <rect x="9" y="13" width="3" height="3" fill="#a04000"/>
+ </svg>`,
+ '환상의 딸': `<svg class="hero-pixel-art" viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="5" y="1" width="6" height="2" fill="#ffd1dc"/>
+  <rect x="4" y="3" width="8" height="3" fill="#ff9ebb"/>
+  <rect x="6" y="4" width="4" height="2" fill="#fff0f5"/>
+  <rect x="6" y="4" width="1" height="1" fill="#79bce0"/>
+  <rect x="9" y="4" width="1" height="1" fill="#79bce0"/>
+  <rect x="5" y="6" width="6" height="3" fill="#f8bbd0"/>
+  <rect x="4" y="9" width="8" height="5" fill="#e1bee7"/>
+  <rect x="3" y="11" width="10" height="3" fill="#f3e5f5"/>
+  <rect x="6" y="14" width="1" height="2" fill="#ffeaa7"/>
+  <rect x="9" y="14" width="1" height="2" fill="#ffeaa7"/>
+ </svg>`
+};
+
+function getBossPixelArt(enemy){
+ if(!enemy)return '';
+ if(enemy.type!=='boss')return null;
+ return bossPixelArtData[enemy.name] || `<svg class="hero-pixel-art" viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="5" y="1" width="6" height="2" fill="#f2c66d"/>
+  <rect x="4" y="3" width="8" height="4" fill="#8e44ad"/>
+  <rect x="6" y="4" width="4" height="1" fill="#e87979"/>
+  <rect x="3" y="7" width="10" height="6" fill="#5b2c6f"/>
+  <rect x="5" y="8" width="6" height="4" fill="#a569bd"/>
+  <rect x="4" y="13" width="3" height="3" fill="#4a235a"/>
+  <rect x="9" y="13" width="3" height="3" fill="#4a235a"/>
+ </svg>`;
+}
+
+function renderEnemySprite(){
+ if(!game || !game.enemy)return;
+ const art=getBossPixelArt(game.enemy);
+ if(art){
+  $('enemyGlyph').innerHTML=art;
+ }else{
+  renderEnemySprite();
+ }
+}
+
+
 const GRAIL_UNLOCK_KEY='ashen_heroes_grail_knight_unlocked';
 const VAMPIRE_UNLOCK_KEY='ashen_heroes_vampire_unlocked';
 const MASTERY_STORAGE_KEY='ashen_heroes_mastery_v1';
@@ -394,6 +759,8 @@ function exportProgressSnapshot(){
   grailKnightUnlocked:isGrailKnightUnlocked(),
   vampireUnlocked:isVampireUnlocked(),
   swordsmanUnlocked:isSwordsmanUnlocked(),
+  achievements:loadUnlockedAchievements(),
+  collections:loadUnlockedCollections(),
   mastery:loadMasteryData(),
   bannedCards:loadAllBannedCardsMap()
  };
@@ -425,12 +792,19 @@ function restoreProgressSnapshot(rawObj){
   });
   writeStorageSafe(BANNED_CARDS_KEY,JSON.stringify(mergedBan));
  }
+ if(Array.isArray(rawObj.achievements)){
+  saveUnlockedAchievements([...loadUnlockedAchievements(),...rawObj.achievements]);
+ }
+ if(Array.isArray(rawObj.collections)){
+  saveUnlockedCollections([...loadUnlockedCollections(),...rawObj.collections]);
+ }
  writeStorageSafe(PROGRESS_BUNDLE_KEY,JSON.stringify({
   schemaVersion:SAVE_SCHEMA_VERSION,
   savedAt:new Date().toISOString(),
   grailKnightUnlocked:isGrailKnightUnlocked(),
   vampireUnlocked:isVampireUnlocked(),
-  swordsmanUnlocked:isSwordsmanUnlocked(),
+  achievements:loadUnlockedAchievements(),
+  collections:loadUnlockedCollections(),
   mastery:loadMasteryData(),
   bannedCards:loadAllBannedCardsMap()
  }));
@@ -445,6 +819,7 @@ function restoreProgressSnapshot(rawObj){
   }
  }catch(e){}
 })();
+
 
 function isGrailKnightUnlocked(){
  return readStorageSafe(GRAIL_UNLOCK_KEY)==='1';
@@ -522,6 +897,7 @@ const swordsmanExclusiveSkills=[
  {name:'검성 오의·단죄',glyph:'♛',cost:3,desc:'맹공 자세 전환, 피해 29, 연계 시 적 취약 2턴 및 피해 +8.',kind:'stanceStrike',stance:'assault',damage:29,comboDebuff:'vulnerable',comboBonus:8,type:'검무가 전용',rarity:'영웅'},
  {name:'검성 오의·태산',glyph:'♛',cost:3,desc:'철벽 자세 전환, 방어도 28, 피해 24 및 연계 시 피해 +10.',kind:'stanceGuard',stance:'iron',block:28,damage:24,comboBonus:10,type:'검무가 전용',rarity:'영웅'}
 ];
+
 const vampireExclusiveSkills=[
  {name:'핏빛 베기',glyph:'☽',cost:1,hpCost:3,lifesteal:4,desc:'체력 3 소모, 피해 10 및 체력 4 흡혈.',kind:'bloodStrike',damage:10,type:'혈귀 전용',rarity:'일반'},
  {name:'흡혈 찌르기',glyph:'➤',cost:1,hpCost:2,lifesteal:5,desc:'체력 2 소모, 피해 8 및 체력 5 흡혈.',kind:'bloodStrike',damage:8,type:'혈귀 전용',rarity:'일반'},
@@ -539,6 +915,30 @@ const vampireExclusiveSkills=[
  {name:'혈월의 심판',glyph:'☽',cost:3,hpCost:9,lifesteal:15,desc:'체력 9 소모, 피해 30 및 체력 15 흡혈.',kind:'bloodStrike',damage:30,type:'혈귀 전용',rarity:'영웅'},
  {name:'선혈 성찬',glyph:'♛',cost:3,hpCost:10,lifesteal:16,desc:'체력 10 소모, 피해 32, 체력 16 흡혈 및 방어도 10.',kind:'bloodMixed',damage:32,block:10,type:'혈귀 전용',rarity:'영웅'}
 ];
+
+const grailKnightExclusiveSkills=[
+ {name:'성배의 축복타',glyph:'✦',cost:1,desc:'피해 8, 방어도 5 및 체력 2 회복.',kind:'mixed',damage:8,block:5,heal:2,type:'성배기사 전용',rarity:'일반'},
+ {name:'정화의 검격',glyph:'⚔',cost:1,desc:'피해 9 및 방어도 4 획득.',kind:'mixed',damage:9,block:4,type:'성배기사 전용',rarity:'일반'},
+ {name:'성역의 방패',glyph:'▣',cost:1,desc:'방어도 9 획득 및 체력 2 회복.',kind:'mixed',block:9,heal:2,type:'성배기사 전용',rarity:'일반'},
+ {name:'서약의 찌르기',glyph:'➤',cost:1,desc:'피해 10 및 적 취약 1턴.',kind:'damage',damage:10,debuff:'vulnerable',type:'성배기사 전용',rarity:'일반'},
+ {name:'성광의 수호',glyph:'✦',cost:1,desc:'방어도 8 및 이번 턴 공격 +2.',kind:'mixed',block:8,buff:2,type:'성배기사 전용',rarity:'일반'},
+ {name:'구원의 손길',glyph:'✚',cost:1,desc:'체력 6 회복 및 카드 1장 뽑기.',kind:'heal',heal:6,type:'성배기사 전용',rarity:'일반'},
+ {name:'성배의 가호격',glyph:'✦',cost:1,desc:'피해 10, 방어도 7 및 체력 3 회복.',kind:'mixed',damage:10,block:7,heal:3,type:'성배기사 전용',rarity:'고급'},
+ {name:'순결의 일격',glyph:'⚔',cost:1,desc:'피해 12 및 체력 3 회복.',kind:'mixed',damage:12,heal:3,type:'성배기사 전용',rarity:'고급'},
+ {name:'성전 기사도',glyph:'♛',cost:1,desc:'방어도 10 및 이번 턴 공격 +3.',kind:'mixed',block:10,buff:3,type:'성배기사 전용',rarity:'고급'},
+ {name:'계시의 창',glyph:'➤',cost:2,desc:'피해 15 및 적 취약 2턴.',kind:'damage',damage:15,debuff:'vulnerable',type:'성배기사 전용',rarity:'고급'},
+ {name:'성배의 결계',glyph:'▣',cost:2,desc:'방어도 15 및 체력 4 회복.',kind:'mixed',block:15,heal:4,type:'성배기사 전용',rarity:'고급'},
+ {name:'빛의 인도',glyph:'✦',cost:0,desc:'체력 4 회복 및 카드 1장 뽑기.',kind:'heal',heal:4,type:'성배기사 전용',rarity:'고급'},
+ {name:'맹세의 단죄+',glyph:'⚔',cost:2,desc:'피해 18 및 적 취약 2턴.',kind:'damage',damage:18,debuff:'vulnerable',type:'성배기사 전용',rarity:'희귀'},
+ {name:'성배의 쇄도',glyph:'✦',cost:2,desc:'피해 17, 방어도 10 및 체력 5 회복.',kind:'mixed',damage:17,block:10,heal:5,type:'성배기사 전용',rarity:'희귀'},
+ {name:'광휘의 수호진',glyph:'♜',cost:2,desc:'방어도 19 및 적 취약 2턴.',kind:'mixed',block:19,debuff:'vulnerable',type:'성배기사 전용',rarity:'희귀'},
+ {name:'천상의 서약',glyph:'♛',cost:2,desc:'피해 16, 체력 6 회복 및 이번 턴 공격 +3.',kind:'mixed',damage:16,heal:6,buff:3,type:'성배기사 전용',rarity:'희귀'},
+ {name:'광휘의 심판',glyph:'♛',cost:3,desc:'피해 28 및 방어도 14.',kind:'mixed',damage:28,block:14,type:'성배기사 전용',rarity:'영웅'},
+ {name:'성배의 강림',glyph:'✦',cost:3,desc:'피해 26, 방어도 16 및 체력 8 회복.',kind:'mixed',damage:26,block:16,heal:8,type:'성배기사 전용',rarity:'영웅'},
+ {name:'영원한 계시',glyph:'♛',cost:2,desc:'체력 9 회복 및 방어도 14.',kind:'mixed',block:14,heal:9,type:'성배기사 전용',rarity:'영웅'},
+ {name:'성배기사 오의·여명',glyph:'♛',cost:3,desc:'피해 32, 방어도 18, 체력 10 회복 및 취약 2턴.',kind:'mixed',damage:32,block:18,heal:10,debuff:'vulnerable',type:'성배기사 전용',rarity:'영웅'}
+];
+
 const mageElementalSkills={
  fire:[
   {name:'불씨 점화',glyph:'✹',cost:1,manaCost:1,desc:'마나 1 소모, 피해 7 및 화상 4 부여.',kind:'elementalStrike',damage:7,type:'불 속성 스킬',rarity:'일반'},
@@ -781,9 +1181,9 @@ const masteryUnlockCards={
   5:[{name:'초신성 폭발',glyph:'✹',cost:2,manaCost:2,desc:'마나 2 소모, 피해 27 및 방어도 12.',kind:'mixed',damage:27,block:12,type:'마법사 전용',rarity:'영웅'}]
  },
  grailKnight:{
-  2:[{name:'성배의 가호격',glyph:'✦',cost:1,desc:'피해 10, 방어도 7 및 체력 3 회복.',kind:'mixed',damage:10,block:7,heal:3,type:'성배기사 전용',rarity:'고급'}],
-  3:[{name:'맹세의 단죄+',glyph:'⚔',cost:2,desc:'피해 18 및 적 취약 2턴.',kind:'damage',damage:18,debuff:'vulnerable',type:'성배기사 전용',rarity:'희귀'}],
-  4:[{name:'광휘의 심판',glyph:'♛',cost:3,desc:'피해 28 및 방어도 14.',kind:'mixed',damage:28,block:14,type:'성배기사 전용',rarity:'영웅'}]
+  2:grailKnightExclusiveSkills.slice(6,12),
+  3:grailKnightExclusiveSkills.slice(12,16),
+  4:grailKnightExclusiveSkills.slice(16,20)
  },
  vampire:{
   2:[{name:'갈증의 송곳니',glyph:'☽',cost:1,hpCost:3,lifesteal:5,desc:'체력 3 소모, 피해 9, 체력 5 흡혈 및 카드 1장 뽑기.',kind:'bloodStrike',damage:9,draw:1,type:'혈귀 전용',rarity:'고급'}],
@@ -1073,7 +1473,7 @@ function buildEnemy(type){
  const scaledAtk=Math.round(base.atk*atkScale);
  const scaledHp=Math.round(base.hp*hpScale);
  const nearby=type==='boss'?[]:[rand(monsters).name];
- return {name:base.name,glyph:base.glyph,maxHp:scaledHp,hp:scaledHp,atk:scaledAtk,baseAtk:scaledAtk,intent:scaledAtk,type,pattern:0,burn:0,freeze:0,shock:0,nearby,tempCurseGiven:false,bleedBoss:!!base.bleedBoss,gimmickPhase:0,barrierTurns:0};
+ return {name:base.name,glyph:base.glyph,maxHp:scaledHp,hp:scaledHp,atk:scaledAtk,baseAtk:scaledAtk,intent:scaledAtk,type,pattern:0,burn:0,freeze:0,shock:0,nearby,tempCurseGiven:false,gimmickPhase:0,barrierTurns:0};
 }
 
 function applyElementEffect(stacks=1){
@@ -1186,7 +1586,6 @@ function renderBattle(){
  if(game.enemy.freeze>0)enemyStatuses.push({name:'빙결',turns:game.enemy.freeze,description:'일시 행동불가 상태이며, 다음 공격 시 추가 피해를 받습니다.'});
  if(game.enemy.shock>0)enemyStatuses.push({name:'감전',turns:game.enemy.shock,description:'2턴 동안 행동불가 상태가 되며, 주변 적에게 연쇄 피해를 입힙니다.'});
  if(game.enemy.vulnerable>0)enemyStatuses.push({name:'취약',turns:game.enemy.vulnerable,description:'용사의 공격으로 받는 피해가 1.5배가 됩니다.'});
- if((game.enemy.bleed||0)>0)enemyStatuses.push({name:'출혈',turns:game.enemy.bleed,description:'출혈 상태입니다.'});
  if(game.enemy.atk>(game.enemy.baseAtk||game.enemy.atk))enemyStatuses.push({name:'공격력 강화',turns:0,buff:true,description:'공격력이 강화되어 있습니다.'});
  renderStatusList('enemyStatus',enemyStatuses);
 
@@ -1232,6 +1631,7 @@ function hitEnemy(dmg){
  return actual;
 }
 
+
 function switchStance(targetStance=null){
  if(game.character!=='swordsman')return false;
  const prev=game.stance||'assault';
@@ -1251,11 +1651,60 @@ function switchStance(targetStance=null){
  return changed;
 }
 
+function triggerHeroicCardEffect(card){
+ if(!card || card.rarity!=='영웅')return;
+ const layer=document.createElement('div');
+ layer.className='heroic-fx-layer';
+
+ const charKey=game?.character||'knight';
+ if(charKey==='knight'){
+  const flash=document.createElement('div');
+  flash.className='fx-knight-silver';
+  layer.appendChild(flash);
+ }else if(charKey==='grailKnight'){
+  const v=document.createElement('div');
+  const h=document.createElement('div');
+  v.className='fx-grail-cross-v';
+  h.className='fx-grail-cross-h';
+  layer.append(v,h);
+ }else if(charKey==='mage'){
+  const el=game?.element||'fire';
+  const colorMap={
+   fire:'radial-gradient(circle at 50% 50%, rgba(255,140,55,0.65), rgba(220,45,25,0.25) 60%, transparent 80%)',
+   ice:'radial-gradient(circle at 50% 50%, rgba(145,230,255,0.68), rgba(45,145,235,0.25) 60%, transparent 80%)',
+   lightning:'radial-gradient(circle at 50% 50%, rgba(255,245,120,0.72), rgba(140,120,255,0.28) 60%, transparent 80%)'
+  };
+  const aura=document.createElement('div');
+  aura.className='fx-mage-element';
+  aura.style.background=colorMap[el]||colorMap.fire;
+  layer.appendChild(aura);
+ }else if(charKey==='vampire'){
+  const blood=document.createElement('div');
+  blood.className='fx-vampire-blood';
+  layer.appendChild(blood);
+ }else if(charKey==='swordsman'){
+  const petalCount=22;
+  for(let idx=0;idx<petalCount;idx++){
+   const petal=document.createElement('span');
+   petal.className='fx-sakura-petal';
+   petal.style.left=`${Math.random()*92+4}%`;
+   petal.style.top=`${Math.random()*35+2}%`;
+   petal.style.animationDelay=`${(Math.random()*0.28).toFixed(2)}s`;
+   petal.style.animationDuration=`${(0.95+Math.random()*0.45).toFixed(2)}s`;
+   layer.appendChild(petal);
+  }
+ }
+
+ document.body.appendChild(layer);
+ setTimeout(()=>layer.remove(),1450);
+}
+
 function playCard(i){
  if(!game.active)return;
  const c=game.hand[i];
  const hpCost=c.hpCost||0;
  if(!c||c.cost>game.energy||(c.manaCost||0)>game.mana||(hpCost>0 && game.hp<=hpCost))return;
+ triggerHeroicCardEffect(c);
  game.energy-=c.cost;
  if(c.manaCost)game.mana-=c.manaCost;
  if(hpCost>0){
@@ -1596,12 +2045,17 @@ function getAllCatalogCards(){
  [...common,...knightCards,...mageCards,...grailCards,...vampireExclusiveSkills,...(mageElementalSkills.fire||[]),...(mageElementalSkills.ice||[]),...(mageElementalSkills.lightning||[])].forEach(c=>{
   if(!map.has(c.name))map.set(c.name,c);
  });
+ grailKnightExclusiveSkills.forEach(c=>{
+  if(!map.has(c.name))map.set(c.name,c);
+ });
  swordsmanExclusiveSkills.forEach(c=>{
   if(!map.has(c.name))map.set(c.name,c);
  });
  return [...map.values()];
 }
 
+
+// --- FILE-BASED PROGRESS EXPORT / IMPORT HELPERS ---
 function createProgressSaveFilePayload(){
  const snap = exportProgressSnapshot();
  return {
@@ -1612,7 +2066,8 @@ function createProgressSaveFilePayload(){
   savedAt: new Date().toISOString(),
   grailKnightUnlocked: !!snap.grailKnightUnlocked,
   vampireUnlocked: !!snap.vampireUnlocked,
-  swordsmanUnlocked: !!snap.swordsmanUnlocked,
+  achievements: snap.achievements || [],
+  collections: snap.collections || [],
   mastery: snap.mastery || {},
   bannedCards: snap.bannedCards || {}
  };
@@ -1776,6 +2231,8 @@ function openCardBanModal(statusMsg='',charKey=null){
   if(activeChar==='vampire' && c.type==='혈귀 전용') return true;
   if(activeChar==='grailKnight' && c.type==='성배기사 전용') return true;
   if(activeChar==='swordsman' && c.type==='검무가 전용') return true;
+  if(activeChar==='swordsman' && c.type==='검무가 전용') return true;
+  if(activeChar==='swordsman' && c.type==='검무가 전용') return true;
   return false;
  });
  const displayCards=relevantCards.length?relevantCards:catalog;
@@ -1819,7 +2276,6 @@ function buildSlayTheSpireCardPool(){
   }
   if(activeChar==='vampire' && c.type==='혈귀 전용') return true;
   if(activeChar==='grailKnight' && c.type==='성배기사 전용') return true;
-  if(activeChar==='swordsman' && c.type==='검무가 전용') return true;
   return false;
  });
  
@@ -1855,7 +2311,6 @@ function winBattle(){
  game.battles++;
  const expGain=game.route==='boss'?20:game.route==='elite'?14:8;
  const mRes=gainCharMastery(game.character,expGain);
- let extraText='';
  let masteryText=` · 숙련도 +${expGain} (Lv.${mRes.level})`;
  if(mRes.leveledUp){
   masteryText+=` · 레벨업!${mRes.unlockedCards.length?` 해금 카드: [${mRes.unlockedCards.join(', ')}]`:''}`;
@@ -1867,6 +2322,7 @@ function winBattle(){
    unlockVampire();
   }
  }
+ let extraText='';
  if(game.enemy && game.enemy.name==='잿빛 검수' && !isSwordsmanUnlocked()){
   unlockSwordsman();
   extraText+=' · [잿빛 검수] 격파로 신규 직업 [검무가] 해금!';
@@ -1943,7 +2399,7 @@ function triggerInfiniteFireReset(){
     const charKey=game.character||'knight';
     const elKey=game.element||'fire';
     const wasStory=game.mode==='story';
-    if(wasStory)unlockGrailKnight();
+    if(wasStory){unlockGrailKnight();grantAchievementAndCollection('knight_story_clear','oneTimeIdeal');}
     startRun(charKey,elKey);
     if(wasStory)game.mode='story';
     show('resultScreen');
@@ -2110,8 +2566,9 @@ function finishRun(win){
  show('resultScreen');
  if(win && game && game.mode==='story'){
   unlockGrailKnight();
+  grantAchievementAndCollection('knight_story_clear','oneTimeIdeal');
   $('resultTitle').textContent='성배기사 각성 · 기사 스토리 완주!';
-  $('resultDesc').textContent='노기사가 겸손·용기·배려와 딸의 환상을 넘어 성배기사로 각성했습니다! 캐릭터 선택 화면에서 [성배기사]를 선택할 수 있습니다.';
+  $('resultDesc').textContent='노기사가 겸손·용기·배려와 딸의 환상을 넘어 성배기사로 각성하고 첫 번째 업적과 수집품 [한때의 이상]을 획득했습니다! 수집품 보관소에서 기사와 딸의 도트 사진을 확인해 보세요.';
   return;
  }
  $('resultTitle').textContent=win?'회랑 돌파 성공!':'용사단 전멸...';
@@ -2259,6 +2716,7 @@ if($('masteryMapBtn'))$('masteryMapBtn').onclick=()=>openMasteryAndUnlockModal(g
 if($('masterySelectBtn'))$('masterySelectBtn').onclick=()=>openMasteryAndUnlockModal(selectedBanChar);
 if($('banListMapBtn'))$('banListMapBtn').onclick=()=>openCardBanModal('',game&&game.character);
 if($('banListSelectBtn'))$('banListSelectBtn').onclick=()=>openCardBanModal('',selectedBanChar);
+if($('collectionVaultBtn'))$('collectionVaultBtn').onclick=()=>openAchievementAndCollectionModal('collections');
 
 chooseCharacter();
 </script>
