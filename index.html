@@ -87,6 +87,9 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;bo
 .modal h2{color:var(--gold);margin:0 0 8px}
 .modal p{color:var(--muted);font-size:13px;line-height:1.6}
 .hero-pixel-art{display:inline-block;vertical-align:middle;image-rendering:pixelated}
+.stance-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:3px;font-size:11px;font-weight:900;border:1px solid #9c88c4;background:#261f38;color:#f3ebd4}
+.stance-pill.assault{border-color:#e87979;background:#3c1f2b;color:#ffc4c4}
+.stance-pill.iron{border-color:#79bce0;background:#1c2e3d;color:#bde6ff}
 @media(max-width:700px){body{padding:6px}.app{padding:9px}.stats{grid-template-columns:repeat(2,1fr)}.hand{grid-template-columns:repeat(3,minmax(0,1fr))}.arena{padding:8px;min-height:175px}.unit .sprite{font-size:42px;width:48px;height:48px}.mapgrid{grid-template-columns:repeat(3,minmax(0,1fr))}.tag{font-size:9px}}
 @media(max-width:420px){.hand{grid-template-columns:repeat(2,minmax(0,1fr))}.logo{font-size:11px}}
 </style>
@@ -326,6 +329,22 @@ const heroPixelArtData = {
   <rect x="12" y="7" width="2" height="5" fill="#900c3f"/>
   <rect x="5" y="14" width="2" height="2" fill="#1e1b29"/>
   <rect x="9" y="14" width="2" height="2" fill="#1e1b29"/>
+ </svg>`,
+ swordsman: `<svg class="hero-pixel-art" viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="6" y="1" width="4" height="1" fill="#bdc3c7"/>
+  <rect x="5" y="2" width="6" height="3" fill="#7f8c8d"/>
+  <rect x="6" y="3" width="4" height="1" fill="#f39c12"/>
+  <rect x="6" y="4" width="4" height="1" fill="#1e1b29"/>
+  <rect x="4" y="6" width="8" height="6" fill="#34495e"/>
+  <rect x="5" y="7" width="6" height="4" fill="#95a5a6"/>
+  <rect x="1" y="5" width="2" height="2" fill="#e74c3c"/>
+  <rect x="2" y="7" width="1" height="6" fill="#ecf0f1"/>
+  <rect x="1" y="10" width="3" height="1" fill="#f1c40f"/>
+  <rect x="13" y="5" width="2" height="2" fill="#79bce0"/>
+  <rect x="13" y="7" width="1" height="6" fill="#ecf0f1"/>
+  <rect x="12" y="10" width="3" height="1" fill="#f1c40f"/>
+  <rect x="5" y="12" width="2" height="3" fill="#2c3e50"/>
+  <rect x="9" y="12" width="2" height="3" fill="#2c3e50"/>
  </svg>`
 };
 
@@ -374,6 +393,7 @@ function exportProgressSnapshot(){
   savedAt:new Date().toISOString(),
   grailKnightUnlocked:isGrailKnightUnlocked(),
   vampireUnlocked:isVampireUnlocked(),
+  swordsmanUnlocked:isSwordsmanUnlocked(),
   mastery:loadMasteryData(),
   bannedCards:loadAllBannedCardsMap()
  };
@@ -385,6 +405,7 @@ function restoreProgressSnapshot(rawObj){
  if(!rawObj || typeof rawObj!=='object')return false;
  if(rawObj.grailKnightUnlocked===true)writeStorageSafe(GRAIL_UNLOCK_KEY,'1');
  if(rawObj.vampireUnlocked===true)writeStorageSafe(VAMPIRE_UNLOCK_KEY,'1');
+ if(rawObj.swordsmanUnlocked===true)writeStorageSafe(SWORDSMAN_UNLOCK_KEY,'1');
  if(rawObj.mastery && typeof rawObj.mastery==='object'){
   const cur=loadMasteryData();
   const merged={...cur};
@@ -409,6 +430,7 @@ function restoreProgressSnapshot(rawObj){
   savedAt:new Date().toISOString(),
   grailKnightUnlocked:isGrailKnightUnlocked(),
   vampireUnlocked:isVampireUnlocked(),
+  swordsmanUnlocked:isSwordsmanUnlocked(),
   mastery:loadMasteryData(),
   bannedCards:loadAllBannedCardsMap()
  }));
@@ -424,7 +446,6 @@ function restoreProgressSnapshot(rawObj){
  }catch(e){}
 })();
 
-
 function isGrailKnightUnlocked(){
  return readStorageSafe(GRAIL_UNLOCK_KEY)==='1';
 }
@@ -437,6 +458,14 @@ function isVampireUnlocked(){
 }
 function unlockVampire(){
  writeStorageSafe(VAMPIRE_UNLOCK_KEY,'1');
+ exportProgressSnapshot();
+}
+const SWORDSMAN_UNLOCK_KEY='ashen_heroes_swordsman_unlocked';
+function isSwordsmanUnlocked(){
+ return readStorageSafe(SWORDSMAN_UNLOCK_KEY)==='1';
+}
+function unlockSwordsman(){
+ writeStorageSafe(SWORDSMAN_UNLOCK_KEY,'1');
  exportProgressSnapshot();
 }
 function hasFangRelic(){
@@ -455,9 +484,44 @@ const chars={
   {name:'원소 쇄도',glyph:'✧',cost:2,manaCost:1,desc:'마나 1 소모, 피해 12 및 주 원소 효과 강화.',kind:'elementalSurge',damage:12,type:'원소 특수기',rarity:'일반'}]},
  vampire:{name:'혈귀',glyph:'☽',unlockable:true,unlockType:'vampire',hp:56,energy:3,special:[
   {name:'피의 송곳니',glyph:'☽',cost:1,hpCost:3,lifesteal:4,desc:'체력 3 소모, 피해 9 및 피해량의 4만큼 흡혈.',kind:'bloodStrike',damage:9,type:'혈귀 전용',rarity:'일반'},
-  {name:'진홍의 갈증',glyph:'✹',cost:1,hpCost:4,lifesteal:6,desc:'체력 4 소모, 피해 11 및 체력 6 흡혈.',kind:'bloodStrike',damage:11,type:'혈귀 전용',rarity:'일반'}]}
+  {name:'진홍의 갈증',glyph:'✹',cost:1,hpCost:4,lifesteal:6,desc:'체력 4 소모, 피해 11 및 체력 6 흡혈.',kind:'bloodStrike',damage:11,type:'혈귀 전용',rarity:'일반'}]},
+ swordsman:{name:'검무가',glyph:'⚔',unlockable:true,unlockType:'swordsman',hp:58,energy:3,special:[
+  {name:'맹공의 검무',glyph:'⚔',cost:1,desc:'맹공 자세 전환(공격 피해 +3) 및 적에게 피해 7, 연계 시 +4.',kind:'stanceStrike',stance:'assault',damage:7,comboBonus:4,type:'검무가 전용',rarity:'일반'},
+  {name:'철벽의 검무',glyph:'▣',cost:1,desc:'철벽 자세 전환(방어도 +3) 및 방어도 6 획득, 연계 시 피해 6.',kind:'stanceGuard',stance:'iron',block:6,comboDmg:6,type:'검무가 전용',rarity:'일반'}]}
 };
 
+const swordsmanExclusiveSkills=[
+ {name:'쌍검 난무',glyph:'⚔',cost:1,desc:'피해 7. 직전 자세와 다르면 연계 피해 +4.',kind:'stanceStrike',damage:7,comboBonus:4,type:'검무가 전용',rarity:'일반'},
+ {name:'참격 전환',glyph:'➤',cost:1,desc:'맹공 자세 전환 및 피해 8. 자세 전환 시 +3.',kind:'stanceStrike',stance:'assault',damage:8,comboBonus:3,type:'검무가 전용',rarity:'일반'},
+ {name:'방패 자세 수비',glyph:'▣',cost:1,desc:'철벽 자세 전환 및 방어도 7. 자세 전환 시 +4 방어도.',kind:'stanceGuard',stance:'iron',block:7,comboBlock:4,type:'검무가 전용',rarity:'일반'},
+ {name:'흐름 찌르기',glyph:'➤',cost:1,desc:'피해 8, 연계 시 카드 1장 뽑기.',kind:'stanceStrike',damage:8,comboDraw:1,type:'검무가 전용',rarity:'일반'},
+ {name:'회전 베기',glyph:'⚔',cost:1,desc:'피해 6, 연계 시 피해 6 추가.',kind:'stanceStrike',damage:6,comboBonus:6,type:'검무가 전용',rarity:'일반'},
+ {name:'검막 전개',glyph:'▣',cost:1,desc:'방어도 6, 연계 시 방어도 5 추가.',kind:'stanceGuard',block:6,comboBlock:5,type:'검무가 전용',rarity:'일반'},
+ {name:'맹공 발도',glyph:'⚔',cost:1,desc:'맹공 자세 전환, 피해 9, 연계 시 취약 1턴.',kind:'stanceStrike',stance:'assault',damage:9,comboDebuff:'vulnerable',type:'검무가 전용',rarity:'고급'},
+ {name:'철벽 반격',glyph:'▣',cost:1,desc:'철벽 자세 전환, 방어도 6 및 피해 6. 연계 시 피해 +4.',kind:'stanceGuard',stance:'iron',block:6,comboDmg:6,comboBonus:4,type:'검무가 전용',rarity:'고급'},
+ {name:'연계 베기',glyph:'➤',cost:1,desc:'피해 9, 연계 시 이번 턴 공격 +2.',kind:'stanceStrike',damage:9,comboBuff:2,type:'검무가 전용',rarity:'고급'},
+ {name:'검무 자세 전환',glyph:'✦',cost:0,desc:'자세를 반대로 전환하고 카드 1장 뽑기.',kind:'stanceFlip',draw:1,type:'검무가 전용',rarity:'고급'},
+ {name:'심안의 일격',glyph:'⌖',cost:1,desc:'피해 10, 연계 시 피해 +5.',kind:'stanceStrike',damage:10,comboBonus:5,type:'검무가 전용',rarity:'고급'},
+ {name:'철갑 자세 수호',glyph:'♜',cost:1,desc:'철벽 자세 전환, 방어도 9, 연계 시 체력 2 회복.',kind:'stanceGuard',stance:'iron',block:9,comboHeal:2,type:'검무가 전용',rarity:'고급'},
+ {name:'단절의 일섬',glyph:'⚔',cost:2,desc:'맹공 자세 전환, 피해 14, 연계 시 피해 +6.',kind:'stanceStrike',stance:'assault',damage:14,comboBonus:6,type:'검무가 전용',rarity:'희귀'},
+ {name:'유수 방어 태세',glyph:'▣',cost:1,desc:'철벽 자세 전환, 방어도 8 및 피해 7.',kind:'stanceGuard',stance:'iron',block:8,comboDmg:7,type:'검무가 전용',rarity:'희귀'},
+ {name:'연쇄 검격',glyph:'➤',cost:1,desc:'피해 11, 연계 시 카드 1장 뽑고 피해 +3.',kind:'stanceStrike',damage:11,comboBonus:3,comboDraw:1,type:'검무가 전용',rarity:'희귀'},
+ {name:'자세 붕괴',glyph:'⌖',cost:1,desc:'피해 10 및 적 취약 2턴, 연계 시 피해 +4.',kind:'stanceStrike',damage:10,debuff:'vulnerable',comboBonus:4,type:'검무가 전용',rarity:'희귀'},
+ {name:'맹공 쇄도',glyph:'⚔',cost:2,desc:'맹공 자세 전환, 피해 16, 연계 시 이번 턴 공격 +3.',kind:'stanceStrike',stance:'assault',damage:16,comboBuff:3,type:'검무가 전용',rarity:'희귀'},
+ {name:'철벽 요새',glyph:'▣',cost:2,desc:'철벽 자세 전환, 방어도 14 및 피해 8.',kind:'stanceGuard',stance:'iron',block:14,comboDmg:8,type:'검무가 전용',rarity:'희귀'},
+ {name:'무심 검로',glyph:'✦',cost:0,desc:'자세 전환 후 코스트 1 회복, 연계 시 피해 7.',kind:'stanceFlip',energyGain:1,comboDmg:7,type:'검무가 전용',rarity:'희귀'},
+ {name:'비연참',glyph:'➤',cost:1,desc:'피해 12, 연계 시 피해 +6.',kind:'stanceStrike',damage:12,comboBonus:6,type:'검무가 전용',rarity:'희귀'},
+ {name:'강철 유성',glyph:'⚔',cost:2,desc:'맹공 자세 전환, 피해 18, 연계 시 적 취약 2턴.',kind:'stanceStrike',stance:'assault',damage:18,comboDebuff:'vulnerable',type:'검무가 전용',rarity:'영웅'},
+ {name:'백년 철벽',glyph:'♜',cost:2,desc:'철벽 자세 전환, 방어도 17, 연계 시 방어도 +7.',kind:'stanceGuard',stance:'iron',block:17,comboBlock:7,type:'검무가 전용',rarity:'영웅'},
+ {name:'천상 연계기',glyph:'✦',cost:2,desc:'자세 전환, 피해 17 및 방어도 10, 연계 시 피해 +8.',kind:'stanceStrike',damage:17,block:10,comboBonus:8,type:'검무가 전용',rarity:'영웅'},
+ {name:'파천의 검무',glyph:'⚔',cost:2,desc:'맹공 자세 전환, 피해 21, 연계 시 카드 1장 뽑기.',kind:'stanceStrike',stance:'assault',damage:21,comboDraw:1,type:'검무가 전용',rarity:'영웅'},
+ {name:'절대 검세',glyph:'♛',cost:2,desc:'피해 20 및 방어도 12, 연계 시 피해 +7.',kind:'stanceStrike',damage:20,block:12,comboBonus:7,type:'검무가 전용',rarity:'영웅'},
+ {name:'극의·유성연격',glyph:'➤',cost:2,desc:'맹공 자세 전환, 피해 23, 연계 시 이번 턴 공격 +4.',kind:'stanceStrike',stance:'assault',damage:23,comboBuff:4,type:'검무가 전용',rarity:'영웅'},
+ {name:'극의·무결방어',glyph:'▣',cost:2,desc:'철벽 자세 전환, 방어도 22 및 체력 4 회복.',kind:'stanceGuard',stance:'iron',block:22,heal:4,type:'검무가 전용',rarity:'영웅'},
+ {name:'환영 검무',glyph:'✦',cost:1,desc:'자세 전환, 피해 15, 연계 시 피해 +9.',kind:'stanceStrike',damage:15,comboBonus:9,type:'검무가 전용',rarity:'영웅'},
+ {name:'검성 오의·단죄',glyph:'♛',cost:3,desc:'맹공 자세 전환, 피해 29, 연계 시 적 취약 2턴 및 피해 +8.',kind:'stanceStrike',stance:'assault',damage:29,comboDebuff:'vulnerable',comboBonus:8,type:'검무가 전용',rarity:'영웅'},
+ {name:'검성 오의·태산',glyph:'♛',cost:3,desc:'철벽 자세 전환, 방어도 28, 피해 24 및 연계 시 피해 +10.',kind:'stanceGuard',stance:'iron',block:28,damage:24,comboBonus:10,type:'검무가 전용',rarity:'영웅'}
+];
 const vampireExclusiveSkills=[
  {name:'핏빛 베기',glyph:'☽',cost:1,hpCost:3,lifesteal:4,desc:'체력 3 소모, 피해 10 및 체력 4 흡혈.',kind:'bloodStrike',damage:10,type:'혈귀 전용',rarity:'일반'},
  {name:'흡혈 찌르기',glyph:'➤',cost:1,hpCost:2,lifesteal:5,desc:'체력 2 소모, 피해 8 및 체력 5 흡혈.',kind:'bloodStrike',damage:8,type:'혈귀 전용',rarity:'일반'},
@@ -475,7 +539,6 @@ const vampireExclusiveSkills=[
  {name:'혈월의 심판',glyph:'☽',cost:3,hpCost:9,lifesteal:15,desc:'체력 9 소모, 피해 30 및 체력 15 흡혈.',kind:'bloodStrike',damage:30,type:'혈귀 전용',rarity:'영웅'},
  {name:'선혈 성찬',glyph:'♛',cost:3,hpCost:10,lifesteal:16,desc:'체력 10 소모, 피해 32, 체력 16 흡혈 및 방어도 10.',kind:'bloodMixed',damage:32,block:10,type:'혈귀 전용',rarity:'영웅'}
 ];
-
 const mageElementalSkills={
  fire:[
   {name:'불씨 점화',glyph:'✹',cost:1,manaCost:1,desc:'마나 1 소모, 피해 7 및 화상 4 부여.',kind:'elementalStrike',damage:7,type:'불 속성 스킬',rarity:'일반'},
@@ -552,6 +615,13 @@ const passivePool={
   {name:'피의 공명',desc:'흡혈 카드 사용 시 흡혈량 +2.',effect:'vampireLeechPlus',value:2,rarity:'고급'},
   {name:'혈액 응고',desc:'체력 소모 시 방어도 4 획득.',effect:'bloodToGuard',value:4,rarity:'희귀'},
   {name:'굶주린 포식',desc:'모든 공격 카드 피해 +2 및 적 처치 시 체력 3 회복.',effect:'killHeal',value:3,rarity:'영웅'}
+ ],
+ swordsman:[
+  {name:'유려한 발걸음',desc:'자세 전환 시 방어도 3 획득.',effect:'stanceGuardPlus',value:3,rarity:'일반'},
+  {name:'연계 고수',desc:'자세 연계 발동 시 추가 피해 +3.',effect:'comboDamagePlus',value:3,rarity:'고급'},
+  {name:'맹공의 날',desc:'맹공 자세 중 공격 카드 피해 +3.',effect:'assaultBonus',value:3,rarity:'고급'},
+  {name:'철벽의 균형',desc:'철벽 자세 중 방어도 획득량 +3.',effect:'ironBonus',value:3,rarity:'희귀'},
+  {name:'무아의 검경',desc:'자세 전환 시 카드 1장 뽑기(턴당 1회).',effect:'stanceDrawOnce',value:1,rarity:'영웅'}
  ]
 };
 
@@ -570,7 +640,8 @@ const elites=[
 const bosses=[
  {name:'회랑의 문지기',glyph:'♛',hp:85,atk:12},
  {name:'잿빛 군주',glyph:'☗',hp:125,atk:16},
- {name:'회랑의 종언자',glyph:'✦',hp:175,atk:20}
+ {name:'회랑의 종언자',glyph:'✦',hp:175,atk:20},
+ {name:'잿빛 검수',glyph:'⚔',hp:140,atk:15,bleedBoss:true}
 ];
 
 const relicPool=[
@@ -590,7 +661,10 @@ const relicPool=[
  {name:'영원의 마나 코어',charOnly:'mage',desc:'[마법사 전용] 최대 마나 +2 및 매 턴 마나 +1 회복.',effect:'mageEternalCore',rarity:'영웅'},
  {name:'낡은 기사 훈장',charOnly:'knight',storyOnly:true,desc:'[기사 스토리] 1층 클리어 보상. 공격 피해 +2 및 방어도 +3.',effect:'oldKnightMedal',rarity:'고급'},
  {name:'딸의 유품',charOnly:'knight',storyOnly:true,desc:'[기사 스토리] 2층 클리어 보상. 최대 체력 +8 및 턴 종료 시 방어도 2 유지.',effect:'daughterRelic',rarity:'희귀'},
- {name:'희망의 성배',charOnly:'knight',storyOnly:true,desc:'[기사 스토리] 3층 클리어 보상. 적 처치 시 체력 5 회복 및 공격 피해 +3.',effect:'hopeGrail',rarity:'영웅'}
+ {name:'희망의 성배',charOnly:'knight',storyOnly:true,desc:'[기사 스토리] 3층 클리어 보상. 적 처치 시 체력 5 회복 및 공격 피해 +3.',effect:'hopeGrail',rarity:'영웅'},
+ {name:'검무가의 유풍석',charOnly:'swordsman',desc:'[검무가 전용] 전투 시작 시 맹공 자세 및 피해 +2.',effect:'swordsmanWindStone',rarity:'고급'},
+ {name:'유수 검집',charOnly:'swordsman',desc:'[검무가 전용] 자세 전환 시 연계 피해 +4 및 방어도 +2.',effect:'swordsmanScabbard',rarity:'희귀'},
+ {name:'혈검의 잔향',charOnly:'swordsman',desc:'[검무가 전용] 적에게 출혈 부여 및 출혈 대상 공격 시 피해 +4.',effect:'swordsmanBleedBlade',rarity:'영웅'}
 ];
 
 const potionTypes=[
@@ -598,7 +672,9 @@ const potionTypes=[
  {name:'과충전 포션',desc:'이번 턴 코스트 +2',use:g=>{g.energy+=2;return '이번 턴 코스트가 2 증가'}},
  {name:'광폭 포션',desc:'이번 턴 공격 피해 +5',use:g=>{g.buffs.attack=5;return '이번 턴 공격 피해 +5'}},
  {name:'철벽 포션',desc:'방어도 15 획득',use:g=>{g.block+=15;return '방어도 15 획득'}},
- {name:'정화 포션',desc:'부정적 상태이상 제거',use:g=>{g.status.poison=0;g.status.weak=0;g.status.vulnerable=0;return '부정적 상태이상 제거'}}
+ {name:'정화 포션',desc:'부정적 상태이상 제거',use:g=>{g.status.poison=0;g.status.weak=0;g.status.vulnerable=0;return '부정적 상태이상 제거'}},
+ {name:'지혈 연고',desc:'출혈·중독 해제 및 체력 10 회복',use:g=>{g.status.bleed=0;g.status.poison=0;let n=Math.min(10,g.maxHp-g.hp);g.hp+=n;return `출혈·중독 해제 및 체력 ${n} 회복`}},
+ {name:'검무의 영약',desc:'자세 전환 및 이번 턴 공격 +4, 방어도 +6',use:g=>{g.stance=(g.stance==='assault'?'iron':'assault');g.stanceCombo=true;g.buffs.attack=(g.buffs.attack||0)+4;g.block+=6;return '자세 연계 발동, 공격 +4 및 방어도 +6'}}
 ];
 
 let game=null;
@@ -714,6 +790,12 @@ const masteryUnlockCards={
   3:[{name:'피의 연회',glyph:'✦',cost:2,hpCost:6,lifesteal:9,desc:'체력 6 소모, 피해 18, 체력 9 흡혈 및 적 취약 2턴.',kind:'bloodStrike',damage:18,debuff:'vulnerable',type:'혈귀 전용',rarity:'희귀'}],
   4:[{name:'밤의 군주',glyph:'♛',cost:2,hpCost:7,lifesteal:11,desc:'체력 7 소모, 피해 22 및 체력 11 흡혈.',kind:'bloodStrike',damage:22,type:'혈귀 전용',rarity:'영웅'}],
   5:[{name:'혈월의 심판',glyph:'☽',cost:3,hpCost:9,lifesteal:15,desc:'체력 9 소모, 피해 30 및 체력 15 흡혈.',kind:'bloodStrike',damage:30,type:'혈귀 전용',rarity:'영웅'}]
+ },
+ swordsman:{
+  2:swordsmanExclusiveSkills.slice(6,14),
+  3:swordsmanExclusiveSkills.slice(14,20),
+  4:swordsmanExclusiveSkills.slice(20,26),
+  5:swordsmanExclusiveSkills.slice(26,30)
  }
 };
 
@@ -795,18 +877,27 @@ function chooseCharacter(){
  Object.keys(chars).forEach(key=>{
   const c=chars[key];
   const isVamp=key==='vampire';
+  const isSword=key==='swordsman';
   const isStoryOnlyBlocked=(selectedMode==='story' && key!=='knight');
-  const locked=isStoryOnlyBlocked || (!!c.unlockable && (isVamp?!isVampireUnlocked():!isGrailKnightUnlocked()));
+  const locked=isStoryOnlyBlocked || (!!c.unlockable && (
+   isVamp ? !isVampireUnlocked() :
+   isSword ? !isSwordsmanUnlocked() :
+   !isGrailKnightUnlocked()
+  ));
   const progress=(game && game.fangKills)?game.fangKills:0;
   const lockText=isStoryOnlyBlocked
    ?'기사 스토리 모드에서는 [기사]만 선택할 수 있습니다'
    :isVamp
     ?`회랑 모드에서 송곳니 보유 후 10마리 처치 시 해금 (${Math.min(10,progress)}/10)`
+   :isSword
+    ?'보스 [잿빛 검수] 처치 시 해금'
     :'기사 스토리 모드 클리어 시 해금';
   const descText=key==='mage'
    ?'시작 시 불·얼음·번개 원소 선택'
    :isVamp
     ?'피를 소모해 공격하고 흡혈 · 전용 스킬 15종'
+   :isSword
+    ?'맹공/철벽 자세 전환 & 연계 · 전용 스킬 30종'
     :'기본 특수기 2종';
   const b=document.createElement('button');b.className='choice';
   b.disabled=locked;
@@ -879,6 +970,9 @@ function startRun(key,element='fire'){
   shopTab:'cards',
   shopOffers:null,
   shopRefreshCost:12,
+  stance:'assault',
+  stanceCombo:false,
+  stanceDrawUsedTurn:false,
   fangKills:0,
   masteryExpGain:0,
   masteryLevelStart:mState.level
@@ -971,13 +1065,15 @@ function buildEnemy(type){
   const atk=Math.round(sb.atk*1.25);
   return {name:sb.name,glyph:sb.glyph,maxHp:hp,hp:hp,atk:atk,baseAtk:atk,intent:atk,type,pattern:0,burn:0,freeze:0,shock:0,nearby:[],tempCurseGiven:false,storyRewardItem:sb.rewardItem,gimmickPhase:0,barrierTurns:0};
  }
- let base=type==='boss'?bosses[game.floor]:type==='elite'?rand(elites):rand(monsters);
+ let base=type==='boss'
+  ?(game.floor===0 && Math.random()<.55 ? bosses[3] : bosses[Math.min(2,game.floor)])
+  :type==='elite'?rand(elites):rand(monsters);
  let hpScale=(type==='boss'?2.0:type==='elite'?1.8:1.7)+game.floor*.68;
  let atkScale=1.18+game.floor*.48;
  const scaledAtk=Math.round(base.atk*atkScale);
  const scaledHp=Math.round(base.hp*hpScale);
  const nearby=type==='boss'?[]:[rand(monsters).name];
- return {name:base.name,glyph:base.glyph,maxHp:scaledHp,hp:scaledHp,atk:scaledAtk,baseAtk:scaledAtk,intent:scaledAtk,type,pattern:0,burn:0,freeze:0,shock:0,nearby,tempCurseGiven:false,gimmickPhase:0,barrierTurns:0};
+ return {name:base.name,glyph:base.glyph,maxHp:scaledHp,hp:scaledHp,atk:scaledAtk,baseAtk:scaledAtk,intent:scaledAtk,type,pattern:0,burn:0,freeze:0,shock:0,nearby,tempCurseGiven:false,bleedBoss:!!base.bleedBoss,gimmickPhase:0,barrierTurns:0};
 }
 
 function applyElementEffect(stacks=1){
@@ -1009,7 +1105,12 @@ function startBattle(type){
  game.turn=1;
  game.active=true;
  game.firstGuard=true;
+ game.stance='assault';
+ game.stanceCombo=false;
+ game.stanceDrawUsedTurn=false;
+ game.status.bleed=0;
  game.buffs={attack:0};
+ if(game.items.some(x=>x.effect==='swordsmanWindStone')){game.stance='assault';game.buffs.attack+=2;}
  game.hand=[];
  game.discard=[];
  game.drawPile=shuffle([...game.deck]);
@@ -1077,6 +1178,7 @@ function renderBattle(){
  if(game.status.poison>0)heroStatuses.push({name:'중독',turns:game.status.poison,description:'적 행동 종료 후 중독 수치만큼 피해를 받습니다.'});
  if(game.status.weak>0)heroStatuses.push({name:'약화',turns:game.status.weak,description:'공격 카드의 피해가 감소합니다.'});
  if(game.status.vulnerable>0)heroStatuses.push({name:'취약',turns:game.status.vulnerable,description:'적에게 받는 피해가 1.5배가 됩니다.'});
+ if((game.status.bleed||0)>0)heroStatuses.push({name:'출혈',turns:game.status.bleed,description:'출혈 수치만큼 매 턴 종료 시 추가 피해를 입습니다(잿빛 검수 주력 기믹).'});
  renderStatusList('heroStatus',heroStatuses);
  
  const enemyStatuses=[];
@@ -1084,6 +1186,7 @@ function renderBattle(){
  if(game.enemy.freeze>0)enemyStatuses.push({name:'빙결',turns:game.enemy.freeze,description:'일시 행동불가 상태이며, 다음 공격 시 추가 피해를 받습니다.'});
  if(game.enemy.shock>0)enemyStatuses.push({name:'감전',turns:game.enemy.shock,description:'2턴 동안 행동불가 상태가 되며, 주변 적에게 연쇄 피해를 입힙니다.'});
  if(game.enemy.vulnerable>0)enemyStatuses.push({name:'취약',turns:game.enemy.vulnerable,description:'용사의 공격으로 받는 피해가 1.5배가 됩니다.'});
+ if((game.enemy.bleed||0)>0)enemyStatuses.push({name:'출혈',turns:game.enemy.bleed,description:'출혈 상태입니다.'});
  if(game.enemy.atk>(game.enemy.baseAtk||game.enemy.atk))enemyStatuses.push({name:'공격력 강화',turns:0,buff:true,description:'공격력이 강화되어 있습니다.'});
  renderStatusList('enemyStatus',enemyStatuses);
 
@@ -1096,6 +1199,10 @@ function renderBattle(){
  if(game.character==='mage'){
   const elName=elements[game.element||'fire']?.name||'불';
   $('statusInfo').textContent=`원소: ${elName} · 마나 ${game.mana}/${game.maxMana}`;
+ }else if(game.character==='swordsman'){
+  const stLabel=game.stance==='iron'?'철벽 자세':'맹공 자세';
+  const comboTxt=game.stanceCombo?'연계 활성화!':'자세 전환 대기';
+  $('statusInfo').innerHTML=`<span class="stance-pill ${game.stance==='iron'?'iron':'assault'}">${stLabel} · ${comboTxt}</span>`;
  }else{
   $('statusInfo').textContent='';
  }
@@ -1123,6 +1230,25 @@ function hitEnemy(dmg){
  game.enemyBlock=Math.max(0,game.enemyBlock-dmg);
  game.enemy.hp=Math.max(0,game.enemy.hp-actual);
  return actual;
+}
+
+function switchStance(targetStance=null){
+ if(game.character!=='swordsman')return false;
+ const prev=game.stance||'assault';
+ const next=targetStance||(prev==='assault'?'iron':'assault');
+ const changed=(next!==prev);
+ game.stance=next;
+ game.stanceCombo=changed;
+ if(changed){
+  const gPlus=game.passives.filter(x=>x.effect==='stanceGuardPlus').reduce((a,x)=>a+x.value,0);
+  if(gPlus>0)game.block+=gPlus;
+  if(game.items.some(x=>x.effect==='swordsmanScabbard'))game.block+=2;
+  if(!game.stanceDrawUsedTurn && game.passives.some(x=>x.effect==='stanceDrawOnce')){
+   game.stanceDrawUsedTurn=true;
+   draw(1);
+  }
+ }
+ return changed;
 }
 
 function playCard(i){
@@ -1190,6 +1316,60 @@ function playCard(i){
  if(c.kind==='mana'){game.mana=Math.min(game.maxMana,game.mana+(c.mana||1));msg=`마나 ${c.mana||1} 회복.`}
  if(c.kind==='debuff'){game.enemy[c.debuff==='vulnerable'?'vulnerable':'weak']=2;msg='적에게 상태이상을 부여했습니다.'}
  if(c.kind==='curse'){game.hp=Math.max(1,game.hp-4);msg='재의 저주가 사라지며 체력 4를 잃었습니다.'}
+ if(c.kind==='stanceFlip'){
+  const changed=switchStance();
+  let extra='';
+  if(c.energyGain){game.energy+=c.energyGain;extra+=` 코스트 +${c.energyGain}.`}
+  if(c.draw){draw(c.draw);extra+=` 카드 ${c.draw}장 뽑기.`}
+  if(changed && c.comboDmg){
+   const cBonus=game.passives.filter(x=>x.effect==='comboDamagePlus').reduce((a,x)=>a+x.value,0)+(game.items.some(x=>x.effect==='swordsmanScabbard')?4:0);
+   const d=hitEnemy(c.comboDmg+cBonus);
+   extra+=` 연계 일격 ${d} 피해!`;
+  }
+  msg=`자세 전환(${game.stance==='iron'?'철벽 자세':'맹공 자세'}).${extra}`;
+ }
+ if(c.kind==='stanceStrike'||c.kind==='stanceGuard'){
+  const changed=c.stance?switchStance(c.stance):false;
+  const isCombo=!!(changed || game.stanceCombo);
+  let bonus=game.buffs.attack+(game.status.weak>0?-2:0);
+  bonus+=game.passives.filter(x=>x.effect==='damage').reduce((a,x)=>a+x.value,0);
+  if(game.stance==='assault')bonus+=game.passives.filter(x=>x.effect==='assaultBonus').reduce((a,x)=>a+x.value,0);
+  if(isCombo){
+   bonus+=(c.comboBonus||0);
+   bonus+=game.passives.filter(x=>x.effect==='comboDamagePlus').reduce((a,x)=>a+x.value,0);
+   if(game.items.some(x=>x.effect==='swordsmanScabbard'))bonus+=4;
+  }
+  if(game.items.some(x=>x.effect==='swordsmanBleedBlade')&&(game.enemy.bleed||0)>0)bonus+=4;
+  let parts=[];
+  if(c.block){
+   let blk=c.block;
+   if(game.stance==='iron')blk+=game.passives.filter(x=>x.effect==='ironBonus').reduce((a,x)=>a+x.value,0);
+   if(isCombo && c.comboBlock)blk+=c.comboBlock;
+   game.block+=blk;
+   parts.push(`방어도 ${blk} 획득`);
+  }
+  const baseDmg=c.damage||(isCombo?c.comboDmg:0)||0;
+  if(baseDmg>0||(c.kind==='stanceStrike')){
+   const d=hitEnemy(Math.max(0,baseDmg+bonus));
+   parts.push(`${d} 피해`);
+  }
+  if(isCombo && c.comboDmg && c.damage){
+   const d2=hitEnemy(Math.max(0,c.comboDmg+bonus));
+   parts.push(`연계 추가 ${d2} 피해`);
+  }
+  if(game.items.some(x=>x.effect==='swordsmanBleedBlade')&&baseDmg>0){
+   game.enemy.bleed=(game.enemy.bleed||0)+3;
+   parts.push('출혈 3 부여');
+  }
+  if(c.debuff){game.enemy[c.debuff==='vulnerable'?'vulnerable':'weak']=2;parts.push('취약 2턴');}
+  if(isCombo && c.comboDebuff){game.enemy[c.comboDebuff==='vulnerable'?'vulnerable':'weak']=2;parts.push('연계 취약');}
+  if(isCombo && c.comboBuff){game.buffs.attack+=c.comboBuff;parts.push(`이번 턴 공격 +${c.comboBuff}`);}
+  if(isCombo && c.comboHeal){let h=Math.min(c.comboHeal,game.maxHp-game.hp);game.hp+=h;parts.push(`체력 ${h} 회복`);}
+  if(c.heal){let h=Math.min(c.heal,game.maxHp-game.hp);game.hp+=h;parts.push(`체력 ${h} 회복`);}
+  if(isCombo && c.comboDraw){draw(c.comboDraw);parts.push(`카드 ${c.comboDraw}장 뽑기`);}
+  game.stanceCombo=false;
+  msg=`${c.name}${isCombo?' [연계!]':''}! ${parts.join(', ')}.`;
+ }
  if(c.manaCost&&game.passives.some(x=>x.effect==='mageManaRefund')){
   const refund=game.passives.filter(x=>x.effect==='mageManaRefund').reduce((a,x)=>a+x.value,0);
   game.mana=Math.min(game.maxMana,game.mana+refund);
@@ -1278,6 +1458,11 @@ function enemyAct(){
    e.atk+=3;
    msg=`보스 기믹 [심연의 파동]! ${d} 피해 및 보스 공격력 +3 상승.`;
   }
+  else if(e.bleedBoss){
+   let d=Math.max(0,e.intent-game.block);game.block=Math.max(0,game.block-e.intent);game.hp=Math.max(0,game.hp-d);
+   game.status.bleed=(game.status.bleed||0)+3;
+   msg=`잿빛 검수 [출혈 참격]! ${d} 피해 및 출혈 3 부여(현재 출혈 ${game.status.bleed}).`;
+  }
   else if(e.next==='guard'){game.enemyBlock+=e.intent;msg=`적이 방어도 ${e.intent}를 얻었습니다.`}
   else if(e.next==='weaken'){game.status.weak=2;msg='적의 포효! 다음 2턴 동안 공격력이 감소합니다.'}
   else if(e.next==='poison'){let d=Math.max(0,e.intent-game.block);game.block=Math.max(0,game.block-e.intent);game.hp=Math.max(0,game.hp-d);game.status.poison=4;msg=`맹독 공격! ${d} 피해와 중독(4턴)을 받았습니다.`}
@@ -1299,6 +1484,12 @@ function enemyAct(){
   msg+=` 화상 도트 피해 ${burnDmg}!`;
  }
  if(game.hp>0&&game.status.poison>0){game.hp=Math.max(0,game.hp-game.status.poison);msg+=` 중독으로 ${game.status.poison} 추가 피해.`;game.status.poison--}
+ if(game.hp>0&&(game.status.bleed||0)>0){
+  const bDmg=game.status.bleed;
+  game.hp=Math.max(0,game.hp-bDmg);
+  msg+=` 출혈로 ${bDmg} 추가 피해!`;
+  game.status.bleed=Math.max(0,game.status.bleed-1);
+ }
  if(game.status.weak>0)game.status.weak--;
  if(game.status.vulnerable>0)game.status.vulnerable--;if(game.enemy.vulnerable>0)game.enemy.vulnerable--;
  return msg;
@@ -1320,7 +1511,7 @@ function endTurn(){
  if(game.items.some(x=>x.effect==='knightIronHeart'))game.block=Math.min(game.block,4);
  else if(game.items.some(x=>x.effect==='daughterRelic'))game.block=Math.min(game.block,2);
  else game.block=0;
- game.turn++;game.buffs.attack=0;game.energy=game.maxEnergy+(game.items.some(x=>x.effect==='battleEnergy')?1:0);
+ game.turn++;game.buffs.attack=0;game.stanceCombo=false;game.stanceDrawUsedTurn=false;game.energy=game.maxEnergy+(game.items.some(x=>x.effect==='battleEnergy')?1:0);
  if(game.character==='mage')game.mana=Math.min(game.maxMana,game.mana+game.manaRegen+game.passives.filter(x=>x.effect==='manaRegen').reduce((a,x)=>a+x.value,0));
  enemyChooseIntent();draw(5);
  $('battleLog').textContent=msg+' 턴을 종료하고 새로운 손패를 받았습니다.';renderBattle();
@@ -1405,11 +1596,12 @@ function getAllCatalogCards(){
  [...common,...knightCards,...mageCards,...grailCards,...vampireExclusiveSkills,...(mageElementalSkills.fire||[]),...(mageElementalSkills.ice||[]),...(mageElementalSkills.lightning||[])].forEach(c=>{
   if(!map.has(c.name))map.set(c.name,c);
  });
+ swordsmanExclusiveSkills.forEach(c=>{
+  if(!map.has(c.name))map.set(c.name,c);
+ });
  return [...map.values()];
 }
 
-
-// --- FILE-BASED PROGRESS EXPORT / IMPORT HELPERS ---
 function createProgressSaveFilePayload(){
  const snap = exportProgressSnapshot();
  return {
@@ -1420,6 +1612,7 @@ function createProgressSaveFilePayload(){
   savedAt: new Date().toISOString(),
   grailKnightUnlocked: !!snap.grailKnightUnlocked,
   vampireUnlocked: !!snap.vampireUnlocked,
+  swordsmanUnlocked: !!snap.swordsmanUnlocked,
   mastery: snap.mastery || {},
   bannedCards: snap.bannedCards || {}
  };
@@ -1493,6 +1686,7 @@ function openMasteryAndUnlockModal(selectedChar=null){
    <h3>영구 해금 조건 &amp; 밴 현황</h3>
    <p>· <b>성배기사</b>: ${isGrailKnightUnlocked()?'<b style="color:var(--green)">해금 완료</b>':'미해금 (기사 스토리 모드 완주 시 해금)'}</p>
    <p>· <b>혈귀</b>: ${isVampireUnlocked()?'<b style="color:var(--green)">해금 완료</b>':'미해금 (회랑 모드에서 포식자의 송곳니 보유 후 10마리 처치 시 해금)'}</p>
+   <p>· <b>검무가</b>: ${isSwordsmanUnlocked()?'<b style="color:var(--green)">해금 완료</b>':'미해금 (보스 [잿빛 검수] 처치 시 해금)'}</p>
    <p>· <b>${chars[activeChar].name} 밴 슬롯</b>: 현재 <b>${banned.length} / ${MAX_BANNED_CARDS}장</b> 금지 중 (해당 캐릭터의 드래프트·상점에서 제외)</p>
   </div>
  `;
@@ -1581,6 +1775,7 @@ function openCardBanModal(statusMsg='',charKey=null){
   }
   if(activeChar==='vampire' && c.type==='혈귀 전용') return true;
   if(activeChar==='grailKnight' && c.type==='성배기사 전용') return true;
+  if(activeChar==='swordsman' && c.type==='검무가 전용') return true;
   return false;
  });
  const displayCards=relevantCards.length?relevantCards:catalog;
@@ -1624,6 +1819,7 @@ function buildSlayTheSpireCardPool(){
   }
   if(activeChar==='vampire' && c.type==='혈귀 전용') return true;
   if(activeChar==='grailKnight' && c.type==='성배기사 전용') return true;
+  if(activeChar==='swordsman' && c.type==='검무가 전용') return true;
   return false;
  });
  
@@ -1659,6 +1855,7 @@ function winBattle(){
  game.battles++;
  const expGain=game.route==='boss'?20:game.route==='elite'?14:8;
  const mRes=gainCharMastery(game.character,expGain);
+ let extraText='';
  let masteryText=` · 숙련도 +${expGain} (Lv.${mRes.level})`;
  if(mRes.leveledUp){
   masteryText+=` · 레벨업!${mRes.unlockedCards.length?` 해금 카드: [${mRes.unlockedCards.join(', ')}]`:''}`;
@@ -1670,6 +1867,10 @@ function winBattle(){
    unlockVampire();
   }
  }
+ if(game.enemy && game.enemy.name==='잿빛 검수' && !isSwordsmanUnlocked()){
+  unlockSwordsman();
+  extraText+=' · [잿빛 검수] 격파로 신규 직업 [검무가] 해금!';
+ }
  let earned=game.route==='boss'?45:game.route==='elite'?24:12;
  if(game.items.some(x=>x.effect==='goldBonus'))earned=Math.round(earned*1.5);
  game.gold+=earned;
@@ -1677,7 +1878,6 @@ function winBattle(){
  if(game.items.some(x=>x.effect==='killHeal'))heal+=3;
  if(game.items.some(x=>x.effect==='hopeGrail'))heal+=5;
  game.hp=Math.min(game.maxHp,game.hp+heal);
- let extraText='';
  if(game.route==='elite'){
   const relic=pickRelicNoDup();
   game.items.push(relic);
