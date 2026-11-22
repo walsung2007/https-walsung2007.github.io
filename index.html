@@ -99,6 +99,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;bo
     <div class="subtitle">잿가루 용사단 · 회랑 &amp; 기사 스토리</div>
   </div>
   <div class="row">
+    <button type="button" class="btn small" id="headerBackupBtn">진행도 백업</button>
     <button type="button" class="btn small" id="patchNotesBtn">업데이트 내역</button>
     <div class="tag" id="versionTag">VER 0.7</div>
   </div>
@@ -250,41 +251,11 @@ const elements={
  lightning:{name:'번개',glyph:'ϟ',desc:'감전으로 2턴 행동불가 및 주변 적에게 연쇄 피해'}
 };
 const APP_VERSION='0.7';
-const PATCH_HISTORY = [
-  {
-    version: '0.7',
-    date: '2026-11',
-    notes: [
-      '캐릭터별 숙련도 및 해금 시스템 추가',
-      '캐릭터별 카드 밴(최대 7장) 시스템 추가',
-      '마법사 속성별 고유 스킬 15종 확장'
-    ]
-  },
-  {
-    version: '0.6',
-    date: '2026-11',
-    notes: [
-      '적 체력·공격력 배율 상향 및 보스 기믹 강화',
-      '층 이동 체력 회복량 조정(35% 회복) 및 보상/상점 밸런스 조정'
-    ]
-  },
-  {
-    version: '0.5',
-    date: '2026-11',
-    notes: [
-      '층별 스테이지 구성 변경(1층 10 · 2층 15 · 3층 17 스테이지)',
-      '신규 캐릭터 [혈귀] 및 전용 스킬 15종 추가',
-      '3층 보스 처치 후 4층 회랑의 끝 [무한의 불] 초기화 연출 추가'
-    ]
-  },
-  {
-    version: '0.4',
-    date: '2026-11',
-    notes: [
-      '기사 스토리 모드 추가 및 완주 시 [성배기사] 해금',
-      '엘리트 전투 승리 시 아이템 1개 확정 드롭 및 기보유 아이템 제외'
-    ]
-  }
+const PATCH_HISTORY=[
+ {version:'0.7',date:'2026-11',notes:['캐릭터별 숙련도 및 해금 시스템 추가','캐릭터별 카드 밴(최대 7장) 시스템 추가','마법사 속성별 고유 스킬 15종 확장','업데이트 시에도 숙련도·해금·카드 밴이 유지되는 통합 저장/백업/복원 시스템 추가']},
+ {version:'0.6',date:'2026-11',notes:['적 체력·공격력 배율 상향 및 보스 기믹 강화','층 이동 체력 회복량 조정(35% 회복) 및 보상/상점 밸런스 조정']},
+ {version:'0.5',date:'2026-11',notes:['층별 스테이지 구성 변경(1층 10 · 2층 15 · 3층 17 스테이지)','신규 캐릭터 [혈귀] 및 전용 스킬 15종 추가','3층 보스 처치 후 4층 회랑의 끝 [무한의 불] 초기화 연출 추가']},
+ {version:'0.4',date:'2026-11',notes:['기사 스토리 모드 추가 및 완주 시 [성배기사] 해금','엘리트 전투 승리 시 아이템 1개 확정 드롭 및 기보유 아이템 제외']}
 ];
 
 // --- UNIFORM 16x16 PIXEL ART SPRITES FOR CHARACTERS ---
@@ -368,17 +339,105 @@ const MASTERY_STORAGE_KEY='ashen_heroes_mastery_v1';
 const BANNED_CARDS_KEY='ashen_heroes_banned_cards_v1';
 const MAX_BANNED_CARDS=7;
 
+const SAVE_SCHEMA_VERSION=1;
+const PROGRESS_BUNDLE_KEY='ashen_heroes_persistent_progress_v1';
+
+function readStorageSafe(key){
+ try{
+  const v=localStorage.getItem(key);
+  if(v!==null)return v;
+ }catch(e){}
+ try{
+  if(window.name && window.name.startsWith('ASHEN_HEROES_WIN_STORE:')){
+   const parsed=JSON.parse(window.name.slice('ASHEN_HEROES_WIN_STORE:'.length));
+   if(parsed && Object.prototype.hasOwnProperty.call(parsed,key))return parsed[key];
+  }
+ }catch(e){}
+ return null;
+}
+
+function writeStorageSafe(key,val){
+ try{localStorage.setItem(key,val);}catch(e){}
+ try{
+  let bag={};
+  if(window.name && window.name.startsWith('ASHEN_HEROES_WIN_STORE:')){
+   bag=JSON.parse(window.name.slice('ASHEN_HEROES_WIN_STORE:'.length))||{};
+  }
+  bag[key]=val;
+  window.name='ASHEN_HEROES_WIN_STORE:'+JSON.stringify(bag);
+ }catch(e){}
+}
+
+function exportProgressSnapshot(){
+ const payload={
+  schemaVersion:SAVE_SCHEMA_VERSION,
+  savedAt:new Date().toISOString(),
+  grailKnightUnlocked:isGrailKnightUnlocked(),
+  vampireUnlocked:isVampireUnlocked(),
+  mastery:loadMasteryData(),
+  bannedCards:loadAllBannedCardsMap()
+ };
+ writeStorageSafe(PROGRESS_BUNDLE_KEY,JSON.stringify(payload));
+ return payload;
+}
+
+function restoreProgressSnapshot(rawObj){
+ if(!rawObj || typeof rawObj!=='object')return false;
+ if(rawObj.grailKnightUnlocked===true)writeStorageSafe(GRAIL_UNLOCK_KEY,'1');
+ if(rawObj.vampireUnlocked===true)writeStorageSafe(VAMPIRE_UNLOCK_KEY,'1');
+ if(rawObj.mastery && typeof rawObj.mastery==='object'){
+  const cur=loadMasteryData();
+  const merged={...cur};
+  Object.keys(rawObj.mastery).forEach(k=>{
+   const exp=Math.max(Number(cur[k]?.exp||0),Number(rawObj.mastery[k]?.exp||0));
+   merged[k]={exp};
+  });
+  writeStorageSafe(MASTERY_STORAGE_KEY,JSON.stringify(merged));
+ }
+ if(rawObj.bannedCards && typeof rawObj.bannedCards==='object'){
+  const curBan=loadAllBannedCardsMap();
+  const mergedBan={...curBan};
+  Object.keys(rawObj.bannedCards).forEach(k=>{
+   if(Array.isArray(rawObj.bannedCards[k])){
+    mergedBan[k]=rawObj.bannedCards[k].slice(0,MAX_BANNED_CARDS);
+   }
+  });
+  writeStorageSafe(BANNED_CARDS_KEY,JSON.stringify(mergedBan));
+ }
+ writeStorageSafe(PROGRESS_BUNDLE_KEY,JSON.stringify({
+  schemaVersion:SAVE_SCHEMA_VERSION,
+  savedAt:new Date().toISOString(),
+  grailKnightUnlocked:isGrailKnightUnlocked(),
+  vampireUnlocked:isVampireUnlocked(),
+  mastery:loadMasteryData(),
+  bannedCards:loadAllBannedCardsMap()
+ }));
+ return true;
+}
+
+(function hydratePersistentProgressOnBoot(){
+ try{
+  const rawBundle=readStorageSafe(PROGRESS_BUNDLE_KEY);
+  if(rawBundle){
+   restoreProgressSnapshot(JSON.parse(rawBundle));
+  }
+ }catch(e){}
+})();
+
+
 function isGrailKnightUnlocked(){
- try{return localStorage.getItem(GRAIL_UNLOCK_KEY)==='1';}catch(e){return false;}
+ return readStorageSafe(GRAIL_UNLOCK_KEY)==='1';
 }
 function unlockGrailKnight(){
- try{localStorage.setItem(GRAIL_UNLOCK_KEY,'1');}catch(e){}
+ writeStorageSafe(GRAIL_UNLOCK_KEY,'1');
+ exportProgressSnapshot();
 }
 function isVampireUnlocked(){
- try{return localStorage.getItem(VAMPIRE_UNLOCK_KEY)==='1';}catch(e){return false;}
+ return readStorageSafe(VAMPIRE_UNLOCK_KEY)==='1';
 }
 function unlockVampire(){
- try{localStorage.setItem(VAMPIRE_UNLOCK_KEY,'1');}catch(e){}
+ writeStorageSafe(VAMPIRE_UNLOCK_KEY,'1');
+ exportProgressSnapshot();
 }
 function hasFangRelic(){
  return !!(game && Array.isArray(game.items) && game.items.some(x=>x.name==='포식자의 송곳니' || x.effect==='killHeal'));
@@ -416,6 +475,60 @@ const vampireExclusiveSkills=[
  {name:'혈월의 심판',glyph:'☽',cost:3,hpCost:9,lifesteal:15,desc:'체력 9 소모, 피해 30 및 체력 15 흡혈.',kind:'bloodStrike',damage:30,type:'혈귀 전용',rarity:'영웅'},
  {name:'선혈 성찬',glyph:'♛',cost:3,hpCost:10,lifesteal:16,desc:'체력 10 소모, 피해 32, 체력 16 흡혈 및 방어도 10.',kind:'bloodMixed',damage:32,block:10,type:'혈귀 전용',rarity:'영웅'}
 ];
+
+const mageElementalSkills={
+ fire:[
+  {name:'불씨 점화',glyph:'✹',cost:1,manaCost:1,desc:'마나 1 소모, 피해 7 및 화상 4 부여.',kind:'elementalStrike',damage:7,type:'불 속성 스킬',rarity:'일반'},
+  {name:'열기 방출',glyph:'✹',cost:1,manaCost:1,desc:'마나 1 소모, 피해 9 및 화상 4 부여.',kind:'elementalStrike',damage:9,type:'불 속성 스킬',rarity:'일반'},
+  {name:'타오르는 잿불',glyph:'✹',cost:1,manaCost:1,desc:'마나 1 소모, 피해 8, 화상 4 및 카드 1장 뽑기.',kind:'elementalStrike',damage:8,draw:1,type:'불 속성 스킬',rarity:'일반'},
+  {name:'작열하는 화살',glyph:'✹',cost:1,manaCost:1,desc:'마나 1 소모, 피해 10 및 화상 4 부여.',kind:'elementalStrike',damage:10,type:'불 속성 스킬',rarity:'고급'},
+  {name:'홍련의 방패',glyph:'✹',cost:1,manaCost:1,desc:'마나 1 소모, 피해 7, 방어도 6 및 화상 4 부여.',kind:'elementalStrike',damage:7,block:6,type:'불 속성 스킬',rarity:'고급'},
+  {name:'화염 회오리',glyph:'✹',cost:2,manaCost:1,desc:'마나 1 소모, 피해 13 및 화상 8 부여.',kind:'elementalSurge',damage:13,type:'불 속성 스킬',rarity:'고급'},
+  {name:'재의 낙인',glyph:'✹',cost:1,manaCost:1,desc:'마나 1 소모, 피해 9, 화상 4 및 취약 2턴.',kind:'elementalStrike',damage:9,debuff:'vulnerable',type:'불 속성 스킬',rarity:'고급'},
+  {name:'맹화 쇄도',glyph:'✹',cost:2,manaCost:1,desc:'마나 1 소모, 피해 15 및 화상 8 부여.',kind:'elementalSurge',damage:15,type:'불 속성 스킬',rarity:'희귀'},
+  {name:'소각의 불길',glyph:'✹',cost:2,manaCost:1,desc:'마나 1 소모, 피해 16, 방어도 5 및 화상 8 부여.',kind:'elementalSurge',damage:16,block:5,type:'불 속성 스킬',rarity:'희귀'},
+  {name:'여진의 불씨',glyph:'✹',cost:0,manaCost:1,desc:'마나 1 소모, 화상 8 부여 및 이번 턴 공격 +3.',kind:'elementalSurge',damage:0,buff:3,type:'불 속성 스킬',rarity:'희귀'},
+  {name:'불꽃 폭풍',glyph:'✹',cost:2,manaCost:2,desc:'마나 2 소모, 피해 20 및 화상 8 부여.',kind:'elementalSurge',damage:20,type:'불 속성 스킬',rarity:'희귀'},
+  {name:'업화의 쇄도',glyph:'✹',cost:2,manaCost:2,desc:'마나 2 소모, 피해 24 및 화상 12 부여.',kind:'elementalSurge',damage:24,type:'불 속성 스킬',rarity:'영웅'},
+  {name:'태양의 작렬',glyph:'✹',cost:3,manaCost:2,desc:'마나 2 소모, 피해 28 및 화상 12 부여.',kind:'elementalSurge',damage:28,type:'불 속성 스킬',rarity:'영웅'},
+  {name:'잿빛 대화재',glyph:'✹',cost:3,manaCost:2,desc:'마나 2 소모, 피해 26, 방어도 10 및 화상 12 부여.',kind:'elementalSurge',damage:26,block:10,type:'불 속성 스킬',rarity:'영웅'},
+  {name:'멸망의 불기둥',glyph:'✹',cost:3,manaCost:2,desc:'마나 2 소모, 피해 32, 화상 12 및 카드 1장 뽑기.',kind:'elementalSurge',damage:32,draw:1,type:'불 속성 스킬',rarity:'영웅'}
+ ],
+ ice:[
+  {name:'냉기 조각',glyph:'❄',cost:1,manaCost:1,desc:'마나 1 소모, 피해 7 및 빙결 부여.',kind:'elementalStrike',damage:7,type:'얼음 속성 스킬',rarity:'일반'},
+  {name:'서리 창',glyph:'❄',cost:1,manaCost:1,desc:'마나 1 소모, 피해 9 및 빙결 부여.',kind:'elementalStrike',damage:9,type:'얼음 속성 스킬',rarity:'일반'},
+  {name:'얼음 방패',glyph:'❄',cost:1,manaCost:1,desc:'마나 1 소모, 피해 6, 방어도 7 및 빙결 부여.',kind:'elementalStrike',damage:6,block:7,type:'얼음 속성 스킬',rarity:'일반'},
+  {name:'동상 파편',glyph:'❄',cost:1,manaCost:1,desc:'마나 1 소모, 피해 8, 빙결 및 카드 1장 뽑기.',kind:'elementalStrike',damage:8,draw:1,type:'얼음 속성 스킬',rarity:'고급'},
+  {name:'한파의 일격',glyph:'❄',cost:1,manaCost:1,desc:'마나 1 소모, 피해 10 및 빙결 부여.',kind:'elementalStrike',damage:10,type:'얼음 속성 스킬',rarity:'고급'},
+  {name:'서리 결계',glyph:'❄',cost:1,manaCost:1,desc:'마나 1 소모, 피해 7, 방어도 8 및 빙결 부여.',kind:'elementalStrike',damage:7,block:8,type:'얼음 속성 스킬',rarity:'고급'},
+  {name:'빙결 쇄도',glyph:'❄',cost:2,manaCost:1,desc:'마나 1 소모, 피해 13 및 강화 빙결 부여.',kind:'elementalSurge',damage:13,type:'얼음 속성 스킬',rarity:'고급'},
+  {name:'설원의 창',glyph:'❄',cost:2,manaCost:1,desc:'마나 1 소모, 피해 15, 취약 2턴 및 빙결.',kind:'elementalSurge',damage:15,debuff:'vulnerable',type:'얼음 속성 스킬',rarity:'희귀'},
+  {name:'영구동토의 벽',glyph:'❄',cost:2,manaCost:1,desc:'마나 1 소모, 피해 12, 방어도 10 및 빙결.',kind:'elementalSurge',damage:12,block:10,type:'얼음 속성 스킬',rarity:'희귀'},
+  {name:'빙설 폭풍',glyph:'❄',cost:2,manaCost:1,desc:'마나 1 소모, 피해 16 및 강화 빙결 부여.',kind:'elementalSurge',damage:16,type:'얼음 속성 스킬',rarity:'희귀'},
+  {name:'백야의 서리',glyph:'❄',cost:1,manaCost:1,desc:'마나 1 소모, 피해 12, 강화 빙결 및 카드 1장 뽑기.',kind:'elementalSurge',damage:12,draw:1,type:'얼음 속성 스킬',rarity:'희귀'},
+  {name:'절대영도 쇄도',glyph:'❄',cost:2,manaCost:2,desc:'마나 2 소모, 피해 22 및 강화 빙결 부여.',kind:'elementalSurge',damage:22,type:'얼음 속성 스킬',rarity:'영웅'},
+  {name:'빙하 붕괴',glyph:'❄',cost:3,manaCost:2,desc:'마나 2 소모, 피해 27, 방어도 10 및 강화 빙결.',kind:'elementalSurge',damage:27,block:10,type:'얼음 속성 스킬',rarity:'영웅'},
+  {name:'동결의 심판',glyph:'❄',cost:3,manaCost:2,desc:'마나 2 소모, 피해 29 및 취약 2턴.',kind:'elementalSurge',damage:29,debuff:'vulnerable',type:'얼음 속성 스킬',rarity:'영웅'},
+  {name:'설풍의 지배자',glyph:'❄',cost:3,manaCost:2,desc:'마나 2 소모, 피해 31 및 강화 빙결 부여.',kind:'elementalSurge',damage:31,type:'얼음 속성 스킬',rarity:'영웅'}
+ ],
+ lightning:[
+  {name:'스파크 사출',glyph:'ϟ',cost:1,manaCost:1,desc:'마나 1 소모, 피해 7 및 감전 2턴.',kind:'elementalStrike',damage:7,type:'번개 속성 스킬',rarity:'일반'},
+  {name:'전압 방전',glyph:'ϟ',cost:1,manaCost:1,desc:'마나 1 소모, 피해 9 및 감전 2턴.',kind:'elementalStrike',damage:9,type:'번개 속성 스킬',rarity:'일반'},
+  {name:'정전기 장막',glyph:'ϟ',cost:1,manaCost:1,desc:'마나 1 소모, 피해 6, 방어도 6 및 감전 2턴.',kind:'elementalStrike',damage:6,block:6,type:'번개 속성 스킬',rarity:'일반'},
+  {name:'낙뢰 화살',glyph:'ϟ',cost:1,manaCost:1,desc:'마나 1 소모, 피해 8, 감전 2턴 및 카드 1장 뽑기.',kind:'elementalStrike',damage:8,draw:1,type:'번개 속성 스킬',rarity:'고급'},
+  {name:'고압 충격',glyph:'ϟ',cost:1,manaCost:1,desc:'마나 1 소모, 피해 11 및 감전 2턴.',kind:'elementalStrike',damage:11,type:'번개 속성 스킬',rarity:'고급'},
+  {name:'연쇄 스파크',glyph:'ϟ',cost:2,manaCost:1,desc:'마나 1 소모, 피해 13 및 연쇄 감전 쇄도.',kind:'elementalSurge',damage:13,type:'번개 속성 스킬',rarity:'고급'},
+  {name:'전류 과부하',glyph:'ϟ',cost:1,manaCost:1,desc:'마나 1 소모, 피해 9, 감전 2턴 및 이번 턴 공격 +2.',kind:'elementalStrike',damage:9,buff:2,type:'번개 속성 스킬',rarity:'고급'},
+  {name:'뇌격 쇄도',glyph:'ϟ',cost:2,manaCost:1,desc:'마나 1 소모, 피해 15 및 연쇄 감전 쇄도.',kind:'elementalSurge',damage:15,type:'번개 속성 스킬',rarity:'희귀'},
+  {name:'천둥의 창',glyph:'ϟ',cost:2,manaCost:1,desc:'마나 1 소모, 피해 16, 취약 2턴 및 감전.',kind:'elementalSurge',damage:16,debuff:'vulnerable',type:'번개 속성 스킬',rarity:'희귀'},
+  {name:'초고압 방전',glyph:'ϟ',cost:2,manaCost:1,desc:'마나 1 소모, 피해 14, 방어도 7 및 연쇄 쇄도.',kind:'elementalSurge',damage:14,block:7,type:'번개 속성 스킬',rarity:'희귀'},
+  {name:'번개 도약',glyph:'ϟ',cost:1,manaCost:1,desc:'마나 1 소모, 피해 12, 연쇄 쇄도 및 카드 1장 뽑기.',kind:'elementalSurge',damage:12,draw:1,type:'번개 속성 스킬',rarity:'희귀'},
+  {name:'폭풍의 뇌신',glyph:'ϟ',cost:2,manaCost:2,desc:'마나 2 소모, 피해 22 및 연쇄 감전 쇄도.',kind:'elementalSurge',damage:22,type:'번개 속성 스킬',rarity:'영웅'},
+  {name:'성간 낙뢰',glyph:'ϟ',cost:3,manaCost:2,desc:'마나 2 소모, 피해 28 및 연쇄 감전 쇄도.',kind:'elementalSurge',damage:28,type:'번개 속성 스킬',rarity:'영웅'},
+  {name:'뇌전 결계',glyph:'ϟ',cost:3,manaCost:2,desc:'마나 2 소모, 피해 25, 방어도 12 및 감전.',kind:'elementalSurge',damage:25,block:12,type:'번개 속성 스킬',rarity:'영웅'},
+  {name:'궁극의 천벌',glyph:'ϟ',cost:3,manaCost:2,desc:'마나 2 소모, 피해 32 및 연쇄 감전 쇄도.',kind:'elementalSurge',damage:32,type:'번개 속성 스킬',rarity:'영웅'}
+ ]
+};
 
 const passivePool={
  knight:[
@@ -526,7 +639,7 @@ function resolveBanChar(charKey=null){
 }
 function loadAllBannedCardsMap(){
  try{
-  const raw=localStorage.getItem(BANNED_CARDS_KEY);
+  const raw=readStorageSafe(BANNED_CARDS_KEY);
   const parsed=raw?JSON.parse(raw):{};
   if(Array.isArray(parsed)){
    return {knight:parsed.slice(0,MAX_BANNED_CARDS)};
@@ -544,7 +657,8 @@ function saveBannedCards(list,charKey=null){
  const k=resolveBanChar(charKey);
  const map=loadAllBannedCardsMap();
  map[k]=list.slice(0,MAX_BANNED_CARDS);
- try{localStorage.setItem(BANNED_CARDS_KEY,JSON.stringify(map));}catch(e){}
+ writeStorageSafe(BANNED_CARDS_KEY,JSON.stringify(map));
+ exportProgressSnapshot();
  updateHeaderActionLabels();
 }
 function toggleBanCard(cardName,charKey=null){
@@ -605,13 +719,14 @@ const masteryUnlockCards={
 
 function loadMasteryData(){
  try{
-  const raw=localStorage.getItem(MASTERY_STORAGE_KEY);
+  const raw=readStorageSafe(MASTERY_STORAGE_KEY);
   const parsed=raw?JSON.parse(raw):{};
   return parsed && typeof parsed==='object'?parsed:{};
  }catch(e){return {};}
 }
 function saveMasteryData(data){
- try{localStorage.setItem(MASTERY_STORAGE_KEY,JSON.stringify(data));}catch(e){}
+ writeStorageSafe(MASTERY_STORAGE_KEY,JSON.stringify(data));
+ exportProgressSnapshot();
 }
 function calcMasteryLevel(exp){
  const safeExp=Math.max(0,Number(exp)||0);
@@ -1039,6 +1154,10 @@ function playCard(i){
   msg=`${c.name}! ${d} 피해.`;
   if(c.kind==='elementalStrike')msg+=applyElementEffect(1);
   if(c.kind==='elementalSurge')msg+=applyElementEffect(2);
+  if(c.block){game.block+=c.block;msg+=` 방어도 ${c.block} 획득.`;}
+  if(c.debuff){game.enemy[c.debuff==='vulnerable'?'vulnerable':'weak']=2;msg+=' 상태이상 부여.';}
+  if(c.buff){game.buffs.attack+=c.buff;msg+=` 이번 턴 공격 +${c.buff}.`;}
+  if(c.draw){draw(c.draw);msg+=` 카드 ${c.draw}장 뽑기.`;}
  }
  if(c.kind==='block'){game.block+=c.block;msg=`방어도 ${c.block} 획득.`}
  if(c.kind==='mixed'){
@@ -1283,10 +1402,70 @@ function getAllCatalogCards(){
   {name:'광휘의 심판',glyph:'♛',cost:3,desc:'피해 28 및 방어도 14.',kind:'mixed',damage:28,block:14,type:'성배기사 전용',rarity:'영웅'}
  ];
  const map=new Map();
- [...common,...knightCards,...mageCards,...grailCards,...vampireExclusiveSkills].forEach(c=>{
+ [...common,...knightCards,...mageCards,...grailCards,...vampireExclusiveSkills,...(mageElementalSkills.fire||[]),...(mageElementalSkills.ice||[]),...(mageElementalSkills.lightning||[])].forEach(c=>{
   if(!map.has(c.name))map.set(c.name,c);
  });
  return [...map.values()];
+}
+
+
+// --- FILE-BASED PROGRESS EXPORT / IMPORT HELPERS ---
+function createProgressSaveFilePayload(){
+ const snap = exportProgressSnapshot();
+ return {
+  app: 'ASHEN_HEROES',
+  format: 'ashen_heroes_save_file',
+  version: APP_VERSION,
+  schemaVersion: SAVE_SCHEMA_VERSION,
+  savedAt: new Date().toISOString(),
+  grailKnightUnlocked: !!snap.grailKnightUnlocked,
+  vampireUnlocked: !!snap.vampireUnlocked,
+  mastery: snap.mastery || {},
+  bannedCards: snap.bannedCards || {}
+ };
+}
+
+function downloadProgressFile(){
+ const payload = createProgressSaveFilePayload();
+ const stamp = new Date().toISOString().slice(0, 10);
+ const filename = `ashen_heroes_save_${stamp}.json`;
+ const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
+ const url = URL.createObjectURL(blob);
+ const a = document.createElement('a');
+ a.href = url;
+ a.download = filename;
+ document.body.appendChild(a);
+ a.click();
+ a.remove();
+ setTimeout(() => URL.revokeObjectURL(url), 1500);
+ return filename;
+}
+
+function loadProgressFromFile(file, onDone){
+ if(!file){
+  if(typeof onDone === 'function') onDone(false, '선택된 파일이 없습니다.');
+  return;
+ }
+ const reader = new FileReader();
+ reader.onload = () => {
+  try{
+   const raw = JSON.parse(String(reader.result || '{}'));
+   const ok = restoreProgressSnapshot(raw);
+   if(ok){
+    chooseCharacter();
+    updateHeaderActionLabels();
+    if(typeof onDone === 'function') onDone(true, '세이브 파일에서 숙련도, 해금, 카드 밴을 불러왔습니다.');
+   }else{
+    if(typeof onDone === 'function') onDone(false, '올바른 세이브 파일 형식이 아닙니다.');
+   }
+  }catch(err){
+   if(typeof onDone === 'function') onDone(false, '세이브 파일을 읽는 중 오류가 발생했습니다.');
+  }
+ };
+ reader.onerror = () => {
+  if(typeof onDone === 'function') onDone(false, '파일을 읽을 수 없습니다.');
+ };
+ reader.readAsText(file, 'utf-8');
 }
 
 function openMasteryAndUnlockModal(selectedChar=null){
@@ -1328,6 +1507,46 @@ function openMasteryAndUnlockModal(selectedChar=null){
  openBanBtn.innerHTML=`<h3>${chars[activeChar].name} 카드 밴 설정 열기</h3><p>이 캐릭터의 빌드에 불필요한 카드를 최대 7장까지 금지합니다.</p>`;
  openBanBtn.onclick=()=>openCardBanModal('',activeChar);
  root.appendChild(openBanBtn);
+ const exportBtn=document.createElement('button');
+ exportBtn.type='button';
+ exportBtn.className='choice';
+ exportBtn.innerHTML=`<h3>진행도 백업(파일 다운로드)</h3><p>업데이트 후에도 숙련도와 해금을 안전하게 복원할 수 있는 백업 파일을 저장합니다.</p>`;
+ exportBtn.onclick=()=>{
+  const savedName = downloadProgressFile();
+  const note = document.createElement('p');
+  note.style.color = 'var(--green)';
+  note.style.marginTop = '8px';
+  note.textContent = `세이브 파일(${savedName})을 다운로드했습니다. 업데이트 후에도 파일 불러오기로 이전할 수 있습니다.`;
+  $('modalText').appendChild(note);
+ };
+ root.appendChild(exportBtn);
+
+ const importBtn=document.createElement('button');
+ importBtn.type='button';
+ importBtn.className='choice';
+ importBtn.innerHTML=`<h3>진행도 복원(백업 파일 선택)</h3><p>저장해둔 백업 JSON 파일을 불러와 숙련도와 해금을 복원합니다.</p>`;
+ importBtn.onclick=()=>{
+  const inp=document.createElement('input');
+  inp.type='file';
+  inp.accept='application/json,.json';
+  inp.onchange=ev=>{
+   const file=ev.target.files && ev.target.files[0];
+   if(!file)return;
+   loadProgressFromFile(file, (ok, msg)=>{
+    if(ok){
+     openMasteryAndUnlockModal(activeChar);
+    }else if(msg){
+     const errP = document.createElement('p');
+     errP.style.color = 'var(--red)';
+     errP.style.marginTop = '8px';
+     errP.textContent = msg;
+     $('modalText').appendChild(errP);
+    }
+   });
+  };
+  inp.click();
+ };
+ root.appendChild(importBtn);
  $('modalOverlay').classList.add('show');
 }
 
@@ -1356,6 +1575,10 @@ function openCardBanModal(statusMsg='',charKey=null){
  const relevantCards=catalog.filter(c=>{
   if(c.type==='공통 카드') return true;
   if(c.type.includes(chars[activeChar].name)) return true;
+  if(activeChar==='mage'){
+   const elName=elements[(game&&game.element)||'fire']?.name||'불';
+   if(c.type===`${elName} 속성 스킬`) return true;
+  }
   if(activeChar==='vampire' && c.type==='혈귀 전용') return true;
   if(activeChar==='grailKnight' && c.type==='성배기사 전용') return true;
   return false;
@@ -1395,6 +1618,10 @@ function buildSlayTheSpireCardPool(){
   if(lockedMasterySet.has(c.name)) return false;
   if(c.type==='공통 카드') return true;
   if(c.type.includes(chars[activeChar]?.name||'기사')) return true;
+  if(activeChar==='mage'){
+   const elName=elements[game.element||'fire']?.name||'불';
+   if(c.type===`${elName} 속성 스킬`) return true;
+  }
   if(activeChar==='vampire' && c.type==='혈귀 전용') return true;
   if(activeChar==='grailKnight' && c.type==='성배기사 전용') return true;
   return false;
@@ -1804,6 +2031,15 @@ function triggerStoryFloorEvent(floorIdx){
    }
   }]
  );
+}
+
+if($('headerBackupBtn')){
+ $('headerBackupBtn').onclick=()=>{
+  const savedName = downloadProgressFile();
+  showModal('진행도 백업','',[{label:'닫기',desc:'창을 닫습니다.',action:()=>{}}]);
+  $('modalTitle').textContent='진행도 백업 완료';
+  $('modalText').innerHTML=`<p>세이브 파일(<b>${savedName}</b>)을 다운로드했습니다.</p><p>업데이트 후에도 <b>숙련도 · 해금 → 진행도 복원</b> 메뉴에서 해당 파일을 선택해 숙련도·해금·카드 밴을 그대로 이전할 수 있습니다.</p>`;
+ };
 }
 
 if($('patchNotesBtn')){
