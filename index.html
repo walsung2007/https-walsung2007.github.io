@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>잿가루 용사단 (ASHEN HEROES) v0.7</title>
+<title>잿가루 용사단 (ASHEN HEROES) v0.90</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+KR:wght@400;600;700;900&display=swap');
 :root{--bg:#11101b;--panel:#242238;--panel2:#302c49;--line:#716987;--text:#f3ebd4;--muted:#b9b1ca;--gold:#f2c66d;--red:#e87979;--blue:#79bce0;--green:#8dc99a;--purple:#b99ae8}
@@ -190,7 +190,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;bo
   <div class="row">
     <button type="button" class="btn small" id="headerBackupBtn">진행도 백업</button>
     <button type="button" class="btn small" id="patchNotesBtn">업데이트 내역</button>
-    <div class="tag" id="versionTag">VER 0.7</div>
+    <div class="tag" id="shardTag">✦ 0 샤드</div><div class="tag" id="versionTag">VER 0.90</div>
   </div>
 </header>
 
@@ -202,10 +202,14 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;bo
         <button type="button" class="btn small" id="masterySelectBtn">숙련도 · 해금</button>
         <button type="button" class="btn small" id="banListSelectBtn">카드 밴 (0/7)</button>
         <button type="button" class="btn small" id="collectionVaultBtn">업적 · 수집품</button>
+        
       </div>
-      <div class="tabs" id="modeTabs" style="margin:0">
-        <button type="button" class="tab active" data-mode="corridor">회랑 모드</button>
-        <button type="button" class="tab" data-mode="story">스토리 모드</button>
+      <div class="row" style="gap:8px">
+        <button type="button" class="btn gold small" id="continueRunBtn" disabled>이어하기</button>
+        <div class="tabs" id="modeTabs" style="margin:0">
+          <button type="button" class="tab active" data-mode="corridor">회랑 모드</button>
+          <button type="button" class="tab" data-mode="story">스토리 모드</button>
+        </div>
       </div>
     </div>
     <p class="muted" id="modeDesc" style="margin-top:8px">회랑 모드에 도전할 캐릭터를 선택하세요. 1층 10 · 2층 15 · 3층 17 스테이지로 구성된 로그라이크 모드입니다.</p>
@@ -294,6 +298,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;bo
   <div class="row" style="margin-top:12px">
     <button class="btn" id="endTurnBtn">턴 종료</button>
     <button class="btn" id="potionBtn">포션 사용</button>
+    <button class="btn" id="pilesBattleBtn">전투 더미 보기</button>
     <button class="btn" id="inventoryBattleBtn">보유 목록</button>
   </div>
   <div class="log" id="battleLog">전투가 시작되었습니다.</div>
@@ -340,9 +345,17 @@ const elements={
  ice:{name:'얼음',glyph:'❄',desc:'빙결로 일시 행동불가 및 다음 턴 공격 시 받는 피해 증가'},
  lightning:{name:'번개',glyph:'ϟ',desc:'감전으로 2턴 행동불가 및 주변 적에게 연쇄 피해'}
 };
-const APP_VERSION='0.7';
+const APP_VERSION='0.90';
 const PATCH_HISTORY=[
- {version:'0.7',date:'2026-11',notes:['첫 번째 업적(기사 스토리 완주하기) 및 수집품 [한때의 이상] 도트 사진·보관소 추가','보스 7종 전용 16x16 도트 스프라이트 디자인 및 보스전 도트 렌더링 추가','신규 직업군(성배기사·혈귀·검무가) 추가 및 전용 스킬·해금 연동','직업군별 영웅 등급 카드 전용 연출 이펙트 추가','캐릭터별 숙련도 및 해금 시스템 추가','캐릭터별 카드 밴(최대 7장) 시스템 추가','마법사 속성별 고유 스킬 15종 확장','업데이트 시에도 숙련도·해금·카드 밴이 유지되는 통합 저장/백업/복원 시스템 추가']},
+ {version:'0.90',date:'2026-11',notes:[
+  '보스 50% 체력 이하 2페이즈 각성 기믹 추가 및 신규 보스 3종(잿불 대사제·심연의 집행자·균열의 폭군) 추가',
+  '신규 보스 3종 전용 16x16 도트 아트 추가',
+  '맵 [위험한 회랑] 분기 노드 추가(고위험·고보상 엘리트/유물/골드)',
+  '특수 이벤트 4종 확장(심연의 벼랑·재의 대장간·고대 성소의 기도·균열의 문지기 제단) 및 신규 유물 4종 추가',
+  '영구 특전 트리 제거 및 샤드(✦)는 도트 스킨 등 꾸미기 전용으로 제한'
+ ]},
+ {version:'0.85',date:'2026-11',notes:['신규 특수 이벤트 4종 추가(회랑 연금술사·잿빛 사당·고대 룬 비석·상처 치유의 모닥불)','신규 포션 2종 추가(성광 포션·혈폭 포션)','전투 보상 카드 등급 분포 밸런스 조정(일반 42%·고급 32%·희귀 17%·영웅 9%) 및 상점 새로고침 비용 완화(12G -> 9G)','전투 중 덱·버린 더미·뽑을 더미 현황을 한눈에 보는 [전투 더미 보기] 모달 추가']},
+ {version:'0.7',date:'2026-11',notes:['이어하기 기능 추가(진행 중 런 상태 저장 및 복원)','캐릭터별 도트 스킨 및 스킨 구매·장착 시스템 추가','검무가 전용 [잿빛 검수] 도트 스킨 및 스킨 보관함 추가','첫 번째 업적(기사 스토리 완주하기) 및 수집품 [한때의 이상] 도트 사진·보관소 추가','보스 7종 전용 16x16 도트 스프라이트 디자인 및 보스전 도트 렌더링 추가','신규 직업군(성배기사·혈귀·검무가) 추가 및 전용 스킬·해금 연동','직업군별 영웅 등급 카드 전용 연출 이펙트 추가','캐릭터별 숙련도 및 해금 시스템 추가','캐릭터별 카드 밴(최대 7장) 시스템 추가','마법사 속성별 고유 스킬 15종 확장','업데이트 시에도 숙련도·해금·카드 밴이 유지되는 통합 저장/백업/복원 시스템 추가']},
  {version:'0.6',date:'2026-11',notes:['적 체력·공격력 배율 상향 및 보스 기믹 강화','층 이동 체력 회복량 조정(35% 회복) 및 보상/상점 밸런스 조정']},
  {version:'0.5',date:'2026-11',notes:['층별 스테이지 구성 변경(1층 10 · 2층 15 · 3층 17 스테이지)','신규 캐릭터 [혈귀] 및 전용 스킬 15종 추가','3층 보스 처치 후 4층 회랑의 끝 [무한의 불] 초기화 연출 추가']},
  {version:'0.4',date:'2026-11',notes:['기사 스토리 모드 추가 및 완주 시 [성배기사] 해금','엘리트 전투 승리 시 아이템 1개 확정 드롭 및 기보유 아이템 제외']}
@@ -350,93 +363,268 @@ const PATCH_HISTORY=[
 
 // --- UNIFORM 16x16 PIXEL ART SPRITES FOR CHARACTERS ---
 const heroPixelArtData = {
- knight: `<svg class="hero-pixel-art" viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">
-  <rect x="7" y="0" width="2" height="2" fill="#e74c3c"/>
-  <rect x="6" y="1" width="2" height="2" fill="#c0392b"/>
-  <rect x="5" y="2" width="6" height="4" fill="#95a5a6"/>
-  <rect x="6" y="3" width="4" height="1" fill="#ecf0f1"/>
-  <rect x="6" y="4" width="4" height="1" fill="#2c3e50"/>
-  <rect x="5" y="5" width="6" height="1" fill="#7f8c8d"/>
-  <rect x="4" y="6" width="8" height="6" fill="#7f8c8d"/>
-  <rect x="5" y="7" width="6" height="4" fill="#bdc3c7"/>
-  <rect x="2" y="6" width="3" height="6" fill="#2980b9"/>
-  <rect x="3" y="7" width="1" height="4" fill="#f1c40f"/>
-  <rect x="2" y="8" width="3" height="1" fill="#f1c40f"/>
-  <rect x="12" y="4" width="1" height="8" fill="#ecf0f1"/>
-  <rect x="11" y="8" width="3" height="1" fill="#f1c40f"/>
-  <rect x="5" y="12" width="2" height="3" fill="#34495e"/>
-  <rect x="9" y="12" width="2" height="3" fill="#34495e"/>
- </svg>`,
- grailKnight: `<svg class="hero-pixel-art" viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">
-  <rect x="5" y="0" width="6" height="1" fill="#ffeaa7"/>
-  <rect x="6" y="1" width="4" height="1" fill="#f1c40f"/>
-  <rect x="5" y="2" width="6" height="4" fill="#f39c12"/>
-  <rect x="6" y="3" width="4" height="1" fill="#ffeaa7"/>
-  <rect x="6" y="4" width="4" height="1" fill="#d35400"/>
-  <rect x="4" y="6" width="8" height="6" fill="#f1c40f"/>
-  <rect x="5" y="7" width="6" height="4" fill="#ffeaa7"/>
-  <rect x="7" y="7" width="2" height="3" fill="#e67e22"/>
-  <rect x="6" y="7" width="4" height="1" fill="#e67e22"/>
-  <rect x="2" y="6" width="3" height="7" fill="#e67e22"/>
-  <rect x="3" y="7" width="1" height="5" fill="#ffeaa7"/>
-  <rect x="12" y="3" width="1" height="9" fill="#ffffff"/>
-  <rect x="11" y="8" width="3" height="1" fill="#f1c40f"/>
-  <rect x="5" y="12" width="2" height="3" fill="#d35400"/>
-  <rect x="9" y="12" width="2" height="3" fill="#d35400"/>
- </svg>`,
- mage: `<svg class="hero-pixel-art" viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">
-  <rect x="6" y="1" width="4" height="1" fill="#8e44ad"/>
-  <rect x="5" y="2" width="6" height="4" fill="#9b59b6"/>
-  <rect x="6" y="3" width="4" height="3" fill="#141526"/>
-  <rect x="6" y="4" width="1" height="1" fill="#00cec9"/>
-  <rect x="9" y="4" width="1" height="1" fill="#00cec9"/>
-  <rect x="4" y="6" width="8" height="8" fill="#8e44ad"/>
-  <rect x="5" y="7" width="6" height="7" fill="#2c3e50"/>
-  <rect x="13" y="1" width="2" height="2" fill="#74b9ff"/>
-  <rect x="14" y="2" width="1" height="1" fill="#ffffff"/>
-  <rect x="13" y="3" width="1" height="12" fill="#7f8c8d"/>
-  <rect x="2" y="7" width="2" height="5" fill="#9b59b6"/>
-  <rect x="1" y="6" width="2" height="2" fill="#00cec9"/>
-  <rect x="5" y="14" width="2" height="2" fill="#141526"/>
-  <rect x="9" y="14" width="2" height="2" fill="#141526"/>
- </svg>`,
- vampire: `<svg class="hero-pixel-art" viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">
-  <rect x="5" y="1" width="6" height="2" fill="#1e1b29"/>
-  <rect x="4" y="2" width="2" height="3" fill="#c0392b"/>
-  <rect x="10" y="2" width="2" height="3" fill="#c0392b"/>
-  <rect x="6" y="3" width="4" height="4" fill="#dfe6e9"/>
-  <rect x="6" y="4" width="1" height="1" fill="#e74c3c"/>
-  <rect x="9" y="4" width="1" height="1" fill="#e74c3c"/>
-  <rect x="7" y="6" width="1" height="1" fill="#ffffff"/>
-  <rect x="8" y="6" width="1" height="1" fill="#ffffff"/>
-  <rect x="4" y="6" width="8" height="8" fill="#900c3f"/>
-  <rect x="5" y="7" width="6" height="7" fill="#581845"/>
-  <rect x="2" y="8" width="2" height="2" fill="#e74c3c"/>
-  <rect x="1" y="9" width="2" height="2" fill="#c0392b"/>
-  <rect x="12" y="7" width="2" height="5" fill="#900c3f"/>
-  <rect x="5" y="14" width="2" height="2" fill="#1e1b29"/>
-  <rect x="9" y="14" width="2" height="2" fill="#1e1b29"/>
- </svg>`,
- swordsman: `<svg class="hero-pixel-art" viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">
-  <rect x="6" y="1" width="4" height="1" fill="#bdc3c7"/>
-  <rect x="5" y="2" width="6" height="3" fill="#7f8c8d"/>
-  <rect x="6" y="3" width="4" height="1" fill="#f39c12"/>
-  <rect x="6" y="4" width="4" height="1" fill="#1e1b29"/>
-  <rect x="4" y="6" width="8" height="6" fill="#34495e"/>
-  <rect x="5" y="7" width="6" height="4" fill="#95a5a6"/>
-  <rect x="1" y="5" width="2" height="2" fill="#e74c3c"/>
-  <rect x="2" y="7" width="1" height="6" fill="#ecf0f1"/>
-  <rect x="1" y="10" width="3" height="1" fill="#f1c40f"/>
-  <rect x="13" y="5" width="2" height="2" fill="#79bce0"/>
-  <rect x="13" y="7" width="1" height="6" fill="#ecf0f1"/>
-  <rect x="12" y="10" width="3" height="1" fill="#f1c40f"/>
-  <rect x="5" y="12" width="2" height="3" fill="#2c3e50"/>
-  <rect x="9" y="12" width="2" height="3" fill="#2c3e50"/>
- </svg>`
+ knight: `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="18" y="68" width="36" height="3" fill="#0b0a12"/>
+  <rect x="10" y="50" width="12" height="3" fill="#0b0a12"/>
+  <rect x="57" y="62" width="14" height="3" fill="#0b0a12"/>
+  <rect x="30" y="2" width="12" height="4" fill="#991b22"/>
+  <rect x="32" y="1" width="11" height="4" fill="#e63946"/>
+  <rect x="34" y="2" width="8" height="3" fill="#ff858d"/>
+  <rect x="19" y="24" width="10" height="5" fill="#7a1219"/>
+  <rect x="17" y="27" width="10" height="6" fill="#c92a37"/>
+  <rect x="15" y="31" width="8" height="5" fill="#ff6b78"/>
+  <rect x="26" y="7" width="20" height="17" fill="#495668"/>
+  <rect x="28" y="7" width="16" height="15" fill="#8d9db0"/>
+  <rect x="30" y="8" width="12" height="5" fill="#dce6f2"/>
+  <rect x="35" y="6" width="2" height="18" fill="#f2c66d"/>
+  <rect x="25" y="13" width="22" height="7" fill="#1b2230"/>
+  <rect x="27" y="13" width="18" height="6" fill="#273244"/>
+  <rect x="29" y="15" width="5" height="2" fill="#7ce0ff"/>
+  <rect x="31" y="15" width="2" height="1" fill="#ffffff"/>
+  <rect x="38" y="15" width="5" height="2" fill="#7ce0ff"/>
+  <rect x="40" y="15" width="2" height="1" fill="#ffffff"/>
+  <rect x="35" y="13" width="2" height="9" fill="#f2c66d"/>
+  <rect x="24" y="20" width="8" height="5" fill="#68778c"/>
+  <rect x="40" y="20" width="8" height="5" fill="#68778c"/>
+  <rect x="24" y="24" width="24" height="2" fill="#3b4656"/>
+  <rect x="12" y="24" width="13" height="12" fill="#2b3445"/>
+  <rect x="13" y="25" width="11" height="10" fill="#6c7d94"/>
+  <rect x="14" y="26" width="9" height="3" fill="#cad7e6"/>
+  <rect x="15" y="29" width="7" height="2" fill="#f2c66d"/>
+  <rect x="16" y="32" width="2" height="2" fill="#fff3b0"/>
+  <rect x="20" y="32" width="2" height="2" fill="#fff3b0"/>
+  <rect x="47" y="24" width="13" height="12" fill="#2b3445"/>
+  <rect x="48" y="25" width="11" height="10" fill="#6c7d94"/>
+  <rect x="49" y="26" width="9" height="3" fill="#cad7e6"/>
+  <rect x="50" y="29" width="7" height="2" fill="#f2c66d"/>
+  <rect x="51" y="32" width="2" height="2" fill="#fff3b0"/>
+  <rect x="55" y="32" width="2" height="2" fill="#fff3b0"/>
+  <rect x="21" y="26" width="30" height="21" fill="#3b4656"/>
+  <rect x="24" y="26" width="24" height="21" fill="#7e90a6"/>
+  <rect x="27" y="27" width="18" height="19" fill="#b8c7d9"/>
+  <rect x="31" y="28" width="10" height="17" fill="#e4edf7"/>
+  <rect x="34" y="29" width="4" height="15" fill="#1d6fa5"/>
+  <rect x="35" y="30" width="2" height="13" fill="#63c5ff"/>
+  <rect x="28" y="35" width="16" height="3" fill="#f2c66d"/>
+  <rect x="33" y="33" width="6" height="7" fill="#e6b84c"/>
+  <rect x="35" y="35" width="2" height="3" fill="#fff8d6"/>
+  <rect x="20" y="47" width="32" height="4" fill="#3d281e"/>
+  <rect x="22" y="48" width="28" height="2" fill="#7c533e"/>
+  <rect x="33" y="46" width="6" height="5" fill="#f2c66d"/>
+  <rect x="35" y="48" width="2" height="2" fill="#ffffff"/>
+  <rect x="22" y="51" width="11" height="16" fill="#2b3445"/>
+  <rect x="24" y="52" width="8" height="14" fill="#6c7d94"/>
+  <rect x="25" y="52" width="3" height="13" fill="#b8c7d9"/>
+  <rect x="24" y="57" width="9" height="2" fill="#f2c66d"/>
+  <rect x="39" y="51" width="11" height="16" fill="#2b3445"/>
+  <rect x="41" y="52" width="8" height="14" fill="#6c7d94"/>
+  <rect x="42" y="52" width="3" height="13" fill="#b8c7d9"/>
+  <rect x="41" y="57" width="9" height="2" fill="#f2c66d"/>
+  <rect x="20" y="66" width="13" height="4" fill="#8d9db0"/>
+  <rect x="20" y="66" width="5" height="2" fill="#e4edf7"/>
+  <rect x="39" y="66" width="13" height="4" fill="#8d9db0"/>
+  <rect x="39" y="66" width="5" height="2" fill="#e4edf7"/>
+  <rect x="3" y="24" width="15" height="26" fill="#133854"/>
+  <rect x="4" y="25" width="13" height="24" fill="#1f618d"/>
+  <rect x="5" y="26" width="11" height="21" fill="#3498db"/>
+  <rect x="6" y="27" width="3" height="18" fill="#7cc6fe"/>
+  <rect x="10" y="25" width="2" height="24" fill="#f2c66d"/>
+  <rect x="4" y="35" width="13" height="2" fill="#f2c66d"/>
+  <rect x="7" y="31" width="8" height="8" fill="#f9e79f"/>
+  <rect x="9" y="33" width="4" height="4" fill="#e67e22"/>
+  <rect x="10" y="34" width="2" height="2" fill="#ffffff"/>
+  <rect x="61" y="4" width="4" height="42" fill="#9aaab8"/>
+  <rect x="62" y="3" width="2" height="43" fill="#e8f1f8"/>
+  <rect x="62" y="5" width="1" height="40" fill="#ffffff"/>
+  <rect x="55" y="46" width="16" height="4" fill="#d4ac0d"/>
+  <rect x="56" y="47" width="14" height="2" fill="#fff3b0"/>
+  <rect x="61" y="45" width="4" height="6" fill="#e67e22"/>
+  <rect x="61" y="51" width="4" height="8" fill="#4a2e20"/>
+  <rect x="62" y="51" width="1" height="8" fill="#8c583a"/>
+  <rect x="60" y="59" width="6" height="3" fill="#f2c66d"/>
+  <rect x="61" y="62" width="4" height="2" fill="#fff3b0"/>
+</svg>`,
+ grailKnight: `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="18" y="68" width="36" height="3" fill="#0b0a12"/>
+  <rect x="57" y="62" width="14" height="3" fill="#0b0a12"/>
+  <rect x="20" y="1" width="32" height="2" fill="#fffdf0"/>
+  <rect x="16" y="3" width="40" height="2" fill="#ffe680"/>
+  <rect x="19" y="5" width="34" height="2" fill="#f4c430"/>
+  <rect x="34" y="1" width="4" height="7" fill="#ffffff"/>
+  <rect x="24" y="3" width="5" height="4" fill="#fff3b0"/>
+  <rect x="43" y="3" width="5" height="4" fill="#fff3b0"/>
+  <rect x="19" y="3" width="4" height="2" fill="#ffffff"/>
+  <rect x="49" y="3" width="4" height="2" fill="#ffffff"/>
+  <rect x="25" y="8" width="22" height="16" fill="#8c6208"/>
+  <rect x="26" y="8" width="20" height="15" fill="#d4af37"/>
+  <rect x="28" y="9" width="16" height="5" fill="#fae17d"/>
+  <rect x="31" y="10" width="10" height="2" fill="#ffffff"/>
+  <rect x="35" y="8" width="2" height="16" fill="#fff8d6"/>
+  <rect x="27" y="14" width="18" height="6" fill="#2e1a05"/>
+  <rect x="29" y="15" width="5" height="2" fill="#fff6b3"/>
+  <rect x="31" y="15" width="2" height="1" fill="#ffffff"/>
+  <rect x="38" y="15" width="5" height="2" fill="#fff6b3"/>
+  <rect x="40" y="15" width="2" height="1" fill="#ffffff"/>
+  <rect x="24" y="24" width="24" height="2" fill="#8c6208"/>
+  <rect x="19" y="26" width="34" height="21" fill="#8c6208"/>
+  <rect x="22" y="26" width="28" height="21" fill="#e0b22b"/>
+  <rect x="26" y="28" width="20" height="17" fill="#fae17d"/>
+  <rect x="30" y="29" width="12" height="15" fill="#fffdf5"/>
+  <rect x="34" y="29" width="4" height="16" fill="#e67e22"/>
+  <rect x="28" y="35" width="16" height="4" fill="#e67e22"/>
+  <rect x="35" y="36" width="2" height="2" fill="#ffffff"/>
+  <rect x="12" y="24" width="13" height="12" fill="#9e7210"/>
+  <rect x="13" y="25" width="11" height="10" fill="#f4d03f"/>
+  <rect x="14" y="26" width="5" height="7" fill="#fffdf5"/>
+  <rect x="47" y="24" width="13" height="12" fill="#9e7210"/>
+  <rect x="48" y="25" width="11" height="10" fill="#f4d03f"/>
+  <rect x="53" y="26" width="5" height="7" fill="#fffdf5"/>
+  <rect x="20" y="47" width="32" height="4" fill="#7d5806"/>
+  <rect x="34" y="47" width="4" height="4" fill="#ffffff"/>
+  <rect x="22" y="51" width="11" height="16" fill="#b88b14"/>
+  <rect x="24" y="52" width="8" height="14" fill="#f4d03f"/>
+  <rect x="25" y="52" width="2" height="13" fill="#fffdf5"/>
+  <rect x="39" y="51" width="11" height="16" fill="#b88b14"/>
+  <rect x="41" y="52" width="8" height="14" fill="#f4d03f"/>
+  <rect x="42" y="52" width="2" height="13" fill="#fffdf5"/>
+  <rect x="20" y="66" width="13" height="4" fill="#d4af37"/>
+  <rect x="39" y="66" width="13" height="4" fill="#d4af37"/>
+  <rect x="3" y="24" width="15" height="26" fill="#7d4e08"/>
+  <rect x="4" y="25" width="13" height="24" fill="#e67e22"/>
+  <rect x="5" y="26" width="11" height="21" fill="#f7dc6f"/>
+  <rect x="10" y="28" width="2" height="19" fill="#ffffff"/>
+  <rect x="6" y="35" width="10" height="2" fill="#ffffff"/>
+  <rect x="61" y="3" width="4" height="43" fill="#f4f9ff"/>
+  <rect x="62" y="2" width="2" height="44" fill="#ffffff"/>
+  <rect x="62" y="4" width="1" height="41" fill="#ffeaa7"/>
+  <rect x="55" y="46" width="16" height="4" fill="#f4d03f"/>
+  <rect x="61" y="50" width="4" height="9" fill="#5b2c6f"/>
+  <rect x="60" y="59" width="6" height="3" fill="#fff3b0"/>
+</svg>`,
+ mage: `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="18" y="68" width="36" height="3" fill="#0b0a12"/>
+  <rect x="62" y="67" width="5" height="3" fill="#0b0a12"/>
+  <rect x="33" y="1" width="6" height="5" fill="#3b1854"/>
+  <rect x="35" y="1" width="2" height="4" fill="#9b59b6"/>
+  <rect x="28" y="6" width="16" height="5" fill="#4a1e6b"/>
+  <rect x="23" y="11" width="26" height="5" fill="#6c3483"/>
+  <rect x="18" y="16" width="36" height="4" fill="#8e44ad"/>
+  <rect x="13" y="20" width="46" height="3" fill="#d4ac0d"/>
+  <rect x="15" y="21" width="42" height="1" fill="#fff6b3"/>
+  <rect x="35" y="3" width="2" height="2" fill="#ffffff"/>
+  <rect x="25" y="12" width="3" height="3" fill="#7ce0ff"/>
+  <rect x="44" y="12" width="3" height="3" fill="#5ef2d6"/>
+  <rect x="19" y="17" width="2" height="2" fill="#fff6b3"/>
+  <rect x="51" y="17" width="2" height="2" fill="#fff6b3"/>
+  <rect x="35" y="17" width="2" height="2" fill="#ff85c0"/>
+  <rect x="24" y="23" width="24" height="9" fill="#2c123f"/>
+  <rect x="26" y="25" width="20" height="6" fill="#0d0c17"/>
+  <rect x="29" y="27" width="5" height="2" fill="#26f7e4"/>
+  <rect x="31" y="27" width="2" height="1" fill="#ffffff"/>
+  <rect x="38" y="27" width="5" height="2" fill="#26f7e4"/>
+  <rect x="40" y="27" width="2" height="1" fill="#ffffff"/>
+  <rect x="16" y="32" width="40" height="35" fill="#3b1854"/>
+  <rect x="21" y="32" width="30" height="35" fill="#1e2738"/>
+  <rect x="26" y="34" width="20" height="32" fill="#2c3a52"/>
+  <rect x="34" y="32" width="4" height="35" fill="#9b59b6"/>
+  <rect x="35" y="33" width="2" height="33" fill="#e8daef"/>
+  <rect x="33" y="38" width="6" height="6" fill="#1b4f72"/>
+  <rect x="34" y="39" width="4" height="4" fill="#26f7e4"/>
+  <rect x="35" y="40" width="2" height="2" fill="#ffffff"/>
+  <rect x="33" y="49" width="6" height="6" fill="#4a235a"/>
+  <rect x="34" y="50" width="4" height="4" fill="#7ce0ff"/>
+  <rect x="35" y="51" width="2" height="2" fill="#ffffff"/>
+  <rect x="11" y="32" width="7" height="19" fill="#5b2c6f"/>
+  <rect x="9" y="49" width="9" height="5" fill="#26f7e4"/>
+  <rect x="54" y="32" width="7" height="19" fill="#5b2c6f"/>
+  <rect x="54" y="49" width="9" height="5" fill="#7ce0ff"/>
+  <rect x="20" y="67" width="12" height="3" fill="#141526"/>
+  <rect x="40" y="67" width="12" height="3" fill="#141526"/>
+  <rect x="60" y="4" width="10" height="10" fill="#2e86c1"/>
+  <rect x="62" y="6" width="6" height="6" fill="#85c1e9"/>
+  <rect x="64" y="8" width="2" height="2" fill="#ffffff"/>
+  <rect x="59" y="8" width="1" height="2" fill="#26f7e4"/>
+  <rect x="70" y="8" width="1" height="2" fill="#26f7e4"/>
+  <rect x="64" y="3" width="2" height="1" fill="#7ce0ff"/>
+  <rect x="64" y="14" width="2" height="1" fill="#7ce0ff"/>
+  <rect x="63" y="15" width="3" height="53" fill="#4a2e20"/>
+  <rect x="64" y="15" width="1" height="53" fill="#9c6b43"/>
+  <rect x="60" y="34" width="9" height="2" fill="#f2c66d"/>
+</svg>`,
+ vampire: `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="20" y="68" width="32" height="3" fill="#0b0a12"/>
+  <rect x="61" y="37" width="8" height="2" fill="#0b0a12"/>
+  <rect x="22" y="3" width="28" height="7" fill="#161221"/>
+  <rect x="16" y="6" width="12" height="10" fill="#780628"/>
+  <rect x="44" y="6" width="12" height="10" fill="#780628"/>
+  <rect x="11" y="11" width="10" height="8" fill="#4a0e2e"/>
+  <rect x="51" y="11" width="10" height="8" fill="#4a0e2e"/>
+  <rect x="8" y="15" width="8" height="5" fill="#9e0b36"/>
+  <rect x="56" y="15" width="8" height="5" fill="#9e0b36"/>
+  <rect x="27" y="9" width="18" height="15" fill="#d5dbdb"/>
+  <rect x="28" y="10" width="16" height="13" fill="#f9fafa"/>
+  <rect x="29" y="14" width="5" height="2" fill="#9e0b36"/>
+  <rect x="31" y="14" width="2" height="1" fill="#ff4d79"/>
+  <rect x="38" y="14" width="5" height="2" fill="#9e0b36"/>
+  <rect x="40" y="14" width="2" height="1" fill="#ff4d79"/>
+  <rect x="34" y="19" width="4" height="2" fill="#780628"/>
+  <rect x="33" y="21" width="2" height="3" fill="#ffffff"/>
+  <rect x="37" y="21" width="2" height="3" fill="#ffffff"/>
+  <rect x="11" y="24" width="50" height="39" fill="#4f0419"/>
+  <rect x="15" y="24" width="42" height="39" fill="#8f0a30"/>
+  <rect x="21" y="26" width="30" height="37" fill="#1d0d1c"/>
+  <rect x="34" y="26" width="4" height="37" fill="#c9184a"/>
+  <rect x="29" y="31" width="14" height="3" fill="#f2c66d"/>
+  <rect x="35" y="30" width="2" height="5" fill="#fff3b0"/>
+  <rect x="22" y="63" width="11" height="7" fill="#161221"/>
+  <rect x="39" y="63" width="11" height="7" fill="#161221"/>
+  <rect x="60" y="27" width="10" height="10" fill="#780628"/>
+  <rect x="61" y="28" width="8" height="8" fill="#d91e4a"/>
+  <rect x="62" y="29" width="4" height="4" fill="#ff8fab"/>
+  <rect x="63" y="30" width="2" height="2" fill="#ffffff"/>
+</svg>`,
+ swordsman: `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="20" y="68" width="32" height="3" fill="#0b0a12"/>
+  <rect x="5" y="59" width="8" height="2" fill="#0b0a12"/>
+  <rect x="61" y="59" width="8" height="2" fill="#0b0a12"/>
+  <rect x="27" y="3" width="18" height="5" fill="#aab7c4"/>
+  <rect x="34" y="2" width="4" height="6" fill="#f2c66d"/>
+  <rect x="24" y="8" width="24" height="8" fill="#465362"/>
+  <rect x="25" y="11" width="22" height="3" fill="#b5173b"/>
+  <rect x="27" y="12" width="18" height="1" fill="#ff758f"/>
+  <rect x="27" y="14" width="18" height="7" fill="#1e2736"/>
+  <rect x="29" y="16" width="5" height="2" fill="#ffe066"/>
+  <rect x="38" y="16" width="5" height="2" fill="#ffe066"/>
+  <rect x="18" y="21" width="36" height="28" fill="#1e2736"/>
+  <rect x="23" y="21" width="26" height="28" fill="#4e5d6e"/>
+  <rect x="27" y="23" width="18" height="24" fill="#8d9db0"/>
+  <rect x="31" y="25" width="10" height="20" fill="#dce6f2"/>
+  <rect x="21" y="38" width="30" height="5" fill="#780628"/>
+  <rect x="23" y="39" width="26" height="3" fill="#d91e4a"/>
+  <rect x="13" y="21" width="8" height="14" fill="#2c384a"/>
+  <rect x="51" y="21" width="8" height="14" fill="#2c384a"/>
+  <rect x="22" y="49" width="11" height="18" fill="#1e2736"/>
+  <rect x="24" y="50" width="8" height="16" fill="#2f3e52"/>
+  <rect x="39" y="49" width="11" height="18" fill="#1e2736"/>
+  <rect x="41" y="50" width="8" height="16" fill="#2f3e52"/>
+  <rect x="20" y="66" width="13" height="4" fill="#7f8c8d"/>
+  <rect x="39" y="66" width="13" height="4" fill="#7f8c8d"/>
+  <rect x="6" y="7" width="4" height="37" fill="#d91e4a"/>
+  <rect x="7" y="6" width="2" height="38" fill="#ff758f"/>
+  <rect x="8" y="8" width="1" height="35" fill="#ffffff"/>
+  <rect x="4" y="44" width="8" height="3" fill="#f2c66d"/>
+  <rect x="6" y="47" width="4" height="10" fill="#69051f"/>
+  <rect x="5" y="57" width="6" height="2" fill="#ffe066"/>
+  <rect x="62" y="7" width="4" height="37" fill="#1f78c1"/>
+  <rect x="63" y="6" width="2" height="38" fill="#74c0fc"/>
+  <rect x="63" y="8" width="1" height="35" fill="#ffffff"/>
+  <rect x="60" y="44" width="8" height="3" fill="#f2c66d"/>
+  <rect x="62" y="47" width="4" height="10" fill="#124570"/>
+  <rect x="61" y="57" width="6" height="2" fill="#ffe066"/>
+</svg>`
 };
-
 function getHeroPixelArt(charKey){
- return heroPixelArtData[charKey] || heroPixelArtData.knight;
+ return getActiveHeroPixelArt(charKey);
 }
 
 // --- ACHIEVEMENTS & COLLECTION VAULT (한때의 이상) ---
@@ -449,39 +637,50 @@ const ACHIEVEMENTS=[
   title:'첫 번째 업적 · 기사 스토리 완주하기',
   desc:'기사 스토리 모드를 완주하고 은퇴 노기사의 여정을 마무리하세요.',
   rewardLabel:'수집품 [한때의 이상] 획득'
+ },
+ {
+  id:'ashen_warden_slayer',
+  title:'업적 · 잿빛 검수 처치하기',
+  desc:'보스 [잿빛 검수]를 쓰러뜨리세요.',
+  rewardLabel:'검무가 전용 [방랑 낭인] 업적 스킨 획득'
  }
 ];
 
-const ONETIME_IDEAL_PIXEL_PHOTO=`<svg class="collection-photo-svg hero-pixel-art" viewBox="0 0 32 24" width="100%" height="100%" shape-rendering="crispEdges">
- <rect x="0" y="0" width="32" height="16" fill="#3a2f4d"/>
- <rect x="0" y="16" width="32" height="8" fill="#2c2438"/>
- <rect x="4" y="3" width="4" height="4" fill="#f7e6a1"/>
- <rect x="5" y="2" width="2" height="6" fill="#fff6cc"/>
- <rect x="4" y="4" width="4" height="2" fill="#fff6cc"/>
- <rect x="2" y="2" width="10" height="13" fill="#e8dcc4"/>
- <rect x="3" y="3" width="8" height="11" fill="#242033"/>
- <rect x="4" y="5" width="2" height="2" fill="#d9c7a3"/>
- <rect x="8" y="6" width="2" height="2" fill="#9bc4e2"/>
- <rect x="4" y="8" width="6" height="4" fill="#5c6f8c"/>
- <rect x="6" y="10" width="2" height="3" fill="#e69db8"/>
- <rect x="14" y="4" width="6" height="2" fill="#95a5a6"/>
- <rect x="15" y="6" width="4" height="2" fill="#f2d3b8"/>
- <rect x="16" y="6" width="1" height="1" fill="#2c3e50"/>
- <rect x="18" y="6" width="1" height="1" fill="#2c3e50"/>
- <rect x="13" y="8" width="8" height="7" fill="#7f8c8d"/>
- <rect x="15" y="9" width="4" height="5" fill="#bdc3c7"/>
- <rect x="14" y="15" width="2" height="3" fill="#34495e"/>
- <rect x="18" y="15" width="2" height="3" fill="#34495e"/>
- <rect x="22" y="7" width="4" height="2" fill="#ff9ebb"/>
- <rect x="21" y="9" width="6" height="2" fill="#ffd1dc"/>
- <rect x="22" y="11" width="4" height="2" fill="#f2d3b8"/>
- <rect x="23" y="11" width="1" height="1" fill="#2c3e50"/>
- <rect x="25" y="11" width="1" height="1" fill="#2c3e50"/>
- <rect x="22" y="13" width="4" height="3" fill="#f8bbd0"/>
- <rect x="21" y="16" width="6" height="2" fill="#fff0f5"/>
- <rect x="23" y="18" width="2" height="1" fill="#f2d3b8"/>
- <rect x="18" y="11" width="5" height="1" fill="#f2d3b8"/>
- <rect x="1" y="1" width="30" height="22" fill="none" stroke="#c9a66b" stroke-width="1"/>
+const ONETIME_IDEAL_PIXEL_PHOTO=`<svg class="collection-photo-svg hero-pixel-art" viewBox="0 0 96 72" width="100%" height="100%" shape-rendering="crispEdges">
+ <rect x="0" y="0" width="96" height="48" fill="#382c4a"/>
+ <rect x="0" y="48" width="96" height="24" fill="#282035"/>
+ <rect x="0" y="46" width="96" height="2" fill="#594670"/>
+ <rect x="8" y="8" width="28" height="36" fill="#e8dcc4"/>
+ <rect x="12" y="12" width="20" height="28" fill="#1f1b2e"/>
+ <rect x="14" y="14" width="8" height="12" fill="#5c7699"/>
+ <rect x="24" y="14" width="6" height="12" fill="#7895bd"/>
+ <rect x="14" y="28" width="16" height="10" fill="#3b4d6b"/>
+ <rect x="16" y="16" width="6" height="6" fill="#fff3b0"/>
+ <rect x="18" y="14" width="2" height="10" fill="#fff9db"/>
+ <rect x="14" y="18" width="10" height="2" fill="#fff9db"/>
+ <rect x="40" y="12" width="16" height="4" fill="#c0392b"/>
+ <rect x="38" y="16" width="20" height="10" fill="#4b586a"/>
+ <rect x="41" y="18" width="14" height="7" fill="#171926"/>
+ <rect x="40" y="21" width="16" height="5" fill="#7a1219"/>
+ <rect x="42" y="22" width="12" height="3" fill="#b5173b"/>
+ <rect x="36" y="26" width="24" height="20" fill="#5d6d7e"/>
+ <rect x="40" y="26" width="16" height="20" fill="#95a5a6"/>
+ <rect x="44" y="28" width="8" height="16" fill="#bdc3c7"/>
+ <rect x="46" y="28" width="4" height="16" fill="#2980b9"/>
+ <rect x="38" y="46" width="6" height="10" fill="#34495e"/>
+ <rect x="52" y="46" width="6" height="10" fill="#34495e"/>
+ <rect x="64" y="18" width="16" height="6" fill="#ff9ebb"/>
+ <rect x="62" y="24" width="20" height="6" fill="#ffc2d4"/>
+ <rect x="66" y="26" width="12" height="8" fill="#f2d3b8"/>
+ <rect x="68" y="28" width="2" height="2" fill="#2c3e50"/>
+ <rect x="74" y="28" width="2" height="2" fill="#2c3e50"/>
+ <rect x="70" y="30" width="4" height="2" fill="#e57373"/>
+ <rect x="64" y="34" width="16" height="12" fill="#f8bbd0"/>
+ <rect x="60" y="44" width="24" height="8" fill="#fff0f5"/>
+ <rect x="66" y="52" width="4" height="6" fill="#f2d3b8"/>
+ <rect x="74" y="52" width="4" height="6" fill="#f2d3b8"/>
+ <rect x="56" y="34" width="10" height="4" fill="#f2d3b8"/>
+ <rect x="4" y="4" width="88" height="64" fill="none" stroke="#c9a66b" stroke-width="2"/>
 </svg>`;
 
 const COLLECTIONS={
@@ -574,8 +773,9 @@ function openAchievementAndCollectionModal(initialTab='collections'){
     </div>
    `;
   }else{
+   const wardenDone=unlockedAchs.includes('ashen_warden_slayer') || isAshenWardenDefeated();
    body.innerHTML=ACHIEVEMENTS.map(a=>{
-    const done=unlockedAchs.includes(a.id);
+    const done=(a.id==='ashen_warden_slayer')?wardenDone:unlockedAchs.includes(a.id);
     return `
      <div class="reward">
       <h3>${a.title} <span class="achievement-badge ${done?'done':'todo'}">${done?'달성 완료':'미달성'}</span></h3>
@@ -601,101 +801,518 @@ function openAchievementAndCollectionModal(initialTab='collections'){
 
 // --- UNIFORM 16x16 PIXEL ART SPRITES FOR BOSSES ---
 const bossPixelArtData = {
- '회랑의 문지기': `<svg class="hero-pixel-art" viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">
-  <rect x="4" y="1" width="2" height="2" fill="#f1c40f"/>
-  <rect x="7" y="0" width="2" height="3" fill="#f39c12"/>
-  <rect x="10" y="1" width="2" height="2" fill="#f1c40f"/>
-  <rect x="4" y="3" width="8" height="3" fill="#5d6d7e"/>
-  <rect x="6" y="4" width="4" height="1" fill="#e74c3c"/>
-  <rect x="3" y="6" width="10" height="7" fill="#34495e"/>
-  <rect x="5" y="7" width="6" height="5" fill="#7f8c8d"/>
-  <rect x="7" y="7" width="2" height="5" fill="#f1c40f"/>
-  <rect x="1" y="6" width="2" height="6" fill="#5d6d7e"/>
-  <rect x="13" y="5" width="2" height="9" fill="#d5dbdb"/>
-  <rect x="12" y="10" width="4" height="1" fill="#f1c40f"/>
-  <rect x="4" y="13" width="3" height="3" fill="#2c3e50"/>
-  <rect x="9" y="13" width="3" height="3" fill="#2c3e50"/>
- </svg>`,
- '잿빛 군주': `<svg class="hero-pixel-art" viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">
-  <rect x="3" y="1" width="2" height="2" fill="#9b59b6"/>
-  <rect x="6" y="0" width="4" height="2" fill="#f2c66d"/>
-  <rect x="11" y="1" width="2" height="2" fill="#9b59b6"/>
-  <rect x="4" y="2" width="8" height="4" fill="#2c2538"/>
-  <rect x="5" y="4" width="2" height="1" fill="#ff5e7e"/>
-  <rect x="9" y="4" width="2" height="1" fill="#ff5e7e"/>
-  <rect x="2" y="6" width="12" height="7" fill="#4a3b5c"/>
-  <rect x="5" y="7" width="6" height="5" fill="#1d1826"/>
-  <rect x="7" y="8" width="2" height="3" fill="#e87979"/>
-  <rect x="1" y="7" width="2" height="5" fill="#8e44ad"/>
-  <rect x="13" y="7" width="2" height="5" fill="#8e44ad"/>
-  <rect x="4" y="13" width="3" height="3" fill="#1d1826"/>
-  <rect x="9" y="13" width="3" height="3" fill="#1d1826"/>
- </svg>`,
- '회랑의 종언자': `<svg class="hero-pixel-art" viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">
-  <rect x="7" y="0" width="2" height="2" fill="#ffffff"/>
-  <rect x="5" y="2" width="6" height="2" fill="#b99ae8"/>
-  <rect x="3" y="4" width="10" height="2" fill="#79bce0"/>
-  <rect x="5" y="6" width="6" height="5" fill="#181528"/>
-  <rect x="6" y="7" width="4" height="3" fill="#f2c66d"/>
-  <rect x="7" y="8" width="2" height="1" fill="#ffffff"/>
-  <rect x="2" y="7" width="2" height="4" fill="#9b59b6"/>
-  <rect x="12" y="7" width="2" height="4" fill="#9b59b6"/>
-  <rect x="4" y="11" width="8" height="3" fill="#2e2445"/>
-  <rect x="6" y="14" width="4" height="2" fill="#b99ae8"/>
- </svg>`,
- '잿빛 검수': `<svg class="hero-pixel-art" viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">
-  <rect x="5" y="1" width="6" height="1" fill="#c0392b"/>
-  <rect x="4" y="2" width="8" height="4" fill="#2c3e50"/>
-  <rect x="5" y="4" width="6" height="1" fill="#e74c3c"/>
-  <rect x="3" y="6" width="10" height="7" fill="#34495e"/>
-  <rect x="5" y="7" width="6" height="5" fill="#5d6d7e"/>
-  <rect x="1" y="3" width="2" height="10" fill="#ecf0f1"/>
-  <rect x="13" y="4" width="2" height="10" fill="#e87979"/>
-  <rect x="4" y="13" width="3" height="3" fill="#1c2833"/>
-  <rect x="9" y="13" width="3" height="3" fill="#1c2833"/>
- </svg>`,
- '겸손의 수호자': `<svg class="hero-pixel-art" viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">
-  <rect x="5" y="1" width="6" height="2" fill="#7f8c8d"/>
-  <rect x="6" y="3" width="4" height="2" fill="#bdc3c7"/>
-  <rect x="3" y="5" width="10" height="8" fill="#546e7a"/>
-  <rect x="5" y="6" width="6" height="6" fill="#90a4ae"/>
-  <rect x="7" y="6" width="2" height="6" fill="#eceff1"/>
-  <rect x="6" y="8" width="4" height="2" fill="#eceff1"/>
-  <rect x="1" y="6" width="2" height="6" fill="#455a64"/>
-  <rect x="13" y="6" width="2" height="6" fill="#455a64"/>
-  <rect x="4" y="13" width="3" height="3" fill="#37474f"/>
-  <rect x="9" y="13" width="3" height="3" fill="#37474f"/>
- </svg>`,
- '용기의 시험관': `<svg class="hero-pixel-art" viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">
-  <rect x="5" y="0" width="6" height="2" fill="#f1c40f"/>
-  <rect x="4" y="2" width="8" height="4" fill="#d35400"/>
-  <rect x="6" y="3" width="4" height="2" fill="#ffeaa7"/>
-  <rect x="3" y="6" width="10" height="7" fill="#e67e22"/>
-  <rect x="5" y="7" width="6" height="5" fill="#f39c12"/>
-  <rect x="7" y="7" width="2" height="5" fill="#fff3cd"/>
-  <rect x="1" y="5" width="2" height="8" fill="#f5f6fa"/>
-  <rect x="13" y="6" width="2" height="6" fill="#c0392b"/>
-  <rect x="4" y="13" width="3" height="3" fill="#a04000"/>
-  <rect x="9" y="13" width="3" height="3" fill="#a04000"/>
- </svg>`,
- '환상의 딸': `<svg class="hero-pixel-art" viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">
-  <rect x="5" y="1" width="6" height="2" fill="#ffd1dc"/>
-  <rect x="4" y="3" width="8" height="3" fill="#ff9ebb"/>
-  <rect x="6" y="4" width="4" height="2" fill="#fff0f5"/>
-  <rect x="6" y="4" width="1" height="1" fill="#79bce0"/>
-  <rect x="9" y="4" width="1" height="1" fill="#79bce0"/>
-  <rect x="5" y="6" width="6" height="3" fill="#f8bbd0"/>
-  <rect x="4" y="9" width="8" height="5" fill="#e1bee7"/>
-  <rect x="3" y="11" width="10" height="3" fill="#f3e5f5"/>
-  <rect x="6" y="14" width="1" height="2" fill="#ffeaa7"/>
-  <rect x="9" y="14" width="1" height="2" fill="#ffeaa7"/>
- </svg>`
+ '회랑의 문지기': `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="18" y="68" width="36" height="3" fill="#0b0a12"/>
+  <rect x="17" y="3" width="6" height="9" fill="#f4c430"/>
+  <rect x="33" y="1" width="6" height="11" fill="#ffe066"/>
+  <rect x="49" y="3" width="6" height="9" fill="#f4c430"/>
+  <rect x="20" y="12" width="32" height="12" fill="#495668"/>
+  <rect x="25" y="15" width="22" height="6" fill="#1b2230"/>
+  <rect x="29" y="16" width="5" height="2" fill="#ff4d4d"/>
+  <rect x="38" y="16" width="5" height="2" fill="#ff4d4d"/>
+  <rect x="11" y="24" width="50" height="30" fill="#2b3445"/>
+  <rect x="21" y="24" width="30" height="30" fill="#6c7d94"/>
+  <rect x="33" y="24" width="6" height="30" fill="#f2c66d"/>
+  <rect x="23" y="36" width="26" height="5" fill="#f2c66d"/>
+  <rect x="5" y="24" width="6" height="24" fill="#495668"/>
+  <rect x="60" y="10" width="4" height="44" fill="#e8f1f8"/>
+  <rect x="61" y="11" width="2" height="42" fill="#ffffff"/>
+  <rect x="54" y="39" width="16" height="4" fill="#f2c66d"/>
+  <rect x="18" y="54" width="12" height="15" fill="#1b2230"/>
+  <rect x="42" y="54" width="12" height="15" fill="#1b2230"/>
+</svg>`,
+ '잿빛 군주': `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="18" y="68" width="36" height="3" fill="#0b0a12"/>
+  <rect x="14" y="3" width="9" height="9" fill="#8e44ad"/>
+  <rect x="26" y="1" width="20" height="9" fill="#f2c66d"/>
+  <rect x="49" y="3" width="9" height="9" fill="#8e44ad"/>
+  <rect x="20" y="10" width="32" height="15" fill="#211a2e"/>
+  <rect x="26" y="15" width="6" height="4" fill="#ff4d79"/>
+  <rect x="40" y="15" width="6" height="4" fill="#ff4d79"/>
+  <rect x="8" y="25" width="56" height="30" fill="#3e2f52"/>
+  <rect x="21" y="25" width="30" height="30" fill="#15111f"/>
+  <rect x="30" y="30" width="12" height="15" fill="#8e44ad"/>
+  <rect x="33" y="33" width="6" height="9" fill="#ff758f"/>
+  <rect x="2" y="25" width="6" height="24" fill="#9b59b6"/>
+  <rect x="64" y="25" width="6" height="24" fill="#9b59b6"/>
+  <rect x="18" y="55" width="12" height="14" fill="#15111f"/>
+  <rect x="42" y="55" width="12" height="14" fill="#15111f"/>
+</svg>`,
+ '회랑의 종언자': `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="18" y="68" width="36" height="3" fill="#0b0a12"/>
+  <rect x="29" y="1" width="14" height="6" fill="#ffffff"/>
+  <rect x="20" y="7" width="32" height="6" fill="#b99ae8"/>
+  <rect x="14" y="13" width="44" height="6" fill="#7ce0ff"/>
+  <rect x="20" y="19" width="32" height="24" fill="#141124"/>
+  <rect x="27" y="22" width="18" height="15" fill="#4a2e6b"/>
+  <rect x="30" y="25" width="12" height="9" fill="#ffe066"/>
+  <rect x="33" y="28" width="6" height="3" fill="#ffffff"/>
+  <rect x="8" y="22" width="10" height="21" fill="#9b59b6"/>
+  <rect x="54" y="22" width="10" height="21" fill="#9b59b6"/>
+  <rect x="5" y="27" width="3" height="9" fill="#7ce0ff"/>
+  <rect x="64" y="27" width="3" height="9" fill="#7ce0ff"/>
+  <rect x="18" y="43" width="36" height="15" fill="#261d3b"/>
+  <rect x="27" y="58" width="18" height="9" fill="#b99ae8"/>
+</svg>`,
+ '잿빛 검수': `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="18" y="68" width="36" height="3" fill="#0b0a12"/>
+  <rect x="23" y="3" width="26" height="6" fill="#c9184a"/>
+  <rect x="20" y="9" width="32" height="15" fill="#1e2736"/>
+  <rect x="24" y="15" width="24" height="6" fill="#121822"/>
+  <rect x="27" y="16" width="6" height="2" fill="#ff4d79"/>
+  <rect x="39" y="16" width="6" height="2" fill="#ff4d79"/>
+  <rect x="14" y="24" width="44" height="30" fill="#2b384a"/>
+  <rect x="24" y="24" width="24" height="30" fill="#5d6d7e"/>
+  <rect x="30" y="30" width="12" height="15" fill="#1e2736"/>
+  <rect x="6" y="8" width="5" height="46" fill="#e8f1f8"/>
+  <rect x="7" y="8" width="2" height="46" fill="#ffffff"/>
+  <rect x="3" y="42" width="11" height="4" fill="#f2c66d"/>
+  <rect x="60" y="11" width="5" height="46" fill="#ff4d79"/>
+  <rect x="62" y="11" width="2" height="46" fill="#ffb3c6"/>
+  <rect x="58" y="45" width="11" height="4" fill="#ffe066"/>
+  <rect x="18" y="54" width="12" height="15" fill="#121822"/>
+  <rect x="42" y="54" width="12" height="15" fill="#121822"/>
+</svg>`,
+ '겸손의 수호자': `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="18" y="68" width="36" height="3" fill="#0b0a12"/>
+  <rect x="23" y="3" width="26" height="9" fill="#7f8c8d"/>
+  <rect x="27" y="12" width="18" height="9" fill="#bdc3c7"/>
+  <rect x="30" y="15" width="5" height="2" fill="#7ce0ff"/>
+  <rect x="37" y="15" width="5" height="2" fill="#7ce0ff"/>
+  <rect x="14" y="21" width="44" height="33" fill="#4c6470"/>
+  <rect x="24" y="24" width="24" height="27" fill="#90a4ae"/>
+  <rect x="33" y="24" width="6" height="27" fill="#ffffff"/>
+  <rect x="27" y="33" width="18" height="6" fill="#ffffff"/>
+  <rect x="5" y="21" width="9" height="27" fill="#3b4e57"/>
+  <rect x="58" y="21" width="9" height="27" fill="#3b4e57"/>
+  <rect x="18" y="54" width="12" height="15" fill="#2c3b42"/>
+  <rect x="42" y="54" width="12" height="15" fill="#2c3b42"/>
+</svg>`,
+ '용기의 시험관': `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="18" y="68" width="36" height="3" fill="#0b0a12"/>
+  <rect x="23" y="1" width="26" height="6" fill="#ffe066"/>
+  <rect x="20" y="7" width="32" height="12" fill="#d35400"/>
+  <rect x="27" y="10" width="18" height="6" fill="#fff3b0"/>
+  <rect x="30" y="12" width="5" height="2" fill="#ff4d4d"/>
+  <rect x="37" y="12" width="5" height="2" fill="#ff4d4d"/>
+  <rect x="14" y="19" width="44" height="35" fill="#e67e22"/>
+  <rect x="24" y="21" width="24" height="30" fill="#f39c12"/>
+  <rect x="33" y="21" width="6" height="30" fill="#ffffff"/>
+  <rect x="6" y="14" width="9" height="37" fill="#e8f1f8"/>
+  <rect x="7" y="14" width="3" height="37" fill="#ffffff"/>
+  <rect x="57" y="21" width="9" height="27" fill="#c0392b"/>
+  <rect x="18" y="54" width="12" height="15" fill="#873600"/>
+  <rect x="42" y="54" width="12" height="15" fill="#873600"/>
+</svg>`,
+ '환상의 딸': `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="18" y="68" width="36" height="3" fill="#0b0a12"/>
+  <rect x="23" y="3" width="26" height="9" fill="#ffd6e5"/>
+  <rect x="17" y="12" width="38" height="9" fill="#ff8fb8"/>
+  <rect x="27" y="15" width="18" height="9" fill="#ffffff"/>
+  <rect x="30" y="18" width="5" height="2" fill="#7ce0ff"/>
+  <rect x="37" y="18" width="5" height="2" fill="#7ce0ff"/>
+  <rect x="33" y="21" width="6" height="3" fill="#ff4d79"/>
+  <rect x="24" y="24" width="24" height="12" fill="#ffc2d4"/>
+  <rect x="17" y="36" width="38" height="21" fill="#d8b4fe"/>
+  <rect x="11" y="42" width="50" height="15" fill="#f3e8ff"/>
+  <rect x="27" y="57" width="6" height="10" fill="#ffe066"/>
+  <rect x="39" y="57" width="6" height="10" fill="#ffe066"/>
+</svg>`,
+ '잿불 대사제': `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="18" y="68" width="36" height="3" fill="#0b0a12"/>
+  <rect x="24" y="4" width="24" height="12" fill="#7c2d12"/>
+  <rect x="28" y="2" width="16" height="6" fill="#fb923c"/>
+  <rect x="22" y="16" width="28" height="10" fill="#1f1418"/>
+  <rect x="28" y="19" width="5" height="2" fill="#fde047"/>
+  <rect x="39" y="19" width="5" height="2" fill="#fde047"/>
+  <rect x="14" y="26" width="44" height="30" fill="#9a3412"/>
+  <rect x="24" y="26" width="24" height="30" fill="#431407"/>
+  <rect x="33" y="26" width="6" height="30" fill="#f97316"/>
+  <rect x="58" y="8" width="4" height="48" fill="#fdba74"/>
+  <rect x="54" y="22" width="12" height="4" fill="#facc15"/>
+  <rect x="20" y="56" width="12" height="13" fill="#29120b"/>
+  <rect x="40" y="56" width="12" height="13" fill="#29120b"/>
+</svg>`,
+ '심연의 집행자': `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="18" y="68" width="36" height="3" fill="#0b0a12"/>
+  <rect x="22" y="5" width="28" height="15" fill="#1e1b4b"/>
+  <rect x="26" y="12" width="20" height="6" fill="#090814"/>
+  <rect x="29" y="13" width="5" height="2" fill="#c084fc"/>
+  <rect x="38" y="13" width="5" height="2" fill="#c084fc"/>
+  <rect x="12" y="20" width="48" height="34" fill="#312e81"/>
+  <rect x="24" y="22" width="24" height="30" fill="#17153b"/>
+  <rect x="34" y="22" width="4" height="30" fill="#a855f7"/>
+  <rect x="4" y="14" width="8" height="34" fill="#e2e8f0"/>
+  <rect x="2" y="42" width="14" height="5" fill="#7e22ce"/>
+  <rect x="20" y="54" width="12" height="15" fill="#1e1b4b"/>
+  <rect x="40" y="54" width="12" height="15" fill="#1e1b4b"/>
+</svg>`,
+ '균열의 폭군': `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="16" y="68" width="40" height="3" fill="#0b0a12"/>
+  <rect x="15" y="2" width="8" height="10" fill="#e11d48"/>
+  <rect x="49" y="2" width="8" height="10" fill="#e11d48"/>
+  <rect x="21" y="10" width="30" height="14" fill="#3f1d38"/>
+  <rect x="28" y="15" width="5" height="2" fill="#ff4d79"/>
+  <rect x="39" y="15" width="5" height="2" fill="#ff4d79"/>
+  <rect x="9" y="24" width="54" height="31" fill="#500724"/>
+  <rect x="22" y="24" width="28" height="31" fill="#881337"/>
+  <rect x="34" y="24" width="4" height="31" fill="#38bdf8"/>
+  <rect x="2" y="24" width="7" height="25" fill="#4c0519"/>
+  <rect x="63" y="24" width="7" height="25" fill="#4c0519"/>
+  <rect x="19" y="55" width="12" height="14" fill="#270614"/>
+  <rect x="41" y="55" width="12" height="14" fill="#270614"/>
+</svg>`
 };
+
+// --- CHARACTER SKINS & SHARD CURRENCY (ALL CHARACTERS) ---
+const SKIN_STORAGE_KEY='ashen_heroes_skins_v1';
+const SHARD_STORAGE_KEY='ashen_heroes_shards_v1';
+const SHARD_MILESTONE_KEY='ashen_heroes_shard_milestones_v1';
+
+function getShards(){
+ const v=parseInt(readStorageSafe(SHARD_STORAGE_KEY)||'0',10);
+ return Number.isFinite(v)&&v>=0?v:0;
+}
+
+function setShards(amount){
+ const safe=Math.max(0,Math.floor(Number(amount)||0));
+ writeStorageSafe(SHARD_STORAGE_KEY,String(safe));
+ exportProgressSnapshot();
+ updateHeaderActionLabels();
+ return safe;
+}
+
+function addShards(delta){
+ const d=Math.floor(Number(delta)||0);
+ if(d<=0)return getShards();
+ return setShards(getShards()+d);
+}
+
+function loadClaimedShardMilestones(){
+ try{
+  const raw=readStorageSafe(SHARD_MILESTONE_KEY);
+  const arr=raw?JSON.parse(raw):[];
+  return Array.isArray(arr)?arr:[];
+ }catch(e){return [];}
+}
+
+function saveClaimedShardMilestones(list){
+ writeStorageSafe(SHARD_MILESTONE_KEY,JSON.stringify([...new Set(list)]));
+ exportProgressSnapshot();
+}
+
+function awardCorridorProgressShards(reason='stage'){
+ if(!game || game.mode==='story')return 0;
+ const claimed=new Set(loadClaimedShardMilestones());
+ let gained=0;
+ const f=game.floor||0;
+ const s=game.stage||0;
+
+ if(s>=1 && s%5===0){
+  const mKey=`stage_${f}_${s}`;
+  if(!claimed.has(mKey)){
+   claimed.add(mKey);
+   gained+=5;
+  }
+ }
+ if(reason==='elite'){
+  const eKey=`elite_${f}_${s}_${game.battles||0}`;
+  if(!claimed.has(eKey)){
+   claimed.add(eKey);
+   gained+=6;
+  }
+ }
+ if(reason==='boss'){
+  const bKey=`boss_${f}`;
+  if(!claimed.has(bKey)){
+   claimed.add(bKey);
+   gained+=15;
+  }
+ }
+ if(gained>0){
+  saveClaimedShardMilestones([...claimed]);
+  addShards(gained);
+ }
+ return gained;
+}
+
+const CHARACTER_SKINS={
+ knight:[
+  {
+   id:'default',
+   name:'은빛 수호 기사',
+   desc:'푸른 방패와 은빛 갑옷을 두른 기본 도트 외형입니다.',
+   shardCost:0,
+   isUnlocked:()=>true,
+   lockHint:'',
+   art:heroPixelArtData.knight
+  },
+  {
+   id:'knight_ember_vanguard',
+   name:'잿불 선봉대장',
+   desc:'타오르는 붉은 깃털과 벼려진 잿불 검신을 지닌 선봉대 스킨입니다.',
+   shardCost:15,
+   art:`<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges"><rect x="18" y="68" width="36" height="3" fill="#0b0a12"/><rect x="28" y="2" width="16" height="5" fill="#d91e4a"/><rect x="33" y="1" width="10" height="4" fill="#ff858d"/><rect x="26" y="7" width="20" height="17" fill="#3a2832"/><rect x="28" y="8" width="16" height="15" fill="#7c535e"/><rect x="27" y="14" width="18" height="6" fill="#18121a"/><rect x="29" y="16" width="5" height="2" fill="#ff9e44"/><rect x="38" y="16" width="5" height="2" fill="#ff9e44"/><rect x="20" y="26" width="32" height="21" fill="#4a232e"/><rect x="25" y="27" width="22" height="19" fill="#9c424c"/><rect x="34" y="28" width="4" height="17" fill="#f2c66d"/><rect x="4" y="24" width="14" height="26" fill="#5e1924"/><rect x="6" y="26" width="10" height="22" fill="#c92a37"/><rect x="9" y="31" width="4" height="10" fill="#ffe066"/><rect x="61" y="4" width="4" height="42" fill="#ffd8a8"/><rect x="55" y="46" width="16" height="4" fill="#f2c66d"/><rect x="61" y="50" width="4" height="10" fill="#7a1219"/><rect x="22" y="51" width="11" height="17" fill="#2b222e"/><rect x="39" y="51" width="11" height="17" fill="#2b222e"/></svg>`
+  }
+ ],
+ grailKnight:[
+  {
+   id:'default',
+   name:'황금 성배기사',
+   desc:'성배의 빛과 순금 갑옷을 두른 기본 도트 외형입니다.',
+   shardCost:0,
+   isUnlocked:()=>true,
+   lockHint:'',
+   art:heroPixelArtData.grailKnight
+  },
+  {
+   id:'grail_dawn_seraph',
+   name:'여명의 성휘 기사',
+   desc:'새벽빛 은백과 자수정 성광을 두른 고위 성전 스킨입니다.',
+   shardCost:20,
+   art:`<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges"><rect x="18" y="68" width="36" height="3" fill="#0b0a12"/><rect x="18" y="2" width="36" height="5" fill="#a5d8ff"/><rect x="34" y="1" width="4" height="7" fill="#ffffff"/><rect x="25" y="8" width="22" height="16" fill="#748ffc"/><rect x="28" y="9" width="16" height="14" fill="#dbe4ff"/><rect x="29" y="15" width="5" height="2" fill="#ffd43b"/><rect x="38" y="15" width="5" height="2" fill="#ffd43b"/><rect x="20" y="26" width="32" height="21" fill="#5c7cfa"/><rect x="25" y="27" width="22" height="19" fill="#edf2ff"/><rect x="34" y="28" width="4" height="17" fill="#ffd43b"/><rect x="28" y="35" width="16" height="4" fill="#ffd43b"/><rect x="4" y="24" width="14" height="26" fill="#4c6ef5"/><rect x="6" y="26" width="10" height="22" fill="#bac8ff"/><rect x="61" y="3" width="4" height="43" fill="#e7f5ff"/><rect x="55" y="46" width="16" height="4" fill="#ffd43b"/><rect x="61" y="50" width="4" height="10" fill="#4c6ef5"/><rect x="22" y="51" width="11" height="17" fill="#364fc7"/><rect x="39" y="51" width="11" height="17" fill="#364fc7"/></svg>`
+  }
+ ],
+ mage:[
+  {
+   id:'default',
+   name:'심연 원소술사',
+   desc:'보랏빛 마도 모자와 마력 지팡이를 지닌 기본 도트 외형입니다.',
+   shardCost:0,
+   isUnlocked:()=>true,
+   lockHint:'',
+   art:heroPixelArtData.mage
+  },
+  {
+   id:'mage_astral_archon',
+   name:'성좌의 현자',
+   desc:'청록 성좌의 빛과 금빛 마도구를 두른 현자 스킨입니다.',
+   shardCost:15,
+   art:`<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges"><rect x="18" y="68" width="36" height="3" fill="#0b0a12"/><rect x="34" y="1" width="4" height="5" fill="#3bc9db"/><rect x="24" y="6" width="24" height="14" fill="#1864ab"/><rect x="14" y="20" width="44" height="3" fill="#ffd43b"/><rect x="25" y="23" width="22" height="9" fill="#101827"/><rect x="29" y="27" width="5" height="2" fill="#66d9e8"/><rect x="38" y="27" width="5" height="2" fill="#66d9e8"/><rect x="18" y="32" width="36" height="35" fill="#1c7ed6"/><rect x="24" y="33" width="24" height="33" fill="#2b2d42"/><rect x="34" y="32" width="4" height="35" fill="#66d9e8"/><rect x="60" y="4" width="10" height="10" fill="#66d9e8"/><rect x="63" y="15" width="3" height="53" fill="#ffd43b"/></svg>`
+  }
+ ],
+ vampire:[
+  {
+   id:'default',
+   name:'진홍 혈귀 백작',
+   desc:'붉은 망토와 송곳니를 지닌 기본 도트 외형입니다.',
+   shardCost:0,
+   isUnlocked:()=>true,
+   lockHint:'',
+   art:heroPixelArtData.vampire
+  },
+  {
+   id:'vampire_eclipse_lord',
+   name:'일식의 군주',
+   desc:'자정 보라와 선홍빛 월식을 두른 고대 혈귀 스킨입니다.',
+   shardCost:20,
+   art:`<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges"><rect x="20" y="68" width="32" height="3" fill="#0b0a12"/><rect x="20" y="3" width="32" height="7" fill="#3b0764"/><rect x="13" y="9" width="46" height="10" fill="#701a75"/><rect x="27" y="9" width="18" height="15" fill="#f8fafc"/><rect x="29" y="14" width="5" height="2" fill="#e11d48"/><rect x="38" y="14" width="5" height="2" fill="#e11d48"/><rect x="33" y="21" width="2" height="3" fill="#ffd43b"/><rect x="37" y="21" width="2" height="3" fill="#ffd43b"/><rect x="12" y="24" width="48" height="39" fill="#4a044e"/><rect x="21" y="26" width="30" height="37" fill="#18181b"/><rect x="34" y="26" width="4" height="37" fill="#e11d48"/><rect x="60" y="27" width="10" height="10" fill="#f59f00"/><rect x="22" y="63" width="11" height="7" fill="#27272a"/><rect x="39" y="63" width="11" height="7" fill="#27272a"/></svg>`
+  }
+ ],
+ swordsman:[
+  {
+   id:'default',
+   name:'기본 쌍검 무사',
+   desc:'붉은 맹공과 푸른 철벽의 균형을 지닌 기본 도트 외형입니다.',
+   shardCost:0,
+   isUnlocked:()=>true,
+   lockHint:'',
+   art:heroPixelArtData.swordsman
+  },
+  {
+   id:'ronin_wanderer',
+   name:'방랑 낭인 (업적 스킨)',
+   desc:'삿갓과 찢어진 붉은 두건, 날카로운 외검을 든 낭인 스타일 업적 도트 스킨입니다. [잿빛 검수] 처치 업적 달성 시 해금됩니다.',
+   shardCost:0,
+   achievementSkin:true,
+   isUnlocked:()=>isAshenWardenDefeated() || loadUnlockedAchievements().includes('ashen_warden_slayer'),
+   lockHint:'업적 [잿빛 검수 처치하기] 달성 시 해금',
+   art:`<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges"><rect x="16" y="68" width="40" height="3" fill="#0b0a12"/><rect x="8" y="62" width="14" height="3" fill="#0b0a12"/><rect x="33" y="3" width="6" height="3" fill="#d4ac0d"/><rect x="27" y="6" width="18" height="3" fill="#a67c37"/><rect x="21" y="9" width="30" height="3" fill="#c79846"/><rect x="15" y="12" width="42" height="3" fill="#b38436"/><rect x="9" y="15" width="54" height="3" fill="#8f6624"/><rect x="12" y="18" width="48" height="2" fill="#4a3516"/><rect x="24" y="20" width="24" height="7" fill="#12111c"/><rect x="36" y="22" width="6" height="2" fill="#ff4d79"/><rect x="38" y="22" width="2" height="1" fill="#ffffff"/><rect x="22" y="27" width="28" height="4" fill="#8f0a30"/><rect x="14" y="29" width="12" height="4" fill="#c9184a"/><rect x="9" y="32" width="9" height="4" fill="#ff6b8b"/><rect x="11" y="36" width="5" height="4" fill="#8f0a30"/><rect x="19" y="31" width="34" height="20" fill="#232736"/><rect x="25" y="31" width="22" height="20" fill="#3a4157"/><rect x="34" y="31" width="4" height="20" fill="#d8dee9"/><rect x="14" y="33" width="6" height="15" fill="#191c26"/><rect x="52" y="33" width="6" height="15" fill="#191c26"/><rect x="21" y="48" width="30" height="4" fill="#7c533e"/><rect x="33" y="47" width="6" height="5" fill="#f2c66d"/><rect x="22" y="52" width="11" height="15" fill="#1b1f2b"/><rect x="24" y="53" width="7" height="13" fill="#2e3548"/><rect x="39" y="52" width="11" height="15" fill="#1b1f2b"/><rect x="41" y="53" width="7" height="13" fill="#2e3548"/><rect x="20" y="66" width="13" height="3" fill="#c79846"/><rect x="39" y="66" width="13" height="3" fill="#c79846"/><rect x="54" y="8" width="3" height="38" fill="#dce6f2"/><rect x="55" y="6" width="2" height="40" fill="#ffffff"/><rect x="56" y="9" width="1" height="35" fill="#ff758f"/><rect x="51" y="46" width="9" height="3" fill="#f2c66d"/><rect x="54" y="49" width="3" height="10" fill="#69051f"/><rect x="15" y="44" width="3" height="18" fill="#3b2618"/><rect x="16" y="45" width="1" height="16" fill="#d4ac0d"/></svg>`
+  }
+ ]
+};
+
+const OWNED_SKINS_KEY='ashen_heroes_owned_skins_v1';
+
+function loadOwnedSkinsMap(){
+ try{
+  const raw=readStorageSafe(OWNED_SKINS_KEY);
+  const parsed=raw?JSON.parse(raw):{};
+  return parsed && typeof parsed==='object'?parsed:{};
+ }catch(e){return {};}
+}
+
+function saveOwnedSkinsMap(map){
+ writeStorageSafe(OWNED_SKINS_KEY,JSON.stringify(map));
+ exportProgressSnapshot();
+ updateHeaderActionLabels();
+}
+
+function isSkinOwned(charKey, skin){
+ if(!skin || skin.id==='default' || (skin.shardCost||0)<=0)return true;
+ if(typeof skin.isUnlocked==='function' && skin.isUnlocked())return true;
+ const owned=loadOwnedSkinsMap();
+ const arr=Array.isArray(owned[charKey])?owned[charKey]:[];
+ return arr.includes(skin.id);
+}
+
+function buySkinWithShards(charKey, skin){
+ if(!skin || isSkinOwned(charKey,skin))return {ok:true};
+ const cost=Number(skin.shardCost||0);
+ const cur=getShards();
+ if(cur<cost)return {ok:false,msg:`샤드가 부족합니다. (보유 ${cur} / 필요 ${cost})`};
+ setShards(cur-cost);
+ const owned=loadOwnedSkinsMap();
+ const arr=Array.isArray(owned[charKey])?owned[charKey]:[];
+ if(!arr.includes(skin.id))arr.push(skin.id);
+ owned[charKey]=arr;
+ saveOwnedSkinsMap(owned);
+ return {ok:true};
+}
+
+function isAshenWardenDefeated(){
+ return readStorageSafe('ashen_heroes_ashen_warden_defeated_v1')==='1';
+}
+
+function markAshenWardenDefeated(){
+ writeStorageSafe('ashen_heroes_ashen_warden_defeated_v1','1');
+ const achs=loadUnlockedAchievements();
+ if(!achs.includes('ashen_warden_slayer')){
+  achs.push('ashen_warden_slayer');
+  writeStorageSafe(ACHIEVEMENT_STORAGE_KEY,JSON.stringify([...new Set(achs)]));
+ }
+ exportProgressSnapshot();
+ updateHeaderActionLabels();
+}
+
+function loadSelectedSkinsMap(){
+ try{
+  const raw=readStorageSafe(SKIN_STORAGE_KEY);
+  const parsed=raw?JSON.parse(raw):{};
+  return parsed && typeof parsed==='object'?parsed:{};
+ }catch(e){return {};}
+}
+
+function saveSelectedSkinsMap(map){
+ writeStorageSafe(SKIN_STORAGE_KEY,JSON.stringify(map));
+ exportProgressSnapshot();
+ updateHeaderActionLabels();
+}
+
+function getSelectedSkinId(charKey){
+ const map=loadSelectedSkinsMap();
+ const chosen=map[charKey]||'default';
+ const list=CHARACTER_SKINS[charKey]||[];
+ const found=list.find(s=>s.id===chosen);
+ if(found && isSkinOwned(charKey,found))return found.id;
+ return 'default';
+}
+
+function setSelectedSkinId(charKey, skinId){
+ const list=CHARACTER_SKINS[charKey]||[];
+ const found=list.find(s=>s.id===skinId);
+ if(!found || !isSkinOwned(charKey,found))return false;
+ const map=loadSelectedSkinsMap();
+ map[charKey]=skinId;
+ saveSelectedSkinsMap(map);
+ return true;
+}
+
+function getActiveHeroPixelArt(charKey){
+ const k=charKey||(game&&game.character)||'knight';
+ const skins=CHARACTER_SKINS[k];
+ if(skins && skins.length){
+  const activeId=getSelectedSkinId(k);
+  const match=skins.find(s=>s.id===activeId);
+  if(match && match.art)return match.art;
+ }
+ return heroPixelArtData[k] || heroPixelArtData.knight;
+}
+
+function enterCorridorWithCharacter(key){
+ if(key==='mage'){
+  promptMageElement();
+ }else{
+  startRun(key,'fire');
+ }
+}
+
+function openPreCorridorSkinSelection(charKey, statusMsg=''){
+ const targetChar=CHARACTER_SKINS[charKey]?charKey:'knight';
+ const skins=CHARACTER_SKINS[targetChar]||[];
+ const curId=getSelectedSkinId(targetChar);
+ const shards=getShards();
+ showModal('회랑 입장 전 스킨 선택','',[]);
+ $('modalTitle').textContent=`${chars[targetChar].name} · 회랑 입장 전 스킨 선택`;
+ $('modalText').innerHTML=`
+  <p>보유 샤드: <b style="color:var(--gold)">✦ ${shards} 샤드</b> · 회랑 스테이지/엘리트/보스 진척도에 따라 샤드를 획득하고 다른 캐릭터 스킨도 구매할 수 있습니다.</p>
+  <p>현재 장착 외형: <b>${(skins.find(s=>s.id===curId)||skins[0])?.name||'기본'}</b></p>
+  ${statusMsg?`<p style="color:var(--red);margin-top:4px"><b>${statusMsg}</b></p>`:''}
+ `;
+ const root=$('modalChoices');
+ root.innerHTML='';
+
+ skins.forEach(sk=>{
+  const owned=isSkinOwned(targetChar,sk);
+  const equipped=(sk.id===curId);
+  const cost=Number(sk.shardCost||0);
+  const box=document.createElement('div');
+  box.className='reward';
+  box.style.margin='0';
+  box.innerHTML=`
+   <div class="row between" style="align-items:flex-start;gap:12px">
+    <div class="row" style="align-items:center;gap:12px">
+     <div style="width:52px;height:52px;background:#171626;border:2px solid ${equipped?'var(--gold)':'#5e5776'};display:flex;align-items:center;justify-content:center;flex-shrink:0">${sk.art}</div>
+     <div>
+      <h3>${sk.name} ${equipped?'<span class="achievement-badge done">장착 중</span>':(owned?'<span class="achievement-badge done">보유 중</span>':`<span class="achievement-badge todo">샤드 ${cost}</span>`)}</h3>
+      <p>${sk.desc}</p>
+      ${!owned && sk.lockHint?`<p style="color:var(--muted);margin-top:4px">${sk.lockHint}</p>`:''}
+     </div>
+    </div>
+    <button type="button" class="btn small ${equipped?'gold':''}">${equipped?'장착됨':(owned?'장착하기':`샤드 ${cost} 구매`)}</button>
+   </div>
+  `;
+  const btn=box.querySelector('button');
+  btn.onclick=()=>{
+   if(equipped)return;
+   if(!owned){
+    const res=buySkinWithShards(targetChar,sk);
+    if(!res.ok){
+     openPreCorridorSkinSelection(targetChar,res.msg);
+     return;
+    }
+   }
+   setSelectedSkinId(targetChar,sk.id);
+   chooseCharacter();
+   openPreCorridorSkinSelection(targetChar,'');
+  };
+  root.appendChild(box);
+ });
+
+ const enterBtn=document.createElement('button');
+ enterBtn.type='button';
+ enterBtn.className='choice';
+ enterBtn.style.gridColumn='1 / -1';
+ enterBtn.style.borderColor='var(--gold)';
+ enterBtn.style.background='#3a2e42';
+ enterBtn.innerHTML=`<h3>▶ ${chars[targetChar].name}으로 회랑 입장하기</h3><p>선택한 스킨을 적용한 채 회랑 모드를 시작합니다.</p>`;
+ enterBtn.onclick=()=>{
+  $('modalOverlay').classList.remove('show');
+  enterCorridorWithCharacter(targetChar);
+ };
+ root.appendChild(enterBtn);
+
+ $('modalOverlay').classList.add('show');
+}
+
+function openSkinModal(charKey='knight'){
+ openPreCorridorSkinSelection(charKey);
+}
 
 function getBossPixelArt(enemy){
  if(!enemy)return '';
  if(enemy.type!=='boss')return null;
- return bossPixelArtData[enemy.name] || `<svg class="hero-pixel-art" viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">
+ return bossPixelArtData[enemy.name] || `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
   <rect x="5" y="1" width="6" height="2" fill="#f2c66d"/>
   <rect x="4" y="3" width="8" height="4" fill="#8e44ad"/>
   <rect x="6" y="4" width="4" height="1" fill="#e87979"/>
@@ -712,7 +1329,7 @@ function renderEnemySprite(){
  if(art){
   $('enemyGlyph').innerHTML=art;
  }else{
-  renderEnemySprite();
+  $('enemyGlyph').textContent=game.enemy.glyph||'☠';
  }
 }
 
@@ -759,8 +1376,13 @@ function exportProgressSnapshot(){
   grailKnightUnlocked:isGrailKnightUnlocked(),
   vampireUnlocked:isVampireUnlocked(),
   swordsmanUnlocked:isSwordsmanUnlocked(),
+  ashenWardenDefeated:isAshenWardenDefeated(),
   achievements:loadUnlockedAchievements(),
   collections:loadUnlockedCollections(),
+  shards:getShards(),
+  claimedShardMilestones:loadClaimedShardMilestones(),
+  ownedSkins:loadOwnedSkinsMap(),
+  skins:loadSelectedSkinsMap(),
   mastery:loadMasteryData(),
   bannedCards:loadAllBannedCardsMap()
  };
@@ -773,6 +1395,7 @@ function restoreProgressSnapshot(rawObj){
  if(rawObj.grailKnightUnlocked===true)writeStorageSafe(GRAIL_UNLOCK_KEY,'1');
  if(rawObj.vampireUnlocked===true)writeStorageSafe(VAMPIRE_UNLOCK_KEY,'1');
  if(rawObj.swordsmanUnlocked===true)writeStorageSafe(SWORDSMAN_UNLOCK_KEY,'1');
+ if(rawObj.ashenWardenDefeated===true)writeStorageSafe('ashen_heroes_ashen_warden_defeated_v1','1');
  if(rawObj.mastery && typeof rawObj.mastery==='object'){
   const cur=loadMasteryData();
   const merged={...cur};
@@ -797,6 +1420,12 @@ function restoreProgressSnapshot(rawObj){
  }
  if(Array.isArray(rawObj.collections)){
   saveUnlockedCollections([...loadUnlockedCollections(),...rawObj.collections]);
+ }
+ if(typeof rawObj.shards==='number')setShards(Math.max(getShards(),rawObj.shards));
+ if(Array.isArray(rawObj.claimedShardMilestones))saveClaimedShardMilestones([...loadClaimedShardMilestones(),...rawObj.claimedShardMilestones]);
+ if(rawObj.ownedSkins && typeof rawObj.ownedSkins==='object')saveOwnedSkinsMap({...loadOwnedSkinsMap(),...rawObj.ownedSkins});
+ if(rawObj.skins && typeof rawObj.skins==='object'){
+  saveSelectedSkinsMap({...loadSelectedSkinsMap(),...rawObj.skins});
  }
  writeStorageSafe(PROGRESS_BUNDLE_KEY,JSON.stringify({
   schemaVersion:SAVE_SCHEMA_VERSION,
@@ -1038,10 +1667,13 @@ const elites=[
  {name:'잿불 집행자',glyph:'✹',hp:62,atk:9}
 ];
 const bosses=[
- {name:'회랑의 문지기',glyph:'♛',hp:85,atk:12},
- {name:'잿빛 군주',glyph:'☗',hp:125,atk:16},
- {name:'회랑의 종언자',glyph:'✦',hp:175,atk:20},
- {name:'잿빛 검수',glyph:'⚔',hp:140,atk:15,bleedBoss:true}
+ {name:'회랑의 문지기',glyph:'♛',hp:85,atk:12,phase2Name:'각성한 회랑의 문지기'},
+ {name:'잿빛 군주',glyph:'☗',hp:125,atk:16,phase2Name:'타락한 잿빛 군주'},
+ {name:'회랑의 종언자',glyph:'✦',hp:175,atk:20,phase2Name:'종언의 화신'},
+ {name:'잿빛 검수',glyph:'⚔',hp:140,atk:15,bleedBoss:true,phase2Name:'피에 젖은 잿빛 검수'},
+ {name:'잿불 대사제',glyph:'✹',hp:110,atk:14,phase2Name:'업화의 대사제'},
+ {name:'심연의 집행자',glyph:'⌖',hp:155,atk:18,phase2Name:'심연의 단두대'},
+ {name:'균열의 폭군',glyph:'♜',hp:195,atk:21,phase2Name:'붕괴하는 균열 폭군'}
 ];
 
 const relicPool=[
@@ -1064,7 +1696,11 @@ const relicPool=[
  {name:'희망의 성배',charOnly:'knight',storyOnly:true,desc:'[기사 스토리] 3층 클리어 보상. 적 처치 시 체력 5 회복 및 공격 피해 +3.',effect:'hopeGrail',rarity:'영웅'},
  {name:'검무가의 유풍석',charOnly:'swordsman',desc:'[검무가 전용] 전투 시작 시 맹공 자세 및 피해 +2.',effect:'swordsmanWindStone',rarity:'고급'},
  {name:'유수 검집',charOnly:'swordsman',desc:'[검무가 전용] 자세 전환 시 연계 피해 +4 및 방어도 +2.',effect:'swordsmanScabbard',rarity:'희귀'},
- {name:'혈검의 잔향',charOnly:'swordsman',desc:'[검무가 전용] 적에게 출혈 부여 및 출혈 대상 공격 시 피해 +4.',effect:'swordsmanBleedBlade',rarity:'영웅'}
+ {name:'혈검의 잔향',charOnly:'swordsman',desc:'[검무가 전용] 적에게 출혈 부여 및 출혈 대상 공격 시 피해 +4.',effect:'swordsmanBleedBlade',rarity:'영웅'},
+ {name:'잿불 각인석',desc:'전투 시작 시 적에게 화상 4 부여 및 공격 피해 +2.',effect:'ashBrand',rarity:'고급'},
+ {name:'균열의 공명구',desc:'엘리트·보스 전투 시작 시 방어도 8 획득 및 골드 보상 +25%.',effect:'riftOrb',rarity:'희귀'},
+ {name:'성역의 잔향',desc:'턴 시작 시 체력이 최대치의 50% 미만이면 방어도 6 획득.',effect:'sanctuaryEcho',rarity:'희귀'},
+ {name:'폭풍의 깃털',desc:'전투 첫 턴에 코스트 +1 및 카드 1장 추가 드로우.',effect:'stormFeather',rarity:'영웅'}
 ];
 
 const potionTypes=[
@@ -1074,10 +1710,158 @@ const potionTypes=[
  {name:'철벽 포션',desc:'방어도 15 획득',use:g=>{g.block+=15;return '방어도 15 획득'}},
  {name:'정화 포션',desc:'부정적 상태이상 제거',use:g=>{g.status.poison=0;g.status.weak=0;g.status.vulnerable=0;return '부정적 상태이상 제거'}},
  {name:'지혈 연고',desc:'출혈·중독 해제 및 체력 10 회복',use:g=>{g.status.bleed=0;g.status.poison=0;let n=Math.min(10,g.maxHp-g.hp);g.hp+=n;return `출혈·중독 해제 및 체력 ${n} 회복`}},
- {name:'검무의 영약',desc:'자세 전환 및 이번 턴 공격 +4, 방어도 +6',use:g=>{g.stance=(g.stance==='assault'?'iron':'assault');g.stanceCombo=true;g.buffs.attack=(g.buffs.attack||0)+4;g.block+=6;return '자세 연계 발동, 공격 +4 및 방어도 +6'}}
+ {name:'검무의 영약',desc:'자세 전환 및 이번 턴 공격 +4, 방어도 +6',use:g=>{g.stance=(g.stance==='assault'?'iron':'assault');g.stanceCombo=true;g.buffs.attack=(g.buffs.attack||0)+4;g.block+=6;return '자세 연계 발동, 공격 +4 및 방어도 +6'}},
+ {name:'성광 포션',desc:'체력 10 회복 및 방어도 8 획득',use:g=>{let n=Math.min(10,g.maxHp-g.hp);g.hp+=n;g.block+=8;return `체력 ${n} 회복 및 방어도 8 획득`}},
+ {name:'혈폭 포션',desc:'이번 턴 공격 피해 +7(턴 종료 시 체력 3 소모)',use:g=>{g.buffs.attack=(g.buffs.attack||0)+7;g.bloodPotionDrain=(g.bloodPotionDrain||0)+3;return '이번 턴 공격 피해 +7 (턴 종료 시 체력 3 소모)'}}
 ];
 
 let game=null;
+
+// --- CONTINUE RUN (이어하기) SAVE / RESTORE ---
+const CONTINUE_RUN_KEY='ashen_heroes_continue_run_v1';
+
+function serializeCard(c){
+ if(!c)return null;
+ return {
+  name:c.name,glyph:c.glyph,cost:c.cost,manaCost:c.manaCost||0,hpCost:c.hpCost||0,
+  lifesteal:c.lifesteal||0,desc:c.desc,kind:c.kind,damage:c.damage||0,block:c.block||0,
+  heal:c.heal||0,buff:c.buff||0,draw:c.draw||0,mana:c.mana||0,debuff:c.debuff||null,
+  stance:c.stance||null,comboBonus:c.comboBonus||0,comboDmg:c.comboDmg||0,
+  comboBlock:c.comboBlock||0,comboDraw:c.comboDraw||0,comboBuff:c.comboBuff||0,
+  comboHeal:c.comboHeal||0,comboDebuff:c.comboDebuff||null,energyGain:c.energyGain||0,
+  type:c.type,rarity:c.rarity||'일반',volatile:!!c.volatile
+ };
+}
+
+function saveContinueRun(){
+ if(!game || !game.hp || game.hp<=0){
+  return;
+ }
+ try{
+  const snap={
+   character:game.character,
+   element:game.element||null,
+   mode:game.mode||'corridor',
+   heroName:game.heroName,
+   hp:game.hp,
+   maxHp:game.maxHp,
+   block:game.block||0,
+   energy:game.energy,
+   maxEnergy:game.maxEnergy,
+   gold:game.gold||0,
+   potions:game.potions||{},
+   deck:(game.deck||[]).map(serializeCard),
+   discard:(game.discard||[]).map(serializeCard),
+   hand:(game.hand||[]).map(serializeCard),
+   drawPile:(game.drawPile||[]).map(serializeCard),
+   floor:game.floor||0,
+   stage:game.stage||0,
+   route:game.route||null,
+   floorNodes:game.floorNodes||[],
+   routeOptions:game.routeOptions||[],
+   cleared:game.cleared||0,
+   turn:game.turn||1,
+   enemy:game.enemy?{...game.enemy}:null,
+   enemyBlock:game.enemyBlock||0,
+   active:!!game.active,
+   items:(game.items||[]).map(x=>({...x})),
+   passives:(game.passives||[]).map(x=>({...x})),
+   status:{...(game.status||{poison:0,weak:0,vulnerable:0,bleed:0})},
+   buffs:{...(game.buffs||{attack:0})},
+   mana:game.mana||0,
+   maxMana:game.maxMana||0,
+   manaRegen:game.manaRegen||1,
+   battles:game.battles||0,
+   firstGuard:game.firstGuard!==false,
+   firstDraw:game.firstDraw!==false,
+   removedCard:!!game.removedCard,
+   removePrice:game.removePrice||37,
+   shopTab:game.shopTab||'cards',
+   shopRefreshCost:game.shopRefreshCost||9,
+   stance:game.stance||'assault',
+   stanceCombo:!!game.stanceCombo,
+   stanceDrawUsedTurn:!!game.stanceDrawUsedTurn,
+   fangKills:game.fangKills||0,
+   masteryExpGain:game.masteryExpGain||0,
+   masteryLevelStart:game.masteryLevelStart||1,
+   savedScreen:document.querySelector('.screen.active')?.id||'mapScreen'
+  };
+  writeStorageSafe(CONTINUE_RUN_KEY,JSON.stringify(snap));
+  refreshContinueButton();
+ }catch(e){}
+}
+
+function clearContinueRun(){
+ try{localStorage.removeItem(CONTINUE_RUN_KEY);}catch(e){}
+ writeStorageSafe(CONTINUE_RUN_KEY,'');
+ refreshContinueButton();
+}
+
+function loadContinueRun(){
+ try{
+  const raw=readStorageSafe(CONTINUE_RUN_KEY);
+  if(!raw)return null;
+  const parsed=JSON.parse(raw);
+  if(!parsed || !parsed.character || !chars[parsed.character])return null;
+  if(!(parsed.hp>0))return null;
+  return parsed;
+ }catch(e){return null;}
+}
+
+function refreshContinueButton(){
+ const btn=$('continueRunBtn');
+ if(!btn)return;
+ const saved=loadContinueRun();
+ if(saved){
+  btn.disabled=false;
+  const f=(saved.floor||0)+1;
+  const s=(saved.stage||0)+1;
+  const cname=chars[saved.character]?.name||'용사';
+  btn.textContent=`이어하기 (${cname} · ${f}층 ${s}스테이지)`;
+ }else{
+  btn.disabled=true;
+  btn.textContent='이어하기';
+ }
+}
+
+function continueSavedRun(){
+ const saved=loadContinueRun();
+ if(!saved)return;
+ game={
+  ...saved,
+  potions:{...(saved.potions||{})},
+  deck:Array.isArray(saved.deck)?saved.deck:makeBaseDeck(saved.character,saved.element||'fire'),
+  discard:Array.isArray(saved.discard)?saved.discard:[],
+  hand:Array.isArray(saved.hand)?saved.hand:[],
+  drawPile:Array.isArray(saved.drawPile)?saved.drawPile:[],
+  items:Array.isArray(saved.items)?saved.items:[],
+  passives:Array.isArray(saved.passives)?saved.passives:[],
+  status:{poison:0,weak:0,vulnerable:0,bleed:0,...(saved.status||{})},
+  buffs:{attack:0,...(saved.buffs||{})}
+ };
+ selectedBanChar=game.character;
+ if(game.active && game.enemy){
+  $('battleFloor').textContent=`${game.floor+1}층`;
+  $('battleStage').textContent=`${game.stage+1}번째 스테이지`;
+  $('enemyKind').textContent=nodeInfo[game.route||'battle']?.[1]||'전투';
+  $('heroName').textContent=game.heroName;
+  $('heroGlyph').innerHTML=getHeroPixelArt(game.character);
+  $('enemyName').textContent=game.enemy.name;
+  renderEnemySprite();
+  $('enemyRank').textContent=game.enemy.type==='boss'?'보스':game.enemy.type==='elite'?'엘리트 마수':'마수';
+  renderBattle();
+  show('battleScreen');
+ }else if(saved.savedScreen==='serviceScreen' && game.route==='shop'){
+  openShop();
+ }else if(saved.savedScreen==='serviceScreen' && game.route==='event'){
+  openEvent();
+ }else{
+  show('mapScreen');
+  renderMap();
+ }
+ updateHeaderActionLabels();
+}
+
 let selectedMode='corridor';
 let selectedBanChar='knight';
 
@@ -1154,6 +1938,8 @@ function toggleBanCard(cardName,charKey=null){
  return {ok:true,banned:true,count:list.length};
 }
 function updateHeaderActionLabels(){
+ const sTag=$('shardTag');
+ if(sTag)sTag.textContent=`✦ ${getShards()} 샤드`;
  const activeChar=resolveBanChar();
  const bannedCount=loadBannedCards(activeChar).length;
  const mInfo=getCharMastery(activeChar);
@@ -1307,7 +2093,7 @@ function chooseCharacter(){
    if(selectedMode==='story'){
     startKnightStoryBundle();
    }else{
-    key==='mage'?promptMageElement():startRun(key,'fire');
+    openPreCorridorSkinSelection(key);
    }
   };
   $('characterChoices').appendChild(b);
@@ -1369,7 +2155,7 @@ function startRun(key,element='fire'){
   removePrice:37,
   shopTab:'cards',
   shopOffers:null,
-  shopRefreshCost:12,
+  shopRefreshCost:9,
   stance:'assault',
   stanceCombo:false,
   stanceDrawUsedTurn:false,
@@ -1381,6 +2167,7 @@ function startRun(key,element='fire'){
  show('mapScreen');
  renderMap();
  updateHeaderActionLabels();
+ saveContinueRun();
 }
 
 function getAvailableRelics(){
@@ -1413,7 +2200,7 @@ function generateOptions(){
  const firstBranch=game.floor===0 && game.stage===0;
  const pool=firstBranch
   ?['battle','battle','battle','battle','battle','elite']
-  :['battle','battle','battle','battle','battle','event','shop','elite'];
+  :['battle','battle','battle','battle','event','shop','elite','hazard'];
  const opts=[];
  for(let i=0;i<count;i++){
   let type=rand(pool);
@@ -1426,6 +2213,7 @@ function generateOptions(){
 const nodeInfo={
  battle:['⚔','일반 전투','일반 마수와 전투'],
  elite:['♜','엘리트','강력한 적과 전투'],
+ hazard:['⚑','위험한 회랑','강적과 조우하지만 높은 골드·유물 기회'],
  shop:['◇','상점','골드를 사용해 상품 구매'],
  event:['✦','특수 이벤트','선택에 따라 보상 또는 위험'],
  boss:['♛','층 보스','층의 마지막 전투']
@@ -1453,7 +2241,7 @@ function renderMap(){
 
 function chooseNode(type){
  game.route=type;game.floorNodes[game.stage]=type;
- if(type==='battle'||type==='elite'||type==='boss')startBattle(type);
+ if(type==='battle'||type==='elite'||type==='hazard'||type==='boss')startBattle(type);
  else if(type==='shop')openShop();
  else openEvent();
 }
@@ -1466,14 +2254,14 @@ function buildEnemy(type){
   return {name:sb.name,glyph:sb.glyph,maxHp:hp,hp:hp,atk:atk,baseAtk:atk,intent:atk,type,pattern:0,burn:0,freeze:0,shock:0,nearby:[],tempCurseGiven:false,storyRewardItem:sb.rewardItem,gimmickPhase:0,barrierTurns:0};
  }
  let base=type==='boss'
-  ?(game.floor===0 && Math.random()<.55 ? bosses[3] : bosses[Math.min(2,game.floor)])
-  :type==='elite'?rand(elites):rand(monsters);
- let hpScale=(type==='boss'?2.0:type==='elite'?1.8:1.7)+game.floor*.68;
- let atkScale=1.18+game.floor*.48;
+  ?(game.floor===0 && Math.random()<.5 ? bosses[3] : game.floor===0 && Math.random()<.5 ? bosses[4] : game.floor===1 && Math.random()<.45 ? bosses[5] : game.floor===2 && Math.random()<.45 ? bosses[6] : bosses[Math.min(2,game.floor)])
+  :(type==='elite'||type==='hazard')?rand(elites):rand(monsters);
+ let hpScale=(type==='boss'?2.05:(type==='hazard'?2.0:type==='elite'?1.8:1.7))+game.floor*.68;
+ let atkScale=(type==='hazard'?1.35:1.18)+game.floor*.48;
  const scaledAtk=Math.round(base.atk*atkScale);
  const scaledHp=Math.round(base.hp*hpScale);
  const nearby=type==='boss'?[]:[rand(monsters).name];
- return {name:base.name,glyph:base.glyph,maxHp:scaledHp,hp:scaledHp,atk:scaledAtk,baseAtk:scaledAtk,intent:scaledAtk,type,pattern:0,burn:0,freeze:0,shock:0,nearby,tempCurseGiven:false,gimmickPhase:0,barrierTurns:0};
+ return {name:base.name,baseName:base.name,phase2Name:base.phase2Name||`각성한 ${base.name}`,glyph:base.glyph,maxHp:scaledHp,hp:scaledHp,atk:scaledAtk,baseAtk:scaledAtk,intent:scaledAtk,type,pattern:0,burn:0,freeze:0,shock:0,nearby,tempCurseGiven:false,gimmickPhase:0,barrierTurns:0,phase2Triggered:false};
 }
 
 function applyElementEffect(stacks=1){
@@ -1521,7 +2309,10 @@ function startBattle(type){
  if(game.items.some(x=>x.effect==='knightSignet'))game.block+=8;
  if(game.items.some(x=>x.effect==='oldKnightMedal'))game.block+=3;
  if(game.items.some(x=>x.effect==='mageFrostPendant'))game.block+=4;
- let extraDraw=(game.items.some(x=>x.effect==='firstDraw')&&game.firstDraw?1:0)+(game.items.some(x=>x.effect==='mageGrimoire')?1:0);
+ if(game.items.some(x=>x.effect==='ashBrand')){game.enemy.burn=(game.enemy.burn||0)+4;game.buffs.attack=(game.buffs.attack||0)+2;}
+ if(game.items.some(x=>x.effect==='riftOrb')&&(type==='elite'||type==='boss'||type==='hazard')){game.block+=8;}
+ if(game.items.some(x=>x.effect==='stormFeather')){game.energy+=1;}
+ let extraDraw=(game.items.some(x=>x.effect==='firstDraw')&&game.firstDraw?1:0)+(game.items.some(x=>x.effect==='mageGrimoire')?1:0)+(game.items.some(x=>x.effect==='stormFeather')?1:0);
  draw(5+extraDraw);
  game.firstDraw=false;
  if(game.character==='mage'){
@@ -1535,10 +2326,12 @@ function startBattle(type){
  $('heroGlyph').innerHTML=getHeroPixelArt(game.character);
  $('enemyName').textContent=game.enemy.name;
  $('enemyGlyph').textContent=game.enemy.glyph;
+ renderEnemySprite();
  $('enemyRank').textContent=type==='boss'?'보스':type==='elite'?'엘리트 마수':'마수';
  $('battleLog').textContent=`${game.enemy.name}이(가) 길을 막아섰다.`;
  renderBattle();
  show('battleScreen');
+ saveContinueRun();
 }
 
 function draw(n){
@@ -1628,7 +2421,24 @@ function hitEnemy(dmg){
  const actual=Math.max(0,dmg-game.enemyBlock);
  game.enemyBlock=Math.max(0,game.enemyBlock-dmg);
  game.enemy.hp=Math.max(0,game.enemy.hp-actual);
+ checkBossPhase2();
  return actual;
+}
+
+function checkBossPhase2(){
+ const e=game&&game.enemy;
+ if(!e || e.type!=='boss' || e.phase2Triggered || e.hp<=0)return;
+ if(e.hp <= Math.floor(e.maxHp*0.5)){
+  e.phase2Triggered=true;
+  e.gimmickPhase=2;
+  e.name=e.phase2Name||`각성한 ${e.baseName||e.name}`;
+  e.atk=Math.round(e.atk*1.25)+3;
+  game.enemyBlock+=12;
+  e.burn=(e.burn||0)+3;
+  $('enemyName').textContent=e.name;
+  enemyChooseIntent();
+  $('battleLog').textContent=`[2페이즈 각성!] ${e.name}이(가) 회랑의 힘을 끌어올려 공격력이 상승하고 방어도 12를 얻었습니다!`;
+ }
 }
 
 
@@ -1956,10 +2766,15 @@ function endTurn(){
  discardHand();
  const msg=enemyAct();
  if(game.enemy.hp<=0){winBattle();return}
- if(game.hp<=0){game.active=false;finishRun(false);return}
+ if(game.hp<=0){game.active=false;clearContinueRun();finishRun(false);return}
+ if((game.bloodPotionDrain||0)>0){
+  game.hp=Math.max(1,game.hp-game.bloodPotionDrain);
+  game.bloodPotionDrain=0;
+ }
  if(game.items.some(x=>x.effect==='knightIronHeart'))game.block=Math.min(game.block,4);
  else if(game.items.some(x=>x.effect==='daughterRelic'))game.block=Math.min(game.block,2);
  else game.block=0;
+ if(game.items.some(x=>x.effect==='sanctuaryEcho')&&game.hp<game.maxHp*0.5){game.block+=6;}
  game.turn++;game.buffs.attack=0;game.stanceCombo=false;game.stanceDrawUsedTurn=false;game.energy=game.maxEnergy+(game.items.some(x=>x.effect==='battleEnergy')?1:0);
  if(game.character==='mage')game.mana=Math.min(game.maxMana,game.mana+game.manaRegen+game.passives.filter(x=>x.effect==='manaRegen').reduce((a,x)=>a+x.value,0));
  enemyChooseIntent();draw(5);
@@ -1976,9 +2791,9 @@ function usePotion(){
 
 function rollRarity(){
  const r=Math.random();
- if(r<.45)return '일반';
- if(r<.75)return '고급';
- if(r<.93)return '희귀';
+ if(r<.42)return '일반';
+ if(r<.74)return '고급';
+ if(r<.91)return '희귀';
  return '영웅';
 }
 
@@ -2066,8 +2881,10 @@ function createProgressSaveFilePayload(){
   savedAt: new Date().toISOString(),
   grailKnightUnlocked: !!snap.grailKnightUnlocked,
   vampireUnlocked: !!snap.vampireUnlocked,
+  swordsmanUnlocked: !!snap.swordsmanUnlocked,
   achievements: snap.achievements || [],
   collections: snap.collections || [],
+  skins: snap.skins || {},
   mastery: snap.mastery || {},
   bannedCards: snap.bannedCards || {}
  };
@@ -2141,7 +2958,7 @@ function openMasteryAndUnlockModal(selectedChar=null){
    <h3>영구 해금 조건 &amp; 밴 현황</h3>
    <p>· <b>성배기사</b>: ${isGrailKnightUnlocked()?'<b style="color:var(--green)">해금 완료</b>':'미해금 (기사 스토리 모드 완주 시 해금)'}</p>
    <p>· <b>혈귀</b>: ${isVampireUnlocked()?'<b style="color:var(--green)">해금 완료</b>':'미해금 (회랑 모드에서 포식자의 송곳니 보유 후 10마리 처치 시 해금)'}</p>
-   <p>· <b>검무가</b>: ${isSwordsmanUnlocked()?'<b style="color:var(--green)">해금 완료</b>':'미해금 (보스 [잿빛 검수] 처치 시 해금)'}</p>
+   <p>· <b>검무가</b>: ${isSwordsmanUnlocked()?'<b style="color:var(--green)">해금 완료</b>':'미해금 (보스 [잿빛 검수] 처치 시 해금)'} · <b>방랑 낭인 스킨</b>: ${isAshenWardenDefeated()?'<b style="color:var(--green)">해금 완료</b>':'미해금 ([잿빛 검수] 처치 시 획득)'}</p>
    <p>· <b>${chars[activeChar].name} 밴 슬롯</b>: 현재 <b>${banned.length} / ${MAX_BANNED_CARDS}장</b> 금지 중 (해당 캐릭터의 드래프트·상점에서 제외)</p>
   </div>
  `;
@@ -2231,8 +3048,6 @@ function openCardBanModal(statusMsg='',charKey=null){
   if(activeChar==='vampire' && c.type==='혈귀 전용') return true;
   if(activeChar==='grailKnight' && c.type==='성배기사 전용') return true;
   if(activeChar==='swordsman' && c.type==='검무가 전용') return true;
-  if(activeChar==='swordsman' && c.type==='검무가 전용') return true;
-  if(activeChar==='swordsman' && c.type==='검무가 전용') return true;
   return false;
  });
  const displayCards=relevantCards.length?relevantCards:catalog;
@@ -2276,6 +3091,7 @@ function buildSlayTheSpireCardPool(){
   }
   if(activeChar==='vampire' && c.type==='혈귀 전용') return true;
   if(activeChar==='grailKnight' && c.type==='성배기사 전용') return true;
+  if(activeChar==='swordsman' && c.type==='검무가 전용') return true;
   return false;
  });
  
@@ -2323,17 +3139,35 @@ function winBattle(){
   }
  }
  let extraText='';
- if(game.enemy && game.enemy.name==='잿빛 검수' && !isSwordsmanUnlocked()){
-  unlockSwordsman();
-  extraText+=' · [잿빛 검수] 격파로 신규 직업 [검무가] 해금!';
+ const shardReason=game.route==='boss'?'boss':(game.route==='elite'?'elite':'stage');
+ const shardGain=awardCorridorProgressShards(shardReason);
+ if(shardGain>0){
+  extraText+=` · 회랑 진척도 보상 +${shardGain} 샤드 (보유 ${getShards()} 샤드)`;
+ }
+ if(game.enemy && game.enemy.name==='잿빛 검수'){
+  markAshenWardenDefeated();
+  if(!isSwordsmanUnlocked()){
+   unlockSwordsman();
+   extraText+=' · [잿빛 검수] 격파로 검무가 해금 및 [방랑 낭인] 스킨 획득!';
+  }else{
+   extraText+=' · [잿빛 검수] 격파로 [방랑 낭인] 스킨 획득!';
+  }
  }
  let earned=game.route==='boss'?45:game.route==='elite'?24:12;
  if(game.items.some(x=>x.effect==='goldBonus'))earned=Math.round(earned*1.5);
+ if(game.items.some(x=>x.effect==='riftOrb')&&(game.route==='elite'||game.route==='boss'||game.route==='hazard'))earned=Math.round(earned*1.25);
  game.gold+=earned;
  let heal=game.route==='boss'?6:2;
  if(game.items.some(x=>x.effect==='killHeal'))heal+=3;
  if(game.items.some(x=>x.effect==='hopeGrail'))heal+=5;
  game.hp=Math.min(game.maxHp,game.hp+heal);
+ if(game.route==='hazard'){
+  game.gold+=18;
+  const r2=pickRelicNoDup();
+  game.items.push(r2);
+  applyRelicAcquired(r2);
+  extraText+=` · [위험한 회랑] 돌파 보상 골드 +18 및 유물 [${r2.name}] 획득`;
+ }
  if(game.route==='elite'){
   const relic=pickRelicNoDup();
   game.items.push(relic);
@@ -2355,17 +3189,17 @@ function winBattle(){
   ...activeDraft.map(c=>({
    label:`액티브: ${c.name} [${c.rarity||'일반'}]`,
    desc:`${c.desc} · ${c.type} · 코스트 ${c.cost}${c.manaCost?` · 마나 ${c.manaCost}`:''}`,
-   action:()=>{game.deck.push(c);advanceStage()}
+   action:()=>{game.deck.push(c);advanceStage();}
   })),
   {
    label:`패시브: ${p1.name} [${p1.rarity||'일반'}]`,
    desc:`${p1.desc} · 패시브 슬롯 3개`,
-   action:()=>{if(game.passives.length>=3)game.passives.shift();game.passives.push(p1);advanceStage()}
+   action:()=>{if(game.passives.length>=3)game.passives.shift();game.passives.push(p1);advanceStage();}
   },
   {
    label:'보상 건너뛰기',
    desc:'카드를 추가하지 않고 다음 스테이지로 진행합니다.',
-   action:()=>advanceStage()
+   action:()=>advanceStage(),
   }
  ];
  showModal(
@@ -2405,6 +3239,7 @@ function triggerInfiniteFireReset(){
     show('resultScreen');
     $('resultTitle').textContent='4층 회랑의 끝 · 무한의 불';
     $('resultDesc').textContent='무한의 불이 모든 기적을 태워버리고 세계와 여정을 처음부터 초기화했습니다.';
+    clearContinueRun();
    }
   }]
  );
@@ -2413,19 +3248,23 @@ function triggerInfiniteFireReset(){
 function advanceStage(){
  clearStageDebuffs();
  const total=floors[game.floor];game.stage++;
+ if(game.mode!=='story' && game.stage>0 && game.stage%5===0){
+  awardCorridorProgressShards('stage');
+ }
  if(game.stage>=total){
   if(game.floor===2){triggerInfiniteFireReset();return}
   game.floor++;
   game.hp=Math.min(game.maxHp,game.hp+Math.round(game.maxHp*.35));
   clearStageDebuffs();
   makeFloor();
+  saveContinueRun();
   if(game.mode==='story'){
    triggerStoryFloorEvent(game.floor);
    return;
   }
   show('mapScreen');renderMap();return;
  }
- game.routeOptions=generateOptions();show('mapScreen');renderMap();
+ game.routeOptions=generateOptions();show('mapScreen');renderMap();saveContinueRun();
 }
 
 function openShop(){
@@ -2519,12 +3358,68 @@ function openEvent(){
   }},
   {name:'무너진 제단',desc:'체력 8을 바치고 코스트 최대치 +1',cost:0,act:()=>{if(game.hp>8){game.hp-=8;game.maxEnergy++;}}},
   {name:'떠돌이 행상인',desc:'골드 15를 얻는다.',cost:0,act:()=>{game.gold+=15;}},
-  {name:'낡은 보급품',desc:'회복 포션 1개와 체력 5 회복',cost:0,act:()=>{addPotion('회복 포션');game.hp=Math.min(game.maxHp,game.hp+5);}}
+  {name:'낡은 보급품',desc:'회복 포션 1개와 체력 5 회복',cost:0,act:()=>{addPotion('회복 포션');game.hp=Math.min(game.maxHp,game.hp+5);}},
+  {name:'회랑 연금술사',desc:'성광 포션 1개와 골드 12 획득',cost:0,act:()=>{addPotion('성광 포션');game.gold+=12;}},
+  {name:'잿빛 사당',desc:'샤드 +4 획득 및 최대 체력 +3',cost:0,act:()=>{addShards(4);game.maxHp+=3;game.hp=Math.min(game.maxHp,game.hp+3);}},
+  {name:'고대 룬 비석',desc:'덱의 방어 카드 1장 방어도 +4 강화',cost:0,act:()=>{
+   const target=game.deck.find(c=>c.kind==='block'||c.kind==='mixed');
+   if(target){target.block=(target.block||6)+4;target.desc=`${target.desc} (강화 +4)`;}
+   else game.gold+=18;
+  }},
+  {name:'상처 치유의 모닥불',desc:'체력 14 회복 및 혈폭 포션 1개 획득',cost:0,act:()=>{game.hp=Math.min(game.maxHp,game.hp+14);addPotion('혈폭 포션');}},
+  {name:'심연의 벼랑',desc:'최대 체력 +10 획득, 단 현재 체력 10 소모',cost:0,act:()=>{game.maxHp+=10;game.hp=Math.max(1,game.hp-10);}},
+  {name:'재의 대장간',desc:'덱의 무작위 카드 1장 피해/방어도 +4 강화 및 골드 10 획득',cost:0,act:()=>{
+   game.gold+=10;
+   const c=rand(game.deck);
+   if(c){if(c.damage)c.damage+=4;if(c.block)c.block+=4;c.desc=`${c.desc} [대장간 +4]`;}
+  }},
+  {name:'고대 성소의 기도',desc:'체력 15 회복 및 정화 포션 1개 획득',cost:0,act:()=>{game.hp=Math.min(game.maxHp,game.hp+15);addPotion('정화 포션');}},
+  {name:'균열의 문지기 제단',desc:'골드 35 획득 및 무작위 유물 1개 획득',cost:0,act:()=>{
+   game.gold+=35;
+   const rel=pickRelicNoDup();
+   game.items.push(rel);
+   applyRelicAcquired(rel);
+  }}
  ];
  const pickedEvents=shuffle([...events]).slice(0,4);
  let eventChosen=false;
  pickedEvents.forEach(e=>{let d=document.createElement('div');d.className='reward row between';d.innerHTML=`<div><h3>${e.name}</h3><p>${e.desc}</p></div><button class="btn small">선택</button>`;const btn=d.querySelector('button');btn.onclick=()=>{if(eventChosen)return;eventChosen=true;e.act();btn.textContent='선택 완료';$('serviceItems').querySelectorAll('button').forEach(other=>{other.disabled=true;if(other!==btn)other.textContent='선택 불가'});$('serviceGold').textContent=`체력 ${game.hp}/${game.maxHp} · 골드 ${game.gold} · 코스트 ${game.maxEnergy}`};$('serviceItems').appendChild(d)});
  $('serviceGold').textContent=`체력 ${game.hp}/${game.maxHp} · 골드 ${game.gold}`; 
+}
+
+
+function showBattlePilesModal(pileTab='draw'){
+ if(!game)return;
+ const tabs=[
+  ['draw',`뽑을 더미 (${(game.drawPile||[]).length})`],
+  ['discard',`버린 더미 (${(game.discard||[]).length})`],
+  ['hand',`손패 (${(game.hand||[]).length})`]
+ ];
+ $('modalTitle').textContent='전투 더미 현황';
+ $('modalText').textContent='현재 전투 중 뽑을 더미, 버린 더미, 손패에 있는 카드를 확인합니다.';
+ const root=$('modalChoices');root.innerHTML='';
+ const bar=document.createElement('div');bar.className='tabs';bar.style.gridColumn='1 / -1';
+ tabs.forEach(([id,label])=>{
+  const b=document.createElement('button');b.type='button';
+  b.className='tab'+(pileTab===id?' active':'');b.textContent=label;
+  b.onclick=()=>showBattlePilesModal(id);bar.appendChild(b);
+ });
+ root.appendChild(bar);
+ const list=pileTab==='discard'?(game.discard||[]):pileTab==='hand'?(game.hand||[]):(game.drawPile||[]);
+ const wrap=document.createElement('div');wrap.style.gridColumn='1 / -1';
+ if(!list.length){
+  wrap.innerHTML='<div class="reward"><h3>해당 더미가 비어 있습니다.</h3></div>';
+ }else{
+  const grid=document.createElement('div');grid.className='inventory';
+  list.forEach(c=>{
+   const card=document.createElement('div');card.className='inventory-item';
+   card.innerHTML=`<h3 style="margin:0 0 5px;color:var(--gold);font-size:14px">${c.glyph||'✦'} ${c.name}</h3><div class="muted">코스트 ${c.cost} · ${c.rarity||'일반'} · ${c.type||'카드'}</div><p style="font-size:12px;line-height:1.5;margin:7px 0 0;color:var(--muted)">${c.desc}</p>`;
+   grid.appendChild(card);
+  });
+  wrap.appendChild(grid);
+ }
+ root.appendChild(wrap);
+ $('modalOverlay').classList.add('show');
 }
 
 function showInventory(tab='cards'){
@@ -2575,7 +3470,7 @@ function finishRun(win){
  $('resultDesc').textContent=win?'3층의 최종 보스를 쓰러뜨리고 회랑을 완주했습니다.':'용사가 쓰러져 이번 회랑 도전이 종료되었습니다.';
 }
 
-$('leaveServiceBtn').onclick=()=>{ $('shopTabs').style.display='none';advanceStage() };
+$('leaveServiceBtn').onclick=()=>{ $('shopTabs').style.display='none';advanceStage(); };
 $('closeModalBtn').onclick=()=>{$('modalOverlay').classList.remove('show')};
 $('modalOverlay').addEventListener('click',e=>{if(e.target===$('modalOverlay'))$('modalOverlay').classList.remove('show')});
 $('endTurnBtn').onclick=endTurn;
@@ -2583,7 +3478,8 @@ $('potionBtn').onclick=usePotion;
 $('enemyIntent').onclick=showEnemyIntentHelp;
 $('inventoryMapBtn').onclick=()=>showInventory('cards');
 $('inventoryBattleBtn').onclick=()=>showInventory('cards');
-$('abandonBtn').onclick=()=>{if(confirm('이번 회랑 도전을 포기할까요?'))finishRun(false)};
+if($('pilesBattleBtn'))$('pilesBattleBtn').onclick=()=>showBattlePilesModal('draw');
+$('abandonBtn').onclick=()=>{if(confirm('이번 회랑 도전을 포기할까요?')){clearContinueRun();finishRun(false);}};
 $('newRunBtn').onclick=()=>{show('selectScreen');chooseCharacter()};
 
 const knightStoryBundle={
@@ -2717,8 +3613,11 @@ if($('masterySelectBtn'))$('masterySelectBtn').onclick=()=>openMasteryAndUnlockM
 if($('banListMapBtn'))$('banListMapBtn').onclick=()=>openCardBanModal('',game&&game.character);
 if($('banListSelectBtn'))$('banListSelectBtn').onclick=()=>openCardBanModal('',selectedBanChar);
 if($('collectionVaultBtn'))$('collectionVaultBtn').onclick=()=>openAchievementAndCollectionModal('collections');
+if($('swordsmanSkinBtn'))$('swordsmanSkinBtn').onclick=()=>openSkinModal('swordsman');
 
+if($('continueRunBtn'))$('continueRunBtn').onclick=continueSavedRun;
 chooseCharacter();
+refreshContinueButton();
 </script>
 </body>
 </html>
