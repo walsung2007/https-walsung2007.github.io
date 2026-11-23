@@ -1269,7 +1269,7 @@ function getActiveHeroPixelArt(charKey){
  return heroPixelArtData[k] || heroPixelArtData.knight;
 }
 
-// --- PURPLE TEAR PRESET OTHER-CHARACTER DECKS & 0-COST STANCE LOCK CARD ---
+// --- PURPLE TEAR PRESET OTHER-CHARACTER DECK & 0-COST 5TH-SLOT STANCE LOCK CARD ---
 const STANCE_LOCK_CARD_TEMPLATE={
  name:'자세고정',
  glyph:'◈',
@@ -1283,45 +1283,11 @@ const STANCE_LOCK_CARD_TEMPLATE={
  rarity:'고급'
 };
 
-const PURPLE_TEAR_PRESET_DECK_KEY='ashen_heroes_purple_tear_preset_deck_v1';
+// 미리 설정해 둔 타 캐릭터 덱(원하시는 타 캐릭터 키로 변경 가능: 'knight','grailKnight','mage','vampire','swordsman')
+const PURPLE_TEAR_DEFAULT_TARGET_CHAR='swordsman';
 
-const PRESET_OTHER_CHARACTER_DECKS={
- knight:{
-  label:'기사 덱 프리셋',
-  desc:'타격·방어·방패 강타·강력한 일격 중심의 균형 잡힌 기사 덱'
- },
- grailKnight:{
-  label:'성배기사 덱 프리셋',
-  desc:'성배의 빛·맹세의 단죄·성배의 축복타 중심의 공방·회복 덱'
- },
- mage:{
-  label:'마법사 덱 프리셋',
-  desc:'불 원소 작렬/쇄도 및 마력 화살·마력 응집 중심의 원소 덱'
- },
- vampire:{
-  label:'혈귀 덱 프리셋',
-  desc:'피의 송곳니·진홍의 갈증·핏빛 베기 중심의 흡혈 연쇄 덱'
- },
- swordsman:{
-  label:'검무가 덱 프리셋',
-  desc:'맹공의 검무·철벽의 검무·쌍검 난무 중심의 자세 연계 덱'
- }
-};
-
-function getSelectedPurpleTearDeckSource(){
- const saved=readStorageSafe(PURPLE_TEAR_PRESET_DECK_KEY);
- if(saved && PRESET_OTHER_CHARACTER_DECKS[saved])return saved;
- return 'swordsman';
-}
-
-function setSelectedPurpleTearDeckSource(sourceChar){
- if(!PRESET_OTHER_CHARACTER_DECKS[sourceChar])return false;
- writeStorageSafe(PURPLE_TEAR_PRESET_DECK_KEY,sourceChar);
- return true;
-}
-
-function buildPresetDeckForSource(sourceChar){
- const k=PRESET_OTHER_CHARACTER_DECKS[sourceChar]?sourceChar:'knight';
+function buildPresetDeckForTargetChar(targetChar='swordsman'){
+ const k=chars[targetChar]&&targetChar!=='purpleTear'?targetChar:'swordsman';
  const strike=Array.from({length:3},()=>({name:'타격',glyph:'⚔',cost:1,desc:'적에게 피해 6.',kind:'damage',damage:6,type:'공통 카드',rarity:'기본'}));
  const defend=Array.from({length:3},()=>({name:'방어',glyph:'▣',cost:1,desc:'방어도 6 획득.',kind:'block',block:6,type:'공통 카드',rarity:'기본'}));
  const specials=(chars[k]?.special||chars.knight.special).map(c=>{
@@ -1352,26 +1318,26 @@ function isStanceLockFixedCard(card){
 function pinStanceLockCardToFifthSlot(){
  if(!game || game.character!=='purpleTear')return;
  const isFixed=(c)=>isStanceLockFixedCard(c);
- const allFixed=[];
- const nonFixedHand=[];
+ const found=[];
+ const normalHand=[];
  (game.hand||[]).forEach(c=>{
-  if(isFixed(c))allFixed.push(c);
-  else nonFixedHand.push(c);
+  if(isFixed(c))found.push(c);
+  else normalHand.push(c);
  });
  game.drawPile=(game.drawPile||[]).filter(c=>{
-  if(isFixed(c)){allFixed.push(c);return false;}
+  if(isFixed(c)){found.push(c);return false;}
   return true;
  });
  game.discard=(game.discard||[]).filter(c=>{
-  if(isFixed(c)){allFixed.push(c);return false;}
+  if(isFixed(c)){found.push(c);return false;}
   return true;
  });
 
- const fixedCard=allFixed[0] || {...STANCE_LOCK_CARD_TEMPLATE};
- fixedCard.cost=0;
- fixedCard.kind='tearStanceLockCard';
+ const lockCard=found[0] || {...STANCE_LOCK_CARD_TEMPLATE};
+ lockCard.cost=0;
+ lockCard.kind='tearStanceLockCard';
 
- while(nonFixedHand.length<4){
+ while(normalHand.length<4){
   if(!game.drawPile.length){
    if(!game.discard.length)break;
    game.drawPile=shuffle(game.discard);
@@ -1380,56 +1346,25 @@ function pinStanceLockCardToFifthSlot(){
   const drawn=game.drawPile.pop();
   if(!drawn)break;
   if(isFixed(drawn))continue;
-  nonFixedHand.push(drawn);
+  normalHand.push(drawn);
  }
 
- const firstFour=nonFixedHand.slice(0,4);
- const overflow=nonFixedHand.slice(4);
- if(overflow.length){
-  game.drawPile=[...overflow,...game.drawPile];
+ const firstFour=normalHand.slice(0,4);
+ const rest=normalHand.slice(4);
+ if(rest.length){
+  game.drawPile=[...rest,...game.drawPile];
  }
- game.hand=[...firstFour,fixedCard];
+ game.hand=[...firstFour,lockCard];
 }
 
 function enterCorridorWithCharacter(key){
  if(key==='mage'){
   promptMageElement();
  }else if(key==='purpleTear'){
-  openPurpleTearDeckSelector();
+  startRun('purpleTear',PURPLE_TEAR_DEFAULT_TARGET_CHAR);
  }else{
   startRun(key,'fire');
  }
-}
-
-function openPurpleTearDeckSelector(){
- const curDeckSrc=getSelectedPurpleTearDeckSource();
- showModal('보라눈물 · 타 캐릭터 덱 선택','',[]);
- $('modalTitle').textContent='보라눈물 · 사용할 타 캐릭터 덱 선택';
- $('modalText').innerHTML=`
-  <p>보라눈물은 <b>0코스트 [자세고정] 카드(항상 5번째 손패 고정)</b>와 함께 미리 설정된 타 캐릭터 덱을 사용합니다.</p>
-  <p>현재 선택된 덱 프리셋: <b style="color:var(--gold)">${PRESET_OTHER_CHARACTER_DECKS[curDeckSrc]?.label||'검무가 덱 프리셋'}</b></p>
- `;
- const root=$('modalChoices');
- root.innerHTML='';
-
- Object.keys(PRESET_OTHER_CHARACTER_DECKS).forEach(srcKey=>{
-  const info=PRESET_OTHER_CHARACTER_DECKS[srcKey];
-  const selected=(srcKey===curDeckSrc);
-  const btn=document.createElement('button');
-  btn.type='button';
-  btn.className='choice';
-  btn.style.borderColor=selected?'var(--gold)':'#655d7d';
-  btn.style.background=selected?'#3a2e42':'#2c2941';
-  btn.innerHTML=`<div class="glyph" style="width:36px;height:36px">${getHeroPixelArt(srcKey)}</div><h3>${info.label} ${selected?'[선택됨]':''}</h3><p>${info.desc}</p>`;
-  btn.onclick=()=>{
-   setSelectedPurpleTearDeckSource(srcKey);
-   $('modalOverlay').classList.remove('show');
-   startRun('purpleTear',srcKey);
-  };
-  root.appendChild(btn);
- });
-
- $('modalOverlay').classList.add('show');
 }
 
 function openPreCorridorSkinSelection(charKey, statusMsg=''){
@@ -1573,7 +1508,6 @@ function exportProgressSnapshot(){
   claimedShardMilestones:loadClaimedShardMilestones(),
   ownedSkins:loadOwnedSkinsMap(),
   skins:loadSelectedSkinsMap(),
-  purpleTearPresetDeck:getSelectedPurpleTearDeckSource(),
   mastery:loadMasteryData(),
   bannedCards:loadAllBannedCardsMap()
  };
@@ -1587,9 +1521,6 @@ function restoreProgressSnapshot(rawObj){
  if(rawObj.vampireUnlocked===true)writeStorageSafe(VAMPIRE_UNLOCK_KEY,'1');
  if(rawObj.swordsmanUnlocked===true)writeStorageSafe(SWORDSMAN_UNLOCK_KEY,'1');
  if(rawObj.ashenWardenDefeated===true)writeStorageSafe('ashen_heroes_ashen_warden_defeated_v1','1');
- if(rawObj.purpleTearPresetDeck && PRESET_OTHER_CHARACTER_DECKS[rawObj.purpleTearPresetDeck]){
-  setSelectedPurpleTearDeckSource(rawObj.purpleTearPresetDeck);
- }
  if(rawObj.mastery && typeof rawObj.mastery==='object'){
   const cur=loadMasteryData();
   const merged={...cur};
@@ -2092,8 +2023,8 @@ function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.re
 
 function makeBaseDeck(character,element='fire',presetSource=null){
  if(character==='purpleTear'){
-  const src=presetSource || getSelectedPurpleTearDeckSource();
-  return buildPresetDeckForSource(src);
+  const target=presetSource || PURPLE_TEAR_DEFAULT_TARGET_CHAR;
+  return buildPresetDeckForTargetChar(target);
  }
  const strike=Array.from({length:4},()=>({name:'타격',glyph:'⚔',cost:1,desc:'적에게 피해 6.',kind:'damage',damage:6,type:'공통 카드',rarity:'기본'}));
  const defend=Array.from({length:4},()=>({name:'방어',glyph:'▣',cost:1,desc:'방어도 6 획득.',kind:'block',block:6,type:'공통 카드',rarity:'기본'}));
@@ -2289,7 +2220,7 @@ function chooseCharacter(){
    !isGrailKnightUnlocked()
   ));
   const progress=(game && game.fangKills)?game.fangKills:0;
-  const presetLabel=PRESET_OTHER_CHARACTER_DECKS[getSelectedPurpleTearDeckSource()]?.label||'검무가 덱 프리셋';
+  const presetCharName=chars[PURPLE_TEAR_DEFAULT_TARGET_CHAR]?.name||'검무가';
   const lockText=isStoryOnlyBlocked
    ?'기사 스토리 모드에서는 [기사]만 선택할 수 있습니다'
    :isVamp
@@ -2304,7 +2235,7 @@ function chooseCharacter(){
    :isSword
     ?'맹공/철벽 자세 전환 & 연계 · 전용 스킬 30종'
    :isTear
-    ?`0코스트 자세고정(5번째 손패 고정) · ${presetLabel}`
+    ?`0코스트 자세고정(5번 손패 고정) · ${presetCharName} 덱 사용`
     :'기본 특수기 2종';
   const b=document.createElement('button');b.className='choice';
   b.disabled=locked;
@@ -2339,7 +2270,7 @@ function promptMageElement(){
 
 function startRun(key,element='fire'){
  selectedBanChar=key;
- const presetSrc=(key==='purpleTear')?(PRESET_OTHER_CHARACTER_DECKS[element]?element:getSelectedPurpleTearDeckSource()):null;
+ const presetSrc=(key==='purpleTear')?(chars[element]&&element!=='purpleTear'?element:PURPLE_TEAR_DEFAULT_TARGET_CHAR):null;
  const mState=getCharMastery(key);
  game={
   character:key,
@@ -2652,8 +2583,8 @@ function renderBattle(){
   $('statusInfo').innerHTML=`<span class="stance-pill ${game.stance==='iron'?'iron':'assault'}">${stLabel} · ${comboTxt}</span>`;
  }else if(game.character==='purpleTear'){
   const locked=(game.stanceLockTurns||0)>0;
-  const presetName=PRESET_OTHER_CHARACTER_DECKS[game.presetDeckSource||'swordsman']?.label||'검무가 덱';
-  $('statusInfo').innerHTML=`<span class="stance-pill ${locked?'locked':''}">${locked?`자세고정 (${game.stanceLockTurns}턴)`:'자세고정 해제'}</span> <span class="muted">· ${presetName} · 5번 슬롯 고정</span>`;
+  const presetName=chars[game.presetDeckSource||PURPLE_TEAR_DEFAULT_TARGET_CHAR]?.name||'검무가';
+  $('statusInfo').innerHTML=`<span class="stance-pill ${locked?'locked':''}">${locked?`자세고정 (${game.stanceLockTurns}턴)`:'자세고정 해제'}</span> <span class="muted">· ${presetName} 덱 · 5번째 손패 고정</span>`;
  }else{
   $('statusInfo').textContent='';
  }
@@ -3128,12 +3059,6 @@ function enemyAct(){
  game.buffs={attack:0};
  const extraNextDraw=game.nextTurnDrawBonus||0;
  game.nextTurnDrawBonus=0;
- game.hand.forEach(c=>{
-  if(!isStanceLockFixedCard(c) && !c.volatile){
-   game.discard.push(c);
-  }
- });
- game.hand=[];
  draw(5+extraNextDraw);
  if(game.character==='purpleTear'){
   pinStanceLockCardToFifthSlot();
@@ -3143,279 +3068,331 @@ function enemyAct(){
  saveContinueRun();
 }
 
-function endTurn(){if(!game.active)return;game.hand.forEach(c=>{if(!isStanceLockFixedCard(c) && !c.volatile)game.discard.push(c)});game.hand=[];renderBattle();enemyAct()}
-
-function getCardPool(){
- const banned=loadBannedCards();
- const lockedByMastery=getLockedByMasteryCardNames();
- const isAllowed=(card)=>card && !banned.includes(card.name) && !lockedByMastery.has(card.name);
- const basePool=[
-  {name:'일격',glyph:'⚔',cost:1,desc:'적에게 피해 9.',kind:'damage',damage:9,type:'공격',rarity:'일반'},
-  {name:'수비 태세',glyph:'▣',cost:1,desc:'방어도 8 획득.',kind:'block',block:8,type:'방어',rarity:'일반'},
-  {name:'신속한 베기',glyph:'➤',cost:0,desc:'피해 5, 카드 1장 뽑기.',kind:'damage',damage:5,draw:1,type:'공격',rarity:'고급'},
-  {name:'기세 충전',glyph:'✦',cost:0,desc:'이번 턴 공격 피해 +3.',kind:'buff',buff:3,type:'강화',rarity:'고급'},
-  {name:'응급 치료',glyph:'✚',cost:1,desc:'체력 7 회복.',kind:'heal',heal:7,type:'회복',rarity:'고급'},
-  {name:'약점 찌르기',glyph:'⌖',cost:1,desc:'피해 7 및 적 취약 2턴 부여.',kind:'damage',damage:7,debuff:'vulnerable',type:'공격',rarity:'고급'},
-  {name:'연속 찌르기',glyph:'⚔',cost:1,desc:'피해 11.',kind:'damage',damage:11,type:'공격',rarity:'일반'},
-  {name:'철벽 수호',glyph:'▣',cost:1,desc:'방어도 10 획득.',kind:'block',block:10,type:'방어',rarity:'일반'},
-  {name:'전투 집중',glyph:'✦',cost:0,desc:'카드 1장 뽑고 이번 턴 공격 +2.',kind:'buff',buff:2,draw:1,type:'강화',rarity:'고급'},
-  {name:'회복의 빛',glyph:'✚',cost:1,desc:'체력 8 회복.',kind:'heal',heal:8,type:'회복',rarity:'고급'},
-  {name:'심판의 일격',glyph:'⚔',cost:2,desc:'피해 18.',kind:'damage',damage:18,type:'공격',rarity:'희귀'},
-  {name:'요새 구축',glyph:'▣',cost:2,desc:'방어도 16 획득.',kind:'block',block:16,type:'방어',rarity:'희귀'},
-  {name:'파멸의 검격',glyph:'⚔',cost:2,desc:'피해 22 및 적 취약 2턴.',kind:'damage',damage:22,debuff:'vulnerable',type:'공격',rarity:'영웅'},
-  {name:'불멸의 성역',glyph:'✦',cost:2,desc:'방어도 20 및 체력 5 회복.',kind:'mixed',block:20,heal:5,type:'방어/회복',rarity:'영웅'}
- ];
- let pool=[...basePool];
- if(game&&game.character==='mage'){
-  const el=game.element||'fire';
-  pool=[
-   ...pool,
-   ...(mageElementalSkills[el]||mageElementalSkills.fire),
-   {name:'마나 방출',glyph:'✧',cost:0,manaCost:1,desc:'마나 1 소모, 피해 10 및 카드 1장 뽑기.',kind:'damage',damage:10,draw:1,type:'마법사 전용',rarity:'일반'},
-   {name:'마력 수급',glyph:'❄',cost:0,desc:'마나 2 회복, 방어도 4 획득.',kind:'mana',mana:2,block:4,type:'마법사 전용',rarity:'고급'},
-   {name:'원소 폭발',glyph:'✹',cost:2,manaCost:2,desc:'마나 2 소모, 피해 24 및 적 취약 2턴.',kind:'damage',damage:24,debuff:'vulnerable',type:'마법사 전용',rarity:'영웅'}
-  ];
- }
- if(game&&game.character==='vampire'){
-  pool=[...pool,...vampireExclusiveSkills];
- }
- if(game&&game.character==='swordsman'){
-  pool=[...pool,...swordsmanExclusiveSkills];
- }
- if(game&&game.character==='grailKnight'){
-  pool=[...pool,...grailKnightExclusiveSkills];
- }
- if(game&&game.character==='purpleTear'){
-  pool=[...pool,...purpleTearExclusiveSkills];
- }
- const filtered=pool.filter(isAllowed);
- return filtered.length?filtered:basePool;
-}
-
-function rollCardByRarity(){
- const pool=getCardPool();
- const r=Math.random();
- const targetRarity=r<.12?'영웅':r<.32?'희귀':r<.62?'고급':'일반';
- const matching=pool.filter(c=>(c.rarity||'일반')===targetRarity);
- const source=matching.length?matching:pool;
- return {...rand(source)};
+function endTurn(){
+ if(!game.active)return;
+ game.discard.push(...game.hand.filter(c=>!c.volatile && !isStanceLockFixedCard(c)));
+ game.hand=[];
+ $('hand').innerHTML='';
+ $('endTurnBtn').disabled=true;
+ $('potionBtn').disabled=true;
+ $('battleLog').textContent=`${game.enemy.name}의 행동 중...`;
+ setTimeout(enemyAct,380);
 }
 
 function winBattle(){
- game.active=false;game.cleared++;
- if(game.enemy && game.enemy.name==='잿빛 검수'){
-  markAshenWardenDefeated();
-  unlockSwordsman();
- }
+ game.active=false;
+ game.cleared++;
+ game.battles++;
  const wasBoss=game.enemy.type==='boss';
- const wasElite=game.enemy.type==='elite'||game.enemy.type==='hazard';
- const gainedShards=awardCorridorProgressShards(wasBoss?'boss':(wasElite?'elite':'stage'));
- const isStoryBoss=game.mode==='story'&&wasBoss;
- const storyItem=isStoryBoss?(game.enemy.storyRewardItem||knightStoryBundle.floorBosses[game.floor]?.rewardItem):null;
- const isFinalStoryBoss=isStoryBoss&&game.floor===2;
-
+ const wasWarden=game.enemy.name==='잿빛 검수';
+ const storyRewardItem=game.enemy.storyRewardItem;
+ if(wasWarden && !isSwordsmanUnlocked()){
+  unlockSwordsman();
+  markAshenWardenDefeated();
+ }
+ if(game.enemy.type==='elite'){
+  game.items.push(...game.items.filter(x=>x.effect==='eliteHp').map(()=>({name:'최대 체력 증가',desc:'최대 체력 +5'})));
+  game.maxHp+=5*game.items.filter(x=>x.effect==='eliteHp').length;
+  game.hp+=5*game.items.filter(x=>x.effect==='eliteHp').length;
+ }
+ const heal=game.passives.filter(x=>x.effect==='killHeal').reduce((a,x)=>a+x.value,0)
+  +game.items.filter(x=>x.effect==='killHeal').length*3
+  +(game.items.some(x=>x.effect==='hopeGrail')?5:0);
+ if(heal>0)game.hp=Math.min(game.maxHp,game.hp+heal);
  if(hasFangRelic()){
   game.fangKills=(game.fangKills||0)+1;
   if(game.fangKills>=10 && !isVampireUnlocked()){
    unlockVampire();
   }
  }
- game.items.filter(x=>x.effect==='killHeal').forEach(x=>{game.hp=Math.min(game.maxHp,game.hp+x.value)});
- if(game.items.some(x=>x.effect==='hopeGrail')){game.hp=Math.min(game.maxHp,game.hp+5);}
- if(wasElite&&game.items.some(x=>x.effect==='eliteHp')){game.maxHp+=5;game.hp+=5}
- let g=wasBoss?45:(wasElite?28:15)+rand([0,3,5]);
- if(game.items.some(x=>x.effect==='goldBonus'))g=Math.round(g*1.5);
- if(game.items.some(x=>x.effect==='riftOrb')&&wasElite)g=Math.round(g*1.25);
- game.gold+=g;
- const mGain=wasBoss?22:(wasElite?15:10);
- const mRes=gainCharMastery(game.character,mGain);
+ let gold=(game.enemy.type==='boss'?34:game.enemy.type==='hazard'?26:game.enemy.type==='elite'?21:14)+Math.floor(Math.random()*5);
+ if(game.items.some(x=>x.effect==='goldBonus'))gold=Math.round(gold*1.5);
+ if(game.items.some(x=>x.effect==='riftOrb')&&(game.enemy.type==='elite'||game.enemy.type==='boss'||game.enemy.type==='hazard'))gold=Math.round(gold*1.25);
+ game.gold+=gold;
 
- const rewards=[];
- if(storyItem){
-  rewards.push({
-   label:`스토리 보상 획득: ${storyItem.name}`,
-   desc:storyItem.desc,
-   action:()=>{
-    if(!game.items.some(it=>it.name===storyItem.name)){
-     game.items.push({...storyItem});
-     applyRelicAcquired(storyItem);
-    }
-    if(isFinalStoryBoss){
+ const gainedShards=awardCorridorProgressShards(game.enemy.type);
+
+ const masteryExpAmount=(game.enemy.type==='boss'?24:game.enemy.type==='elite'?15:10)+game.floor*3;
+ const mRes=gainCharMastery(game.character,masteryExpAmount);
+
+ game.deck=[...game.deck,...game.discard,...game.hand.filter(c=>!c.volatile && !isStanceLockFixedCard(c))];
+ game.discard=[];game.hand=[];
+ if(storyRewardItem && !game.items.some(x=>x.name===storyRewardItem.name)){
+  game.items.push({...storyRewardItem});
+  applyRelicAcquired(storyRewardItem);
+ }
+
+ const finishReward=()=>{
+  if(wasBoss){
+   if(game.mode==='story'){
+    if(game.floor<floors.length-1){
+     game.floor++;
+     makeFloor();
+     renderMap();
+     show('mapScreen');
+     saveContinueRun();
+    }else{
+     unlockGrailKnight();
+     const {newlyUnlockedAch,newlyUnlockedCol}=grantAchievementAndCollection('knight_story_clear','oneTimeIdeal');
      clearContinueRun();
-     grantAchievementAndCollection('knight_story_clear','oneTimeIdeal');
      show('resultScreen');
      $('resultTitle').textContent='기사 스토리 완주!';
-     $('resultDesc').textContent='은퇴 노기사는 환화의 회랑 끝에서 겸손과 용기, 그리고 딸을 향한 배려의 의미를 되찾았습니다. 업적과 수집품 [한때의 이상]이 해금되었습니다!';
-     return;
+     $('resultDesc').textContent=`${game.heroName}이(가) 모든 회랑을 돌파하고 성배기사 해금 및 업적 [기사 스토리 완주하기]를 달성했습니다!${newlyUnlockedAch?' [수집품: 한때의 이상]이 보관소에 추가되었습니다!':''} · 획득 샤드 +${gainedShards}`;
     }
-    advanceAfterBattle();
+    return;
    }
-  });
- }else{
-  const c1=rollCardByRarity(),c2=rollCardByRarity();
-  rewards.push({label:`카드 추가: ${c1.name} (${c1.rarity||'일반'})`,desc:c1.desc,action:()=>{game.deck.push(c1);advanceAfterBattle()}});
-  rewards.push({label:`카드 추가: ${c2.name} (${c2.rarity||'일반'})`,desc:c2.desc,action:()=>{game.deck.push(c2);advanceAfterBattle()}});
-  if(wasElite||wasBoss||Math.random()<.45){
-   const avail=getAvailableRelics().filter(r=>!game.items.some(it=>it.name===r.name));
-   const pool=avail.length?avail:getAvailableRelics();
-   const r=rand(pool);
-   rewards.push({label:`유물 획득: ${r.name} (${r.rarity||'일반'})`,desc:r.desc,action:()=>{game.items.push({...r});applyRelicAcquired(r);advanceAfterBattle()}});
+   if(game.floor<floors.length-1){
+    game.floor++;
+    makeFloor();
+    renderMap();
+    show('mapScreen');
+    saveContinueRun();
+   }else{
+    clearContinueRun();
+    show('resultScreen');
+    $('resultTitle').textContent='회랑 돌파 완료!';
+    $('resultDesc').textContent=`${game.heroName}이(가) 3층 보스를 쓰러뜨렸습니다! · 처치 횟수 ${game.cleared}회 · 보유 골드 ${game.gold} · 누적 샤드 ${getShards()}`;
+   }
+   return;
   }
-  const p=rand(potionTypes);
-  rewards.push({label:`포션 획득: ${p.name}`,desc:p.desc,action:()=>{addPotion(p.name);advanceAfterBattle()}});
-  rewards.push({label:'골드만 챙기기',desc:`보너스 골드 +8 획득 (총 ${g+8}G)`,action:()=>{game.gold+=8;advanceAfterBattle()}});
- }
-
- const shardText=gainedShards>0?` · 샤드 +${gainedShards}`:'';
- const levelUpText=mRes.leveledUp?` · 숙련도 Lv.${mRes.level} 달성!(${mRes.unlockedCards.join(', ')||'신규 카드 해금'})`:'';
- showModal('전투 승리!',`${game.enemy.name} 처치! 골드 +${g} · 숙련도 +${mGain} (Lv.${mRes.level} · ${mRes.curLevelExp}/${mRes.nextExp})${shardText}${levelUpText}`,rewards);
-}
-
-function advanceAfterBattle(){
- game.stage++;
- if(game.stage>=floors[game.floor]){
-  if(game.floor<floors.length-1){
-   game.floor++;
-   makeFloor();
-   show('mapScreen');
-   renderMap();
-   saveContinueRun();
-  }else{
-   clearContinueRun();
-   show('resultScreen');
-   $('resultTitle').textContent='회랑 정복 완료!';
-   $('resultDesc').textContent=`3층 보스를 물리쳤습니다! 처치 ${game.cleared}회 · 보유 골드 ${game.gold}`;
-  }
-  return;
- }
- game.routeOptions=generateOptions();
- show('mapScreen');
- renderMap();
- saveContinueRun();
-}
-
-function ensureShopOffers(){
- if(game.shopOffers)return game.shopOffers;
- const c1=rollCardByRarity();
- const c2=rollCardByRarity();
- const c3=rollCardByRarity();
- const p1=rand(potionTypes);
- const p2=rand(potionTypes);
- const availRelics=getAvailableRelics().filter(r=>!game.items.some(it=>it.name===r.name));
- const relicPoolList=availRelics.length?availRelics:getAvailableRelics();
- const r1=rand(relicPoolList);
- const r2=rand(relicPoolList.filter(x=>x.name!==r1.name))||rand(relicPoolList);
- game.shopOffers={
-  cards:[
-   {id:'shop-c1',name:c1.name,desc:c1.desc,cost:24,card:c1,bought:false},
-   {id:'shop-c2',name:c2.name,desc:c2.desc,cost:28,card:c2,bought:false},
-   {id:'shop-c3',name:c3.name,desc:c3.desc,cost:34,card:c3,bought:false}
-  ],
-  potions:[
-   {id:'shop-p1',name:p1.name,desc:p1.desc,cost:18,potion:p1.name,bought:false},
-   {id:'shop-p2',name:p2.name,desc:p2.desc,cost:22,potion:p2.name,bought:false}
-  ],
-  relics:[
-   {id:'shop-r1',name:r1.name,desc:r1.desc,cost:45,relic:r1,bought:false},
-   {id:'shop-r2',name:r2.name,desc:r2.desc,cost:55,relic:r2,bought:false}
-  ]
+  game.stage++;
+  game.routeOptions=generateOptions();
+  renderMap();
+  show('mapScreen');
+  saveContinueRun();
  };
- return game.shopOffers;
+
+ const unlockNote=wasWarden
+  ?' · ⚔ 신규 캐릭터 [검무가] 및 업적 스킨 [방랑 낭인]이 해금되었습니다!'
+  :(hasFangRelic() && !isVampireUnlocked()
+   ?` · 송곳니 처치 진행도 ${Math.min(10,game.fangKills||0)}/10`
+   :'');
+ const levelUpNote=mRes.leveledUp
+  ?` · 숙련도 Lv.${mRes.level} 달성!${mRes.unlockedCards.length?` (신규 카드 해금: ${mRes.unlockedCards.join(', ')})`:''}`
+  :'';
+ const shardNote=gainedShards>0?` · ✦ 샤드 +${gainedShards}`:'';
+
+ const rewardChoices=[];
+ if(Math.random()<.55 && game.passives.length<3){
+  const availP=passivePool[game.character].filter(p=>!game.passives.some(g=>g.name===p.name));
+  if(availP.length){
+   const p=rand(availP);
+   rewardChoices.push({
+    label:`✦ 패시브 획득: ${p.name}`,
+    desc:p.desc,
+    action:()=>{game.passives.push(p);finishReward();}
+   });
+  }
+ }
+ const cardPool=getRewardCardPool();
+ if(cardPool.length){
+  const picked=shuffle([...cardPool]).slice(0,Math.min(3,cardPool.length));
+  picked.forEach(c=>{
+   rewardChoices.push({
+    label:`+ 카드 추가: ${c.name}`,
+    desc:`[${c.rarity||'일반'}] ${c.desc}`,
+    action:()=>{game.deck.push({...c});finishReward();}
+   });
+  });
+ }
+ rewardChoices.push({
+  label:'카드 추가 안 함',
+  desc:'덱을 늘리지 않고 다음 단계로 진행합니다.',
+  action:finishReward
+ });
+
+ showModal(
+  '전투 승리!',
+  `골드 ${gold} 획득${shardNote}${unlockNote}${levelUpNote} · 숙련도 EXP +${masteryExpAmount} (Lv.${mRes.level}, ${mRes.curLevelExp}/${mRes.nextExp}). 보상을 선택하세요.`,
+  rewardChoices
+ );
 }
 
-function refreshShopOffers(){
- const cost=game.shopRefreshCost||9;
- if(game.gold<cost)return;
- game.gold-=cost;
- game.shopRefreshCost=cost+4;
- game.shopOffers=null;
- ensureShopOffers();
- renderShop();
- saveContinueRun();
+function getRewardCardPool(){
+ const lockedNames=getLockedByMasteryCardNames(game.character);
+ const bannedNames=new Set(loadBannedCards(game.character));
+ const isAllowed=(c)=>c && !lockedNames.has(c.name) && !bannedNames.has(c.name) && !isStanceLockFixedCard(c);
+
+ if(game.character==='purpleTear'){
+  const src=game.presetDeckSource || PURPLE_TEAR_DEFAULT_TARGET_CHAR;
+  const baseTear=[...purpleTearExclusiveSkills];
+  if(src==='swordsman')return [...baseTear,...swordsmanExclusiveSkills].filter(isAllowed);
+  if(src==='vampire')return [...baseTear,...vampireExclusiveSkills].filter(isAllowed);
+  if(src==='grailKnight')return [...baseTear,...grailKnightExclusiveSkills].filter(isAllowed);
+  if(src==='mage')return [...baseTear,...(mageElementalSkills.fire||[])].filter(isAllowed);
+  return [...baseTear,{name:'돌진',glyph:'➤',cost:1,desc:'적에게 피해 9.',kind:'damage',damage:9,type:'기사 전용',rarity:'일반'},{name:'전투 함성',glyph:'♬',cost:1,desc:'이번 턴 공격 피해 +4.',kind:'buff',buff:4,type:'기사 전용',rarity:'고급'}].filter(isAllowed);
+ }
+
+ if(game.character==='swordsman'){
+  return swordsmanExclusiveSkills.filter(isAllowed);
+ }
+ if(game.character==='vampire'){
+  return vampireExclusiveSkills.filter(isAllowed);
+ }
+ if(game.character==='grailKnight'){
+  return grailKnightExclusiveSkills.filter(isAllowed);
+ }
+ if(game.character==='mage'){
+  const elKey=game.element||'fire';
+  const elPool=mageElementalSkills[elKey]||mageElementalSkills.fire;
+  return elPool.filter(isAllowed);
+ }
+
+ const common=[
+  {name:'돌진',glyph:'➤',cost:1,desc:'적에게 피해 9.',kind:'damage',damage:9,type:'공통 카드',rarity:'일반'},
+  {name:'전투 함성',glyph:'♬',cost:1,desc:'이번 턴 공격 피해 +4.',kind:'buff',buff:4,type:'공통 카드',rarity:'고급'},
+  {name:'신속한 움직임',glyph:'◈',cost:1,desc:'카드 2장 뽑기, 방어도 3.',kind:'draw',draw:2,block:3,type:'공통 카드',rarity:'고급'},
+  {name:'균형의 일격',glyph:'⚔',cost:1,desc:'피해 7, 방어도 5.',kind:'mixed',damage:7,block:5,type:'공통 카드',rarity:'일반'},
+  {name:'집중 타격',glyph:'⌖',cost:2,desc:'피해 14, 카드 1장 뽑기.',kind:'damage',damage:14,draw:1,type:'공통 카드',rarity:'희귀'}
+ ];
+ const unlockedExtras=[];
+ const charMap=masteryUnlockCards[game.character]||{};
+ const curLv=getCharMastery(game.character).level;
+ Object.keys(charMap).forEach(reqLv=>{
+  if(curLv>=Number(reqLv)){
+   unlockedExtras.push(...charMap[reqLv]);
+  }
+ });
+ return [...common,...unlockedExtras].filter(isAllowed);
+}
+
+function generateShopOffers(){
+ const pool=getRewardCardPool();
+ const cards=[];
+ const usedNames=new Set();
+ for(let i=0;i<3;i++){
+  const candidates=pool.filter(c=>!usedNames.has(c.name));
+  if(!candidates.length)break;
+  const pick=rand(candidates);
+  usedNames.add(pick.name);
+  const price=pick.rarity==='영웅'?34:pick.rarity==='희귀'?26:pick.rarity==='고급'?20:16;
+  cards.push({card:{...pick},price,sold:false});
+ }
+ const potions=[];
+ for(let i=0;i<2;i++){
+  const p=rand(potionTypes);
+  potions.push({potion:p,price:18,sold:false});
+ }
+ const availRelics=getAvailableRelics().filter(r=>!game.items.some(g=>g.name===r.name));
+ const relics=[];
+ if(availRelics.length){
+  const r=rand(availRelics);
+  relics.push({relic:r,price:42,sold:false});
+ }
+ return {cards,potions,relics};
 }
 
 function openShop(){
- game.shopTab=game.shopTab||'cards';
- game.shopRefreshCost=game.shopRefreshCost||9;
- ensureShopOffers();
  $('serviceTitle').textContent='회랑 상점';
- $('serviceDesc').textContent='탭을 눌러 카드, 포션, 유물을 구매하거나 카드를 제거할 수 있습니다.';
+ $('serviceDesc').textContent='탭을 전환해 카드·포션·유물을 구매하거나, 카드 제거 및 상품 새로고침을 이용할 수 있습니다.';
  $('shopTabs').style.display='flex';
+ if(!game.shopTab)game.shopTab='cards';
+ if(!game.shopOffers)game.shopOffers=generateShopOffers();
  renderShop();
  show('serviceScreen');
  saveContinueRun();
 }
 
 function renderShop(){
- const offers=ensureShopOffers();
- const tabs=[
-  {key:'cards',label:`카드 (${offers.cards.filter(x=>!x.bought).length})`},
-  {key:'potions',label:`포션 (${offers.potions.filter(x=>!x.bought).length})`},
-  {key:'relics',label:`유물 (${offers.relics.filter(x=>!x.bought).length})`},
-  {key:'remove',label:game.removedCard?'카드 제거 (완료)':`카드 제거 (${game.removePrice}G)`}
- ];
- $('shopTabs').innerHTML='';
- tabs.forEach(t=>{
-  const tb=document.createElement('button');
-  tb.type='button';
-  tb.className='tab'+(game.shopTab===t.key?' active':'');
-  tb.textContent=t.label;
-  tb.onclick=()=>{game.shopTab=t.key;renderShop();};
-  $('shopTabs').appendChild(tb);
+ const tabs=$('shopTabs');
+ tabs.innerHTML='';
+ [
+  {id:'cards',label:'카드 상점'},
+  {id:'potions',label:'포션 상점'},
+  {id:'relics',label:'유물 상점'}
+ ].forEach(t=>{
+  const btn=document.createElement('button');
+  btn.type='button';
+  btn.className='tab'+(game.shopTab===t.id?' active':'');
+  btn.textContent=t.label;
+  btn.onclick=()=>{game.shopTab=t.id;renderShop();};
+  tabs.appendChild(btn);
  });
 
- const items=$('serviceItems');
- items.innerHTML='';
+ const el=$('serviceItems');el.innerHTML='';
+ const offers=game.shopOffers;
 
- if(game.shopTab==='cards'||game.shopTab==='potions'||game.shopTab==='relics'){
-  const list=offers[game.shopTab]||[];
-  list.forEach(entry=>{
-   const row=document.createElement('div');
-   row.className='reward';
-   const disabled=entry.bought||game.gold<entry.cost;
-   row.innerHTML=`<div class="row between"><div><h3>${entry.name} (${entry.cost}G)</h3><p>${entry.desc}</p></div><button class="btn small">${entry.bought?'구매 완료':'구매'}</button></div>`;
-   const btn=row.querySelector('button');
-   btn.disabled=disabled;
-   btn.onclick=()=>{
-    if(entry.bought||game.gold<entry.cost)return;
-    game.gold-=entry.cost;
-    entry.bought=true;
-    if(game.shopTab==='cards')game.deck.push({...entry.card});
-    else if(game.shopTab==='potions')addPotion(entry.potion);
-    else if(game.shopTab==='relics'){game.items.push({...entry.relic});applyRelicAcquired(entry.relic);}
+ if(game.shopTab==='cards'){
+  offers.cards.forEach(item=>{
+   const d=document.createElement('div');d.className='reward';
+   d.innerHTML=`<div class="row between"><div><h3>${item.card.name} · ${item.price}G (${item.card.rarity||'일반'})</h3><p>${item.card.desc}</p></div><button class="btn small" ${item.sold||game.gold<item.price?'disabled':''}>${item.sold?'구매 완료':'구매'}</button></div>`;
+   d.querySelector('button').onclick=()=>{
+    if(item.sold||game.gold<item.price)return;
+    game.gold-=item.price;
+    game.deck.push({...item.card});
+    item.sold=true;
     renderShop();
     saveContinueRun();
    };
-   items.appendChild(row);
+   el.appendChild(d);
   });
-  const refreshRow=document.createElement('div');
-  refreshRow.className='reward';
-  const rCost=game.shopRefreshCost||9;
-  refreshRow.innerHTML=`<div class="row between"><div><h3>상점 목록 새로고침 (${rCost}G)</h3><p>현재 탭의 판매 목록을 새로운 구성으로 교체합니다.</p></div><button class="btn small gold">새로고침</button></div>`;
-  const rBtn=refreshRow.querySelector('button');
-  rBtn.disabled=game.gold<rCost;
-  rBtn.onclick=refreshShopOffers;
-  items.appendChild(refreshRow);
- }else if(game.shopTab==='remove'){
-  const row=document.createElement('div');
-  row.className='reward';
-  row.innerHTML=`<div class="row between"><div><h3>덱에서 카드 1장 제거 (${game.removePrice}G)</h3><p>불필요한 기본 카드를 덱에서 영구 제거합니다. (상점당 1회)</p></div><button class="btn small">제거 선택</button></div>`;
-  const btn=row.querySelector('button');
-  btn.disabled=game.removedCard||game.gold<game.removePrice||game.deck.length<=1;
-  btn.onclick=()=>openRemoveCardModal();
-  items.appendChild(row);
+  const rem=document.createElement('div');rem.className='reward';
+  const remPrice=game.removePrice||37;
+  rem.innerHTML=`<div class="row between"><div><h3>카드 제거 · ${remPrice}G</h3><p>덱에서 원치 않는 카드 1장을 제거합니다(회랑당 1회).</p></div><button class="btn small red" ${game.removedCard||game.gold<remPrice?'disabled':''}>${game.removedCard?'완료':'제거'}</button></div>`;
+  rem.querySelector('button').onclick=openRemoveModal;
+  el.appendChild(rem);
+ }else if(game.shopTab==='potions'){
+  offers.potions.forEach(item=>{
+   const d=document.createElement('div');d.className='reward';
+   d.innerHTML=`<div class="row between"><div><h3>${item.potion.name} · ${item.price}G</h3><p>${item.potion.desc}</p></div><button class="btn small" ${item.sold||game.gold<item.price?'disabled':''}>${item.sold?'구매 완료':'구매'}</button></div>`;
+   d.querySelector('button').onclick=()=>{
+    if(item.sold||game.gold<item.price)return;
+    game.gold-=item.price;
+    addPotion(item.potion.name);
+    item.sold=true;
+    renderShop();
+    saveContinueRun();
+   };
+   el.appendChild(d);
+  });
+ }else if(game.shopTab==='relics'){
+  if(!offers.relics.length){
+   const empty=document.createElement('div');empty.className='reward';
+   empty.innerHTML='<h3>구매 가능한 유물 없음</h3><p>현재 보유하지 않은 새 유물이 없습니다.</p>';
+   el.appendChild(empty);
+  }else{
+   offers.relics.forEach(item=>{
+    const already=game.items.some(g=>g.name===item.relic.name);
+    const d=document.createElement('div');d.className='reward';
+    d.innerHTML=`<div class="row between"><div><h3>${item.relic.name} · ${item.price}G (${item.relic.rarity||'고급'})</h3><p>${item.relic.desc}</p></div><button class="btn small" ${item.sold||already||game.gold<item.price?'disabled':''}>${item.sold||already?'보유 중':'구매'}</button></div>`;
+    d.querySelector('button').onclick=()=>{
+     if(item.sold||already||game.gold<item.price)return;
+     game.gold-=item.price;
+     game.items.push({...item.relic});
+     applyRelicAcquired(item.relic);
+     item.sold=true;
+     renderShop();
+     saveContinueRun();
+    };
+    el.appendChild(d);
+   });
+  }
  }
+
+ const refreshBox=document.createElement('div');refreshBox.className='reward';
+ const rCost=game.shopRefreshCost||9;
+ refreshBox.innerHTML=`<div class="row between"><div><h3>상품 새로고침 · ${rCost}G</h3><p>현재 상점 진열 상품을 새로운 목록으로 교체합니다.</p></div><button class="btn small gold" ${game.gold<rCost?'disabled':''}>새로고침 (${rCost}G)</button></div>`;
+ refreshBox.querySelector('button').onclick=()=>{
+  if(game.gold<rCost)return;
+  game.gold-=rCost;
+  game.shopOffers=generateShopOffers();
+  renderShop();
+  saveContinueRun();
+ };
+ el.appendChild(refreshBox);
+
  $('serviceGold').textContent=`보유 골드: ${game.gold}G`;
 }
 
-function openRemoveCardModal(){
- showModal('제거할 카드 선택','덱에서 제거할 카드를 1장 고르세요.',game.deck.map((c,idx)=>({
-  label:`${c.name} (${c.cost}코스트)`,
-  desc:c.desc,
+function openRemoveModal(){
+ const remPrice=game.removePrice||37;
+ showModal('카드 제거',`덱에서 제거할 카드를 선택하세요 (비용 ${remPrice}G).`,game.deck.filter(c=>!isStanceLockFixedCard(c)).map((c,idx)=>({
+  label:c.name,desc:c.desc,
   action:()=>{
-   if(game.removedCard||game.gold<game.removePrice)return;
-   game.gold-=game.removePrice;
-   game.deck.splice(idx,1);
+   if(game.gold<remPrice)return;
+   game.gold-=remPrice;
+   const realIdx=game.deck.indexOf(c);
+   if(realIdx>=0)game.deck.splice(realIdx,1);
    game.removedCard=true;
    $('modalOverlay').classList.remove('show');
    renderShop();
@@ -3425,23 +3402,42 @@ function openRemoveCardModal(){
 }
 
 function openEvent(){
- $('serviceTitle').textContent='회랑의 이상 현상';
  $('shopTabs').style.display='none';
- const ev=rand([
-  {t:'잊혀진 제단',d:'제단에서 붉은 기운이 피어오릅니다.',a:['체력 8을 바치고 카드 1장 획득',()=>{game.hp=Math.max(1,game.hp-8);game.deck.push(rollCardByRarity())}],b:['골드 20 획득',()=>{game.gold+=20}]},
-  {t:'여행자 상인',d:'떠돌이 상인이 낡은 물건을 내밉니다.',a:['15G를 내고 최대 체력 +6',()=>{if(game.gold>=15){game.gold-=15;game.maxHp+=6;game.hp+=6}}],b:['그냥 지나치기',()=>{}]},
-  {t:'회랑 연금술사',d:'연금술사가 빛나는 시험관 두 개를 내밀며 실험을 제안합니다.',a:['성광 포션 획득 및 체력 5 회복',()=>{addPotion('성광 포션');game.hp=Math.min(game.maxHp,game.hp+5)}],b:['12G를 내고 혈폭 포션 획득',()=>{if(game.gold>=12){game.gold-=12;addPotion('혈폭 포션')}}]},
-  {t:'잿빛 사당',d:'잿가루로 뒤덮인 사당에서 숙련의 기운이 감돕니다.',a:['숙련도 +12 획득 및 골드 10G',()=>{gainCharMastery(game.character,12);game.gold+=10}],b:['체력 6을 바치고 유물 획득',()=>{game.hp=Math.max(1,game.hp-6);const avail=getAvailableRelics().filter(r=>!game.items.some(it=>it.name===r.name));const r=rand(avail.length?avail:getAvailableRelics());game.items.push({...r});applyRelicAcquired(r)}]},
-  {t:'고대 룬 비석',d:'회랑 벽면의 룬 문자가 희미하게 빛납니다.',a:['무작위 카드 1장 획득(비용 1 감소)',()=>{const c=rollCardByRarity();c.cost=Math.max(0,(c.cost||0)-1);c.desc=`[룬 각인] ${c.desc}`;game.deck.push(c)}],b:['체력 8 회복',()=>{game.hp=Math.min(game.maxHp,game.hp+8)}]},
-  {t:'상처 치유의 모닥불',d:'꺼져가던 모닥불을 되살리자 따뜻한 온기가 퍼집니다.',a:['체력 35% 회복',()=>{const heal=Math.max(5,Math.round(game.maxHp*0.35));game.hp=Math.min(game.maxHp,game.hp+heal)}],b:['골드 18 획득',()=>{game.gold+=18}]}
- ]);
- $('serviceDesc').textContent=`[${ev.t}] ${ev.d}`;
+ $('serviceTitle').textContent='특수 이벤트';
+ const events=[
+  {title:'잿빛 제단',desc:'고대의 제단에서 붉은 잿가루가 피어오릅니다.',choices:[
+   {label:'제단에 피를 바친다',desc:'최대 체력 -6, 유물 1개 획득.',action:()=>{game.maxHp=Math.max(20,game.maxHp-6);game.hp=Math.min(game.hp,game.maxHp);const avail=getAvailableRelics().filter(r=>!game.items.some(g=>g.name===r.name));if(avail.length){const r=rand(avail);game.items.push({...r});applyRelicAcquired(r);}leaveService();}},
+   {label:'기도만 올린다',desc:'체력 10 회복.',action:()=>{game.hp=Math.min(game.maxHp,game.hp+10);leaveService();}}
+  ]},
+  {title:'방랑 상인의 낙오품',desc:'부서진 수레 옆에 골드 주머니와 포션이 떨어져 있습니다.',choices:[
+   {label:'골드와 포션 회수',desc:'골드 22 획득 및 포션 1개 획득.',action:()=>{game.gold+=22;addPotion(rand(potionTypes).name);leaveService();}},
+   {label:'주변을 살핀다',desc:'골드 12 획득 및 새 카드 추가.',action:()=>{game.gold+=12;const pool=getRewardCardPool();if(pool.length)game.deck.push({...rand(pool)});leaveService();}}
+  ]},
+  {title:'회랑 연금술사',desc:'보랏빛 시약병을 든 연금술사가 실험을 제안합니다.',choices:[
+   {label:'시약 음용',desc:'최대 체력 +4 및 포션 1개 획득.',action:()=>{game.maxHp+=4;game.hp=Math.min(game.maxHp,game.hp+4);addPotion(rand(potionTypes).name);leaveService();}},
+   {label:'잔여 원액 회수',desc:'골드 18 획득 및 체력 6 회복.',action:()=>{game.gold+=18;game.hp=Math.min(game.maxHp,game.hp+6);leaveService();}}
+  ]},
+  {title:'잿빛 사당',desc:'꺼져가는 성화 앞에서 고요한 기운이 감돕니다.',choices:[
+   {label:'성화에 기원',desc:'체력 14 회복 및 골드 10 획득.',action:()=>{game.hp=Math.min(game.maxHp,game.hp+14);game.gold+=10;leaveService();}},
+   {label:'잿불 축복 받기',desc:'유물 1개 획득(보유 유물이 없으면 골드 25).',action:()=>{const avail=getAvailableRelics().filter(r=>!game.items.some(g=>g.name===r.name));if(avail.length){const r=rand(avail);game.items.push({...r});applyRelicAcquired(r);}else{game.gold+=25;}leaveService();}}
+  ]},
+  {title:'고대 룬 비석',desc:'빛바랜 룬 문자가 옅게 맥동합니다.',choices:[
+   {label:'룬 문자 해독',desc:'새 카드 1장 추가 및 골드 15 획득.',action:()=>{const pool=getRewardCardPool();if(pool.length)game.deck.push({...rand(pool)});game.gold+=15;leaveService();}},
+   {label:'마력 공명',desc:'체력 8 회복 및 포션 1개 획득.',action:()=>{game.hp=Math.min(game.maxHp,game.hp+8);addPotion(rand(potionTypes).name);leaveService();}}
+  ]},
+  {title:'상처 치유의 모닥불',desc:'따뜻한 모닥불이 회랑의 한기를 녹여줍니다.',choices:[
+   {label:'모닥불 곁에서 휴식',desc:'체력 18 회복.',action:()=>{game.hp=Math.min(game.maxHp,game.hp+18);leaveService();}},
+   {label:'장작을 보태고 전진',desc:'골드 20 획득 및 체력 8 회복.',action:()=>{game.gold+=20;game.hp=Math.min(game.maxHp,game.hp+8);leaveService();}}
+  ]}
+ ];
+ const ev=rand(events);
+ $('serviceDesc').textContent=`${ev.title} — ${ev.desc}`;
  $('serviceItems').innerHTML='';
- [[ev.a[0],ev.a[1]],[ev.b[0],ev.b[1]]].forEach(([label,fn])=>{
-  const row=document.createElement('div');row.className='reward';
-  row.innerHTML=`<div class="row between"><div><h3>${label}</h3></div><button class="btn small">선택</button></div>`;
-  row.querySelector('button').onclick=(e)=>{fn();e.target.disabled=true;$('serviceGold').textContent=`보유 골드: ${game.gold}G`;saveContinueRun();};
-  $('serviceItems').appendChild(row);
+ ev.choices.forEach(ch=>{
+  const d=document.createElement('div');d.className='reward';
+  d.innerHTML=`<div class="row between"><div><h3>${ch.label}</h3><p>${ch.desc}</p></div><button class="btn small gold">선택</button></div>`;
+  d.querySelector('button').onclick=ch.action;
+  $('serviceItems').appendChild(d);
  });
  $('serviceGold').textContent=`보유 골드: ${game.gold}G`;
  show('serviceScreen');
@@ -3449,190 +3445,136 @@ function openEvent(){
 }
 
 function leaveService(){
- game.shopOffers=null;
- game.removedCard=false;
  game.stage++;
- if(game.stage>=floors[game.floor]){
-  game.floor++;makeFloor();show('mapScreen');renderMap();saveContinueRun();return;
- }
- game.routeOptions=generateOptions();show('mapScreen');renderMap();saveContinueRun();
+ game.routeOptions=generateOptions();
+ renderMap();
+ show('mapScreen');
+ saveContinueRun();
 }
 
 function potionTotal(){return Object.values(game.potions).reduce((a,b)=>a+b,0)}
 function addPotion(name){game.potions[name]=(game.potions[name]||0)+1}
 
-function openPotionModal(){
- const entries=Object.entries(game.potions).filter(([,n])=>n>0);
- if(!entries.length){showModal('포션 보관함','사용할 수 있는 포션이 없습니다.',[]);return}
- showModal('포션 사용','사용할 포션을 선택하세요.',entries.map(([name,count])=>{
-  const p=potionTypes.find(x=>x.name===name);
-  return {label:`${name} (${count}개)`,desc:p.desc,action:()=>{
+function openPotions(){
+ if(!game.active)return;
+ const names=Object.keys(game.potions).filter(k=>game.potions[k]>0);
+ if(!names.length){showModal('포션 보관함','사용할 수 있는 포션이 없습니다.',[]);return}
+ showModal('포션 보관함','사용할 포션을 선택하세요.',names.map(name=>{
+  const pt=potionTypes.find(x=>x.name===name);
+  return {label:`${name} (${game.potions[name]}개)`,desc:pt.desc,action:()=>{
    game.potions[name]--;
-   $('battleLog').textContent=p.use(game);
-   $('modalOverlay').classList.remove('show');
-   if(game.enemy.hp<=0){winBattle();return}
-   renderBattle();
+   $('battleLog').textContent=pt.use(game);
+   if(game.enemy&&game.enemy.hp<=0){$('modalOverlay').classList.remove('show');winBattle();return}
+   $('modalOverlay').classList.remove('show');renderBattle();
   }};
  }));
 }
 
+function openInventory(){
+ const allCards=[...game.deck,...game.discard,...game.hand];
+ const pList=game.passives.length?game.passives.map(p=>`<div class="inventory-item"><b>✦ ${p.name}</b><p class="muted" style="margin:4px 0 0">${p.desc}</p></div>`).join(''):'<p class="muted">보유한 패시브가 없습니다.</p>';
+ const rList=game.items.length?game.items.map(r=>`<div class="inventory-item"><b>❖ ${r.name}</b><p class="muted" style="margin:4px 0 0">${r.desc}</p></div>`).join(''):'<p class="muted">보유한 유물이 없습니다.</p>';
+ const cList=allCards.length?allCards.map(c=>`<div class="inventory-item"><b>${c.glyph} ${c.name} (${getEffectiveCardCost(c)}코스트)</b><p class="muted" style="margin:4px 0 0">${c.desc}</p></div>`).join(''):'<p class="muted">보유한 카드가 없습니다.</p>';
+ showModal('보유 목록','',[]);
+ $('modalTitle').textContent='보유 목록';
+ $('modalText').innerHTML=`<p><b>패시브 (${game.passives.length}/3)</b></p><div class="inventory">${pList}</div><p style="margin-top:12px"><b>유물 (${game.items.length})</b></p><div class="inventory">${rList}</div><p style="margin-top:12px"><b>덱 카드 (${allCards.length}장)</b></p><div class="inventory">${cList}</div>`;
+ $('modalChoices').innerHTML='';
+ $('modalOverlay').classList.add('show');
+}
+
 function openBattlePilesModal(){
  if(!game)return;
- const drawList=game.drawPile||[];
- const discardList=game.discard||[];
- const handList=game.hand||[];
+ const renderPileCards=(arr,emptyMsg)=>arr && arr.length
+  ?arr.map(c=>`<div class="inventory-item"><b>${c.glyph||'✦'} ${c.name} (${getEffectiveCardCost(c)}코스트)</b><p class="muted" style="margin:4px 0 0">${c.desc}</p></div>`).join('')
+  :`<p class="muted">${emptyMsg}</p>`;
  showModal('전투 더미 보기','',[]);
- $('modalTitle').textContent='전투 카드 더미 현황';
+ $('modalTitle').textContent='전투 더미 보기';
  $('modalText').innerHTML=`
-  <p>현재 손패 <b>${handList.length}장</b> · 뽑을 더미 <b>${drawList.length}장</b> · 버린 더미 <b>${discardList.length}장</b></p>
-  <div class="reward">
-   <h3>뽑을 더미 (${drawList.length}장)</h3>
-   <p>${drawList.length?drawList.map(c=>`${c.name}(${getEffectiveCardCost(c)}코스트)`).join(', '):'비어 있음'}</p>
-  </div>
-  <div class="reward">
-   <h3>버린 더미 (${discardList.length}장)</h3>
-   <p>${discardList.length?discardList.map(c=>`${c.name}(${getEffectiveCardCost(c)}코스트)`).join(', '):'비어 있음'}</p>
-  </div>
+  <p><b>뽑을 카드 더미 (${(game.drawPile||[]).length}장)</b></p>
+  <div class="inventory">${renderPileCards(game.drawPile,'뽑을 카드가 없습니다.')}</div>
+  <p style="margin-top:12px"><b>버린 카드 더미 (${(game.discard||[]).length}장)</b></p>
+  <div class="inventory">${renderPileCards(game.discard,'버린 카드가 없습니다.')}</div>
  `;
  $('modalChoices').innerHTML='';
  $('modalOverlay').classList.add('show');
 }
 
-function openInventoryModal(){
- showModal('보유 목록','',[]);
- $('modalTitle').textContent='보유 목록';
- $('modalText').innerHTML=`
-  <div class="tabs" id="invTabs">
-   <button type="button" class="tab active" data-itab="deck">덱 (${game.deck.length}장)</button>
-   <button type="button" class="tab" data-itab="passives">패시브 (${game.passives.length}/3)</button>
-   <button type="button" class="tab" data-itab="relics">유물 (${game.items.length}개)</button>
-   <button type="button" class="tab" data-itab="potions">포션 (${potionTotal()}개)</button>
-  </div>
-  <div id="invBody"></div>
- `;
- const choicesEl=$('modalChoices');
- choicesEl.innerHTML='';
-
- const renderInvTab=(tabKey)=>{
-  const body=$('invBody');
-  if(!body)return;
-  if(tabKey==='deck'){
-   body.innerHTML=`<div class="inventory">${game.deck.map(c=>`<div class="inventory-item"><b>${c.glyph} ${c.name}</b> <span class="muted">(${c.cost}코스트 · ${c.rarity||'일반'})</span><div class="muted" style="margin-top:4px">${c.desc}</div></div>`).join('')}</div>`;
-  }else if(tabKey==='passives'){
-   body.innerHTML=game.passives.length
-    ?`<div class="inventory">${game.passives.map(p=>`<div class="inventory-item"><b>✦ ${p.name}</b> <span class="muted">(${p.rarity||'일반'})</span><div class="muted" style="margin-top:4px">${p.desc}</div></div>`).join('')}</div>`
-    :'<p class="muted">보유 중인 패시브가 없습니다. (최대 3개)</p>';
-  }else if(tabKey==='relics'){
-   body.innerHTML=game.items.length
-    ?`<div class="inventory">${game.items.map(r=>`<div class="inventory-item"><b>❖ ${r.name}</b> <span class="muted">(${r.rarity||'일반'})</span><div class="muted" style="margin-top:4px">${r.desc}</div></div>`).join('')}</div>`
-    :'<p class="muted">보유 중인 유물이 없습니다.</p>';
-  }else{
-   const pEntries=Object.entries(game.potions).filter(([,n])=>n>0);
-   body.innerHTML=pEntries.length
-    ?`<div class="inventory">${pEntries.map(([name,cnt])=>{
-      const info=potionTypes.find(x=>x.name===name);
-      return `<div class="inventory-item"><b>🧪 ${name} ×${cnt}</b><div class="muted" style="margin-top:4px">${info?info.desc:''}</div></div>`;
-     }).join('')}</div>`
-    :'<p class="muted">보유 중인 포션이 없습니다.</p>';
-  }
- };
-
- renderInvTab('deck');
- $('modalOverlay').querySelectorAll('[data-itab]').forEach(btn=>{
-  btn.onclick=()=>{
-   $('modalOverlay').querySelectorAll('[data-itab]').forEach(b=>b.classList.remove('active'));
-   btn.classList.add('active');
-   renderInvTab(btn.dataset.itab);
-  };
- });
- $('modalOverlay').classList.add('show');
-}
-
-function getAllBanCandidateCards(charKey){
- const k=resolveBanChar(charKey);
+function getAllKnownCardsForChar(charKey){
+ const k=chars[charKey]?charKey:'knight';
  const map=new Map();
  const addCard=(c)=>{
-  if(!c || !c.name)return;
+  if(!c || !c.name || isStanceLockFixedCard(c))return;
   if(!map.has(c.name)){
-   map.set(c.name,{...c});
+   map.set(c.name,{name:c.name,glyph:c.glyph||'✦',cost:c.cost??1,desc:c.desc||'',rarity:c.rarity||'일반',type:c.type||'카드'});
   }
  };
- makeBaseDeck(k,'fire').forEach(addCard);
- [
-  {name:'일격',glyph:'⚔',cost:1,desc:'적에게 피해 9.',kind:'damage',damage:9,type:'공격',rarity:'일반'},
-  {name:'수비 태세',glyph:'▣',cost:1,desc:'방어도 8 획득.',kind:'block',block:8,type:'방어',rarity:'일반'},
-  {name:'신속한 베기',glyph:'➤',cost:0,desc:'피해 5, 카드 1장 뽑기.',kind:'damage',damage:5,draw:1,type:'공격',rarity:'고급'},
-  {name:'기세 충전',glyph:'✦',cost:0,desc:'이번 턴 공격 피해 +3.',kind:'buff',buff:3,type:'강화',rarity:'고급'},
-  {name:'응급 치료',glyph:'✚',cost:1,desc:'체력 7 회복.',kind:'heal',heal:7,type:'회복',rarity:'고급'},
-  {name:'약점 찌르기',glyph:'⌖',cost:1,desc:'피해 7 및 적 취약 2턴 부여.',kind:'damage',damage:7,debuff:'vulnerable',type:'공격',rarity:'고급'},
-  {name:'연속 찌르기',glyph:'⚔',cost:1,desc:'피해 11.',kind:'damage',damage:11,type:'공격',rarity:'일반'},
-  {name:'철벽 수호',glyph:'▣',cost:1,desc:'방어도 10 획득.',kind:'block',block:10,type:'방어',rarity:'일반'},
-  {name:'전투 집중',glyph:'✦',cost:0,desc:'카드 1장 뽑고 이번 턴 공격 +2.',kind:'buff',buff:2,draw:1,type:'강화',rarity:'고급'},
-  {name:'회복의 빛',glyph:'✚',cost:1,desc:'체력 8 회복.',kind:'heal',heal:8,type:'회복',rarity:'고급'},
-  {name:'심판의 일격',glyph:'⚔',cost:2,desc:'피해 18.',kind:'damage',damage:18,type:'공격',rarity:'희귀'},
-  {name:'요새 구축',glyph:'▣',cost:2,desc:'방어도 16 획득.',kind:'block',block:16,type:'방어',rarity:'희귀'},
-  {name:'파멸의 검격',glyph:'⚔',cost:2,desc:'피해 22 및 적 취약 2턴.',kind:'damage',damage:22,debuff:'vulnerable',type:'공격',rarity:'영웅'},
-  {name:'불멸의 성역',glyph:'✦',cost:2,desc:'방어도 20 및 체력 5 회복.',kind:'mixed',block:20,heal:5,type:'방어/회복',rarity:'영웅'}
- ].forEach(addCard);
- if(k==='mage'){
-  ['fire','ice','lightning'].forEach(elKey=>{
-   (mageElementalSkills[elKey]||[]).forEach(addCard);
-  });
-  addCard({name:'마나 방출',glyph:'✧',cost:0,manaCost:1,desc:'마나 1 소모, 피해 10 및 카드 1장 뽑기.',kind:'damage',damage:10,draw:1,type:'마법사 전용',rarity:'일반'});
-  addCard({name:'마력 수급',glyph:'❄',cost:0,desc:'마나 2 회복, 방어도 4 획득.',kind:'mana',mana:2,block:4,type:'마법사 전용',rarity:'고급'});
-  addCard({name:'원소 폭발',glyph:'✹',cost:2,manaCost:2,desc:'마나 2 소모, 피해 24 및 적 취약 2턴.',kind:'damage',damage:24,debuff:'vulnerable',type:'마법사 전용',rarity:'영웅'});
+ if(k==='purpleTear'){
+  purpleTearExclusiveSkills.forEach(addCard);
+  swordsmanExclusiveSkills.forEach(addCard);
+  vampireExclusiveSkills.forEach(addCard);
+  grailKnightExclusiveSkills.forEach(addCard);
+  Object.values(mageElementalSkills).forEach(arr=>arr.forEach(addCard));
+ }else if(k==='swordsman'){
+  swordsmanExclusiveSkills.forEach(addCard);
+ }else if(k==='vampire'){
+  vampireExclusiveSkills.forEach(addCard);
+ }else if(k==='grailKnight'){
+  grailKnightExclusiveSkills.forEach(addCard);
+ }else if(k==='mage'){
+  Object.values(mageElementalSkills).forEach(arr=>arr.forEach(addCard));
+ }else{
+  [
+   {name:'돌진',glyph:'➤',cost:1,desc:'적에게 피해 9.',rarity:'일반',type:'공통 카드'},
+   {name:'전투 함성',glyph:'♬',cost:1,desc:'이번 턴 공격 피해 +4.',rarity:'고급',type:'공통 카드'},
+   {name:'신속한 움직임',glyph:'◈',cost:1,desc:'카드 2장 뽑기, 방어도 3.',rarity:'고급',type:'공통 카드'},
+   {name:'균형의 일격',glyph:'⚔',cost:1,desc:'피해 7, 방어도 5.',rarity:'일반',type:'공통 카드'},
+   {name:'집중 타격',glyph:'⌖',cost:2,desc:'피해 14, 카드 1장 뽑기.',rarity:'희귀',type:'공통 카드'}
+  ].forEach(addCard);
  }
- if(k==='vampire')vampireExclusiveSkills.forEach(addCard);
- if(k==='swordsman')swordsmanExclusiveSkills.forEach(addCard);
- if(k==='grailKnight')grailKnightExclusiveSkills.forEach(addCard);
- if(k==='purpleTear')purpleTearExclusiveSkills.forEach(addCard);
- const lvMap=masteryUnlockCards[k]||{};
- Object.keys(lvMap).forEach(lv=>{
-  (lvMap[lv]||[]).forEach(addCard);
- });
+ const mMap=masteryUnlockCards[k]||{};
+ Object.keys(mMap).forEach(lv=>mMap[lv].forEach(addCard));
  return [...map.values()];
 }
 
-function openBanListModal(charKey=null){
+function openBanListModal(charKey=null,statusMsg=''){
  const targetChar=resolveBanChar(charKey);
  selectedBanChar=targetChar;
  const banned=loadBannedCards(targetChar);
- const candidates=getAllBanCandidateCards(targetChar);
+ const allCards=getAllKnownCardsForChar(targetChar);
  showModal('카드 밴 설정','',[]);
- $('modalTitle').textContent=`카드 밴 설정 · ${chars[targetChar].name} (${banned.length}/${MAX_BANNED_CARDS})`;
+ $('modalTitle').textContent=`${chars[targetChar].name} · 카드 밴 (${banned.length}/${MAX_BANNED_CARDS})`;
+ const charTabsHtml=Object.keys(chars).map(ck=>
+  `<button type="button" class="tab ${ck===targetChar?'active':''}" data-banchar="${ck}">${chars[ck].name} (${loadBannedCards(ck).length})</button>`
+ ).join('');
  $('modalText').innerHTML=`
-  <p>캐릭터별로 최대 <b>${MAX_BANNED_CARDS}장</b>의 카드를 금지(밴)할 수 있습니다. 밴된 카드는 해당 캐릭터의 보상·상점 카드 풀에서 제외됩니다.</p>
-  <div class="tabs" id="banCharTabs">
-   ${Object.keys(chars).map(ck=>`<button type="button" class="tab ${ck===targetChar?'active':''}" data-bchar="${ck}">${chars[ck].name} (${loadBannedCards(ck).length})</button>`).join('')}
-  </div>
-  <div id="banFeedback" class="muted" style="margin-bottom:8px;color:var(--gold)"></div>
-  <div class="inventory">${candidates.map(c=>{
-   const isBanned=banned.includes(c.name);
-   return `<div class="inventory-item" style="border-color:${isBanned?'var(--red)':'var(--line)'}">
-    <div class="row between" style="gap:6px">
-     <b>${c.glyph} ${c.name}</b>
-     <button type="button" class="btn small ${isBanned?'red':'gold'}" data-ban-card="${c.name.replace(/"/g,'&quot;')}">${isBanned?'해제':'밴'}</button>
-    </div>
-    <div class="muted" style="margin-top:4px">${c.cost}코스트 · ${c.rarity||'일반'} · ${c.desc}</div>
-   </div>`;
-  }).join('')}</div>
+  <div class="tabs" id="banCharTabs">${charTabsHtml}</div>
+  <p><b>[${chars[targetChar].name}]</b> 보상 풀에서 제외할 카드를 선택하세요. (최대 ${MAX_BANNED_CARDS}장)</p>
+  ${statusMsg?`<p style="color:var(--red);margin-top:4px"><b>${statusMsg}</b></p>`:''}
+  <div class="inventory" id="banCardGrid"></div>
  `;
- $('modalChoices').innerHTML='';
- $('modalOverlay').querySelectorAll('[data-bchar]').forEach(btn=>{
-  btn.onclick=()=>openBanListModal(btn.dataset.bchar);
- });
- $('modalOverlay').querySelectorAll('[data-ban-card]').forEach(btn=>{
-  btn.onclick=()=>{
-   const cardName=btn.dataset.banCard;
-   const res=toggleBanCard(cardName,targetChar);
+ const grid=$('banCardGrid');
+ allCards.forEach(c=>{
+  const isBanned=banned.includes(c.name);
+  const item=document.createElement('button');
+  item.type='button';
+  item.className='inventory-item';
+  item.style.borderColor=isBanned?'var(--red)':'var(--line)';
+  item.style.background=isBanned?'#391d2b':'#171626';
+  item.innerHTML=`<b>${isBanned?'🚫 ':' '}${c.glyph} ${c.name}</b><p class="muted" style="margin:4px 0 0">${isBanned?'밴 됨 (클릭 시 해제)':'보상 풀 포함 (클릭 시 밴)'}</p>`;
+  item.onclick=()=>{
+   const res=toggleBanCard(c.name,targetChar);
    if(!res.ok){
-    const fb=$('banFeedback');
-    if(fb)fb.textContent=res.msg;
-    return;
+    openBanListModal(targetChar,res.msg);
+   }else{
+    openBanListModal(targetChar,'');
    }
-   openBanListModal(targetChar);
   };
+  grid.appendChild(item);
  });
+ $('modalOverlay').querySelectorAll('[data-banchar]').forEach(btn=>{
+  btn.onclick=()=>openBanListModal(btn.dataset.banchar,'');
+ });
+ $('modalChoices').innerHTML='';
  $('modalOverlay').classList.add('show');
 }
 
@@ -3640,185 +3582,208 @@ function openMasteryModal(charKey=null){
  const targetChar=resolveBanChar(charKey);
  selectedBanChar=targetChar;
  const m=getCharMastery(targetChar);
- const charUnlocks=masteryUnlockCards[targetChar]||{};
- const unlockRows=Object.keys(charUnlocks).sort((a,b)=>Number(a)-Number(b)).map(lv=>{
-  const cards=charUnlocks[lv]||[];
-  const unlocked=m.level>=Number(lv);
-  return `<div class="reward"><h3>Lv.${lv} ${unlocked?'(해금 완료)':'(미해금)'}</h3><p>${cards.map(c=>`${c.name} - ${c.desc}`).join('<br>')}</p></div>`;
+ const charTabsHtml=Object.keys(chars).map(ck=>{
+  const cm=getCharMastery(ck);
+  return `<button type="button" class="tab ${ck===targetChar?'active':''}" data-mchar="${ck}">${chars[ck].name} Lv.${cm.level}</button>`;
  }).join('');
- showModal('캐릭터 숙련도','',[]);
- $('modalTitle').textContent=`숙련도 · ${chars[targetChar].name} (Lv.${m.level})`;
+ const unlockRows=[2,3,4,5].map(lv=>{
+  const cards=(masteryUnlockCards[targetChar]&&masteryUnlockCards[targetChar][lv])||[];
+  const names=cards.length?cards.map(x=>x.name).join(', '):'전용 카드 풀 확장';
+  const done=m.level>=lv;
+  return `<div class="reward"><h3>Lv.${lv} ${done?'<span class="achievement-badge done">해금됨</span>':'<span class="achievement-badge todo">미해금</span>'}</h3><p>${names}</p></div>`;
+ }).join('');
+ showModal('숙련도 · 해금','',[]);
+ $('modalTitle').textContent=`${chars[targetChar].name} · 숙련도 Lv.${m.level}`;
  $('modalText').innerHTML=`
-  <p>전투 승리 시 숙련도 경험치를 획득하며, 레벨이 오를수록 전용 카드가 해금됩니다. (현재 경험치: <b>${m.curLevelExp}/${m.nextExp}</b> · 누적 <b>${m.exp}</b>)</p>
-  <div class="tabs" id="masteryCharTabs">
-   ${Object.keys(chars).map(ck=>{
-    const cm=getCharMastery(ck);
-    return `<button type="button" class="tab ${ck===targetChar?'active':''}" data-mchar="${ck}">${chars[ck].name} Lv.${cm.level}</button>`;
-   }).join('')}
-  </div>
-  ${unlockRows || '<p class="muted">해당 캐릭터의 추가 숙련도 해금 카드가 없습니다.</p>'}
+  <div class="tabs" id="masteryCharTabs">${charTabsHtml}</div>
+  <p>현재 숙련도: <b>Lv.${m.level}</b> (${m.curLevelExp} / ${m.nextExp} EXP · 누적 ${m.exp} EXP)</p>
+  ${unlockRows}
  `;
- $('modalChoices').innerHTML='';
  $('modalOverlay').querySelectorAll('[data-mchar]').forEach(btn=>{
   btn.onclick=()=>openMasteryModal(btn.dataset.mchar);
  });
+ $('modalChoices').innerHTML='';
  $('modalOverlay').classList.add('show');
 }
 
 function openPatchNotesModal(){
- showModal('업데이트 내역','',[]);
- $('modalTitle').textContent=`업데이트 내역 (현재 VER ${APP_VERSION})`;
- $('modalText').innerHTML=PATCH_HISTORY.map(p=>`
+ const html=PATCH_HISTORY.map(p=>`
   <div class="reward">
-   <h3>VER ${p.version} (${p.date})</h3>
-   <p>${p.notes.map(n=>`• ${n}`).join('<br>')}</p>
+   <h3>VER ${p.version} <span class="muted">(${p.date})</span></h3>
+   <ul style="margin:6px 0 0 18px;padding:0;color:var(--muted);font-size:12px;line-height:1.6">
+    ${p.notes.map(n=>`<li>${n}</li>`).join('')}
+   </ul>
   </div>
  `).join('');
+ showModal('업데이트 내역','',[]);
+ $('modalTitle').textContent='업데이트 내역';
+ $('modalText').innerHTML=html;
  $('modalChoices').innerHTML='';
  $('modalOverlay').classList.add('show');
 }
 
-function openProgressBackupModal(statusMsg=''){
+function openBackupModal(){
  const snap=exportProgressSnapshot();
- const jsonStr=JSON.stringify(snap,null,2);
+ const jsonText=JSON.stringify(snap,null,2);
  showModal('진행도 백업 / 복원','',[]);
  $('modalTitle').textContent='진행도 백업 및 복원 (JSON)';
  $('modalText').innerHTML=`
-  <p>숙련도, 캐릭터 해금, 카드 밴(최대 7장), 스킨 및 샤드 진행도를 JSON으로 내보내거나 불러올 수 있습니다.</p>
-  ${statusMsg?`<p style="color:var(--gold)"><b>${statusMsg}</b></p>`:''}
-  <textarea id="progressJsonArea" rows="9" style="width:100%;background:#151423;color:#f3ebd4;border:2px solid var(--line);padding:8px;font-family:monospace;font-size:11px">${jsonStr.replace(/</g,'&lt;')}</textarea>
-  <div class="row" style="margin-top:10px">
-   <button type="button" class="btn small gold" id="copyBackupJsonBtn">JSON 복사</button>
-   <button type="button" class="btn small" id="downloadBackupJsonBtn">JSON 파일 저장</button>
-   <button type="button" class="btn small" id="restoreBackupJsonBtn">입력된 JSON으로 복원</button>
+  <p>숙련도, 카드 밴, 스킨, 업적/수집품, 샤드 진행도를 JSON으로 내보내거나 붙여넣어 복원할 수 있습니다.</p>
+  <textarea id="backupJsonArea" rows="9" style="width:100%;background:#151423;color:#f3ebd4;border:1px solid var(--line);padding:8px;font-family:monospace;font-size:11px">${jsonText}</textarea>
+  <div class="row" style="margin-top:8px">
+   <button type="button" class="btn small gold" id="copyBackupBtn">JSON 복사</button>
+   <button type="button" class="btn small" id="applyBackupBtn">입력된 JSON으로 복원</button>
   </div>
+  <p id="backupStatusMsg" class="muted" style="margin-top:6px"></p>
  `;
  $('modalChoices').innerHTML='';
+ $('copyBackupBtn').onclick=()=>{
+  const area=$('backupJsonArea');
+  if(area && navigator.clipboard){
+   navigator.clipboard.writeText(area.value).then(()=>{
+    $('backupStatusMsg').textContent='클립보드에 백업 JSON이 복사되었습니다.';
+   }).catch(()=>{
+    $('backupStatusMsg').textContent='텍스트 영역을 선택해 직접 복사해 주세요.';
+   });
+  }
+ };
+ $('applyBackupBtn').onclick=()=>{
+  try{
+   const area=$('backupJsonArea');
+   const parsed=JSON.parse(area.value);
+   restoreProgressSnapshot(parsed);
+   chooseCharacter();
+   refreshContinueButton();
+   updateHeaderActionLabels();
+   $('backupStatusMsg').textContent='진행도가 복원되었습니다.';
+  }catch(e){
+   $('backupStatusMsg').textContent='올바른 JSON 형식이 아닙니다.';
+  }
+ };
  $('modalOverlay').classList.add('show');
-
- const copyBtn=$('copyBackupJsonBtn');
- if(copyBtn){
-  copyBtn.onclick=()=>{
-   const ta=$('progressJsonArea');
-   if(!ta)return;
-   ta.select();
-   try{navigator.clipboard?.writeText(ta.value);}catch(e){}
-   openProgressBackupModal('백업 JSON이 클립보드에 복사되었습니다.');
-  };
- }
- const dlBtn=$('downloadBackupJsonBtn');
- if(dlBtn){
-  dlBtn.onclick=()=>{
-   try{
-    const blob=new Blob([jsonStr],{type:'application/json'});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');
-    a.href=url;
-    a.download=`ashen-heroes-progress-v${APP_VERSION}.json`;
-    a.click();
-    setTimeout(()=>URL.revokeObjectURL(url),1000);
-   }catch(e){}
-  };
- }
- const resBtn=$('restoreBackupJsonBtn');
- if(resBtn){
-  resBtn.onclick=()=>{
-   const ta=$('progressJsonArea');
-   if(!ta)return;
-   try{
-    const parsed=JSON.parse(ta.value);
-    if(restoreProgressSnapshot(parsed)){
-     chooseCharacter();
-     refreshContinueButton();
-     openProgressBackupModal('진행도가 성공적으로 복원되었습니다.');
-    }else{
-     openProgressBackupModal('올바른 진행도 JSON 형식이 아닙니다.');
-    }
-   }catch(err){
-    openProgressBackupModal('JSON 구문 오류가 발생했습니다.');
-   }
-  };
- }
 }
 
 function showModal(title,text,choices){
- $('modalTitle').textContent=title;$('modalText').textContent=text;const root=$('modalChoices');root.innerHTML='';
- choices.forEach(ch=>{const b=document.createElement('button');b.className='choice';b.innerHTML=`<h3>${ch.label}</h3><p>${ch.desc}</p>`;b.onclick=ch.action;root.appendChild(b)});
+ $('modalTitle').textContent=title;$('modalText').textContent=text;$('modalChoices').innerHTML='';
+ choices.forEach(ch=>{
+  const b=document.createElement('button');b.className='choice';
+  b.innerHTML=`<h3>${ch.label}</h3><p>${ch.desc}</p>`;
+  b.onclick=ch.action;$('modalChoices').appendChild(b);
+ });
  $('modalOverlay').classList.add('show');
 }
 
 const knightStoryBundle={
  floorBosses:[
-  {name:'겸손의 수호자',glyph:'♜',hp:78,atk:11,rewardItem:{name:'낡은 기사 훈장',charOnly:'knight',storyOnly:true,desc:'[기사 스토리] 1층 클리어 보상. 공격 피해 +2 및 방어도 +3.',effect:'oldKnightMedal',rarity:'고급'}},
-  {name:'용기의 시험관',glyph:'✹',hp:112,atk:14,rewardItem:{name:'딸의 유품',charOnly:'knight',storyOnly:true,desc:'[기사 스토리] 2층 클리어 보상. 최대 체력 +8 및 턴 종료 시 방어도 2 유지.',effect:'daughterRelic',rarity:'희귀'}},
-  {name:'환상의 딸',glyph:'✦',hp:148,atk:17,rewardItem:{name:'희망의 성배',charOnly:'knight',storyOnly:true,desc:'[기사 스토리] 3층 클리어 보상. 적 처치 시 체력 5 회복 및 공격 피해 +3.',effect:'hopeGrail',rarity:'영웅'}}
+  {
+   floor:0,
+   name:'겸손의 수호자',
+   glyph:'▣',
+   hp:65,
+   atk:9,
+   rewardItem:{name:'낡은 기사 훈장',charOnly:'knight',storyOnly:true,desc:'[기사 스토리] 1층 클리어 보상. 공격 피해 +2 및 방어도 +3.',effect:'oldKnightMedal',rarity:'고급'}
+  },
+  {
+   floor:1,
+   name:'용기의 시험관',
+   glyph:'⚔',
+   hp:92,
+   atk:13,
+   rewardItem:{name:'딸의 유품',charOnly:'knight',storyOnly:true,desc:'[기사 스토리] 2층 클리어 보상. 최대 체력 +8 및 턴 종료 시 방어도 2 유지.',effect:'daughterRelic',rarity:'희귀'}
+  },
+  {
+   floor:2,
+   name:'환상의 딸',
+   glyph:'✧',
+   hp:125,
+   atk:16,
+   rewardItem:{name:'희망의 성배',charOnly:'knight',storyOnly:true,desc:'[기사 스토리] 3층 클리어 보상. 적 처치 시 체력 5 회복 및 공격 피해 +3.',effect:'hopeGrail',rarity:'영웅'}
+  }
  ],
  chapters:[
   {
-   title:'제1장 · 겸손 — 잿가루가 남긴 자리',
-   body:'불의 회랑에서 뿜어져 나온 잿가루는 마물과 마인을 낳고 평범한 마을을 삼켰습니다. 한때 이름 높던 기사였지만 딸을 잃고 몰락한 은퇴 노기사는, 자신의 영광이 아니라 회랑의 진실 앞에 고개를 숙이며 겸손을 배웁니다.'
+   id:'ch1',
+   title:'1장 · 꺼진 등불과 잿가루',
+   summary:'불의 회랑에서 뿜어져 나온 잿가루가 마을을 삼키고, 은퇴한 노기사가 녹슨 검을 다시 듭니다.',
+   body:'마을의 지붕마다 붉은 잿가루가 내려앉고, 잿빛 망령들이 골목을 배회했습니다. 한때 이름을 날렸으나 딸을 잃은 뒤 검을 내려놓았던 노기사는, 남은 주민들을 지키기 위해 낡은 갑옷을 걸치고 환화의 회랑으로 향합니다.'
   },
   {
-   title:'제2장 · 용기 — 꺼지지 않는 불씨 앞',
-   body:'두려움은 잿가루처럼 시야를 가리지만, 잃어버린 이들을 지키겠다는 결심은 다시 검을 들게 합니다. 노기사는 무너진 자부심 대신 남은 숨결로 회랑의 시련을 건너는 용기를 택합니다.'
+   id:'ch2',
+   title:'2장 · 겸손, 용기, 그리고 배려',
+   summary:'회랑의 시련 속에서 노기사는 명예가 아닌 겸손과 용기, 그리고 타인을 향한 배려를 되새깁니다.',
+   body:'회랑의 문들은 힘만으로는 열리지 않았습니다. 쓰러진 전우의 방패를 거두는 겸손, 두려움 앞에서도 한 걸음 내딛는 용기, 그리고 약자의 숨결을 먼저 살피는 배려가 노기사의 검에 새로운 무게를 실어 줍니다.'
   },
   {
-   title:'제3장 · 배려 — 딸의 기억과 희망의 성배',
-   body:'회랑의 깊은 곳에서 마주한 환상과 시련 속에서 노기사는 깨닫습니다. 진정한 기사의 힘은 군림이 아니라 타인과 남은 이들을 향한 배려에 있음을. 낡은 훈장과 딸의 유품, 그리고 희망의 성배가 그 걸음을 비춥니다.'
+   id:'ch3',
+   title:'3장 · 잿가루 너머의 약속',
+   summary:'회랑의 끝에서 마주한 진실과 함께, 노기사는 잿가루를 잠재울 마지막 결단을 내립니다.',
+   body:'회랑의 심연에서 잿빛 군주의 그림자가 걷히자, 잿가루 속에 가려져 있던 희망의 불씨가 드러납니다. 노기사는 과거의 후회를 넘어, 내일을 살아갈 이들을 위해 끝까지 검을 쥐기로 맹세합니다.'
   }
  ]
 };
 
 function renderStoryChapters(){
- const el=$('storyChapters');
- if(!el)return;
- el.innerHTML=knightStoryBundle.chapters.map(ch=>`<div class="reward"><h3>${ch.title}</h3><p>${ch.body}</p></div>`).join('');
+ const container=$('storyChapters');
+ if(!container)return;
+ container.innerHTML='';
+ knightStoryBundle.chapters.forEach(ch=>{
+  const card=document.createElement('div');
+  card.className='reward';
+  card.innerHTML=`<h3>${ch.title}</h3><p style="color:var(--text);margin-bottom:6px">${ch.summary}</p><p>${ch.body}</p>`;
+  container.appendChild(card);
+ });
 }
 
 function startKnightStoryBundle(){
  startRun('knight','fire');
  game.mode='story';
- showModal(
-  '기사 · 환화의 회랑 스토리 시작',
-  '불의 회랑에서 흘러나오는 잿가루가 마물과 마인을 낳고 마을을 불태웁니다. 딸을 잃고 몰락한 은퇴 노기사가 겸손·용기·배려의 회랑을 나아갑니다.',
-  [{label:'여정 시작하기',desc:'1층 겸손의 회랑으로 진입합니다.',action:()=>{$('modalOverlay').classList.remove('show');renderMap();saveContinueRun();}}]
- );
+ game.heroName='은퇴 노기사';
+ renderMap();
+ saveContinueRun();
 }
 
 function setMode(mode){
  selectedMode=mode;
- document.querySelectorAll('#modeTabs .tab').forEach(t=>t.classList.toggle('active',t.dataset.mode===mode));
+ document.querySelectorAll('#modeTabs .tab').forEach(t=>{
+  t.classList.toggle('active',t.dataset.mode===mode);
+ });
+ const storyPanel=$('storyPanel');
+ const modeDesc=$('modeDesc');
  if(mode==='story'){
-  $('modeDesc').textContent='은퇴 노기사(기사)의 몰락과 재기, 겸손·용기·배려를 다룬 3개 층 스토리 모드입니다.';
-  $('storyPanel').style.display='block';
+  if(storyPanel)storyPanel.style.display='block';
+  if(modeDesc)modeDesc.textContent='스토리 모드: 잿가루가 마을을 덮친 뒤 은퇴 노기사가 환화의 회랑에서 겸손·용기·배려를 마주하는 3층 이야기입니다.';
   renderStoryChapters();
  }else{
-  $('modeDesc').textContent='회랑 모드에 도전할 캐릭터를 선택하세요. 1층 10 · 2층 15 · 3층 17 스테이지로 구성된 로그라이크 모드입니다.';
-  $('storyPanel').style.display='none';
+  if(storyPanel)storyPanel.style.display='none';
+  if(modeDesc)modeDesc.textContent='회랑 모드에 도전할 캐릭터를 선택하세요. 1층 10 · 2층 15 · 3층 17 스테이지로 구성된 로그라이크 모드입니다.';
  }
  chooseCharacter();
 }
 
+document.querySelectorAll('#modeTabs .tab').forEach(t=>{
+ t.addEventListener('click',()=>setMode(t.dataset.mode));
+});
+
 $('closeModalBtn').onclick=()=>$('modalOverlay').classList.remove('show');
-$('enemyIntent').onclick=showEnemyIntentHelp;
 $('endTurnBtn').onclick=endTurn;
-$('potionBtn').onclick=openPotionModal;
+$('potionBtn').onclick=openPotions;
 $('pilesBattleBtn').onclick=openBattlePilesModal;
-$('inventoryMapBtn').onclick=openInventoryModal;
-$('inventoryBattleBtn').onclick=openInventoryModal;
-$('banListMapBtn').onclick=()=>openBanListModal();
-$('banListSelectBtn').onclick=()=>openBanListModal();
-$('masteryMapBtn').onclick=()=>openMasteryModal();
-$('masterySelectBtn').onclick=()=>openMasteryModal();
+$('inventoryBattleBtn').onclick=openInventory;
+$('inventoryMapBtn').onclick=openInventory;
+$('banListMapBtn').onclick=()=>openBanListModal(game?.character||selectedBanChar);
+$('banListSelectBtn').onclick=()=>openBanListModal(selectedBanChar);
+$('masteryMapBtn').onclick=()=>openMasteryModal(game?.character||selectedBanChar);
+$('masterySelectBtn').onclick=()=>openMasteryModal(selectedBanChar);
 $('collectionVaultBtn').onclick=()=>openAchievementAndCollectionModal('collections');
-$('headerBackupBtn').onclick=()=>openProgressBackupModal('');
 $('patchNotesBtn').onclick=openPatchNotesModal;
+$('headerBackupBtn').onclick=openBackupModal;
 $('continueRunBtn').onclick=continueSavedRun;
-document.querySelectorAll('#modeTabs .tab').forEach(t=>t.onclick=()=>setMode(t.dataset.mode));
 $('leaveServiceBtn').onclick=leaveService;
+$('enemyIntent').onclick=showEnemyIntentHelp;
 $('abandonBtn').onclick=()=>{clearContinueRun();show('selectScreen');chooseCharacter();refreshContinueButton();};
 $('newRunBtn').onclick=()=>{clearContinueRun();show('selectScreen');chooseCharacter();refreshContinueButton();};
 
+if($('versionTag'))$('versionTag').textContent=`VER ${APP_VERSION}`;
 chooseCharacter();
 refreshContinueButton();
 updateHeaderActionLabels();
