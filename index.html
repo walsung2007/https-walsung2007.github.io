@@ -90,88 +90,15 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;bo
 .stance-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:3px;font-size:11px;font-weight:900;border:1px solid #9c88c4;background:#261f38;color:#f3ebd4}
 .stance-pill.assault{border-color:#e87979;background:#3c1f2b;color:#ffc4c4}
 .stance-pill.iron{border-color:#79bce0;background:#1c2e3d;color:#bde6ff}
-.sanity-pill{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:3px;font-size:11px;font-weight:900;border:1px solid #e09f5a;background:#32222c;color:#ffe3b3}
-.sanity-pill.transformed{border-color:#ff7b00;background:#541d14;color:#ffd29d;box-shadow:0 0 8px rgba(255,123,0,0.45)}
+.stance-pill.locked{border-color:#c084fc;background:#341c4d;color:#f3d9ff;box-shadow:0 0 8px rgba(192,132,252,0.45)}
+.stance-pill.courage{border-color:#fb923c;background:#4a1d12;color:#ffedd5;box-shadow:0 0 10px rgba(251,146,60,0.55)}
 @media(max-width:700px){body{padding:6px}.app{padding:9px}.stats{grid-template-columns:repeat(2,1fr)}.hand{grid-template-columns:repeat(3,minmax(0,1fr))}.arena{padding:8px;min-height:175px}.unit .sprite{font-size:42px;width:48px;height:48px}.mapgrid{grid-template-columns:repeat(3,minmax(0,1fr))}.tag{font-size:9px}}
 @media(max-width:420px){.hand{grid-template-columns:repeat(2,minmax(0,1fr))}.logo{font-size:11px}}
-
-@keyframes heroSilverFlash {
-  0% { opacity: 0; transform: scale(0.92); }
-  25% { opacity: 0.95; transform: scale(1.02); }
-  100% { opacity: 0; transform: scale(1.08); }
-}
-@keyframes grailCrossPulse {
-  0% { opacity: 0; transform: scale(0.8); }
-  30% { opacity: 1; transform: scale(1.06); }
-  100% { opacity: 0; transform: scale(1.15); }
-}
-@keyframes bloodVortex {
-  0% { opacity: 0; transform: scale(1.12); }
-  30% { opacity: 0.92; transform: scale(1); }
-  100% { opacity: 0; transform: scale(0.95); }
-}
-@keyframes sakuraPetalFall {
-  0% { opacity: 0; transform: translate3d(0, -16px, 0) rotate(0deg); }
-  20% { opacity: 1; }
-  100% { opacity: 0; transform: translate3d(28px, 130px, 0) rotate(220deg); }
-}
-.heroic-fx-layer {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 25;
-  overflow: hidden;
-}
-.fx-knight-silver {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 45%, rgba(245, 250, 255, 0.55), rgba(168, 198, 230, 0.22) 48%, transparent 75%);
-  box-shadow: inset 0 0 90px rgba(220, 238, 255, 0.65);
-  animation: heroSilverFlash 0.75s ease-out forwards;
-}
-.fx-grail-cross-v {
-  position: absolute;
-  left: 50%;
-  top: 12%;
-  width: 18px;
-  height: 76%;
-  margin-left: -9px;
-  background: linear-gradient(to bottom, transparent, rgba(255, 244, 196, 0.9), rgba(242, 198, 109, 0.55), transparent);
-  box-shadow: 0 0 28px rgba(255, 232, 150, 0.95);
-  animation: grailCrossPulse 0.85s ease-out forwards;
-}
-.fx-grail-cross-h {
-  position: absolute;
-  left: 24%;
-  top: 44%;
-  width: 52%;
-  height: 18px;
-  margin-top: -9px;
-  background: linear-gradient(to right, transparent, rgba(255, 244, 196, 0.9), rgba(242, 198, 109, 0.55), transparent);
-  box-shadow: 0 0 28px rgba(255, 232, 150, 0.95);
-  animation: grailCrossPulse 0.85s ease-out forwards;
-}
-.fx-mage-element {
-  position: absolute;
-  inset: 0;
-  animation: heroSilverFlash 0.8s ease-out forwards;
-}
-.fx-vampire-blood {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(165, 10, 35, 0.25), rgba(110, 0, 18, 0.68) 72%);
-  box-shadow: inset 0 0 110px rgba(210, 20, 45, 0.85);
-  animation: bloodVortex 0.85s ease-out forwards;
-}
-.fx-sakura-petal {
-  position: absolute;
-  width: 12px;
-  height: 8px;
-  border-radius: 12px 0 12px 0;
-  background: linear-gradient(135deg, #ffd6e5, #ff8fb8);
-  box-shadow: 0 0 8px rgba(255, 165, 200, 0.75);
-  animation: sakuraPetalFall 1.15s ease-in forwards;
-}
+.collection-photo-frame{background:#151322;border:3px solid #b89456;box-shadow:inset 0 0 0 2px #3b2f24,0 6px 18px #0008;padding:10px;border-radius:4px;margin:8px 0}
+.collection-photo-svg{display:block;width:100%;max-width:240px;height:auto;margin:0 auto;image-rendering:pixelated;border:2px solid #5e4c36}
+.achievement-badge{display:inline-block;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:900;margin-left:6px}
+.achievement-badge.done{background:#203d2c;color:var(--green);border:1px solid #67b082}
+.achievement-badge.todo{background:#2c283d;color:var(--muted);border:1px solid #655d7d}
 </style>
 </head>
 <body>
@@ -182,8 +109,9 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;bo
     <div class="subtitle">잿가루 용사단 · 회랑 &amp; 기사 스토리</div>
   </div>
   <div class="row">
-    <div class="tag" id="shardTag">✦ 0 샤드</div>
-    <div class="tag" id="versionTag">VER 0.91</div>
+    <button type="button" class="btn small" id="headerBackupBtn">진행도 백업</button>
+    <button type="button" class="btn small" id="patchNotesBtn">업데이트 내역</button>
+    <div class="tag" id="shardTag">✦ 0 샤드</div><div class="tag" id="versionTag">VER 0.91</div>
   </div>
 </header>
 
@@ -192,13 +120,25 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;bo
     <div class="row between">
       <div class="row" style="gap:8px">
         <h2 class="section-title" style="margin:0">모드 및 용사 선택</h2>
+        <button type="button" class="btn small" id="masterySelectBtn">숙련도 · 해금</button>
+        <button type="button" class="btn small" id="banListSelectBtn">카드 밴 (0/7)</button>
+        <button type="button" class="btn small" id="collectionVaultBtn">업적 · 수집품</button>
       </div>
       <div class="row" style="gap:8px">
         <button type="button" class="btn gold small" id="continueRunBtn" disabled>이어하기</button>
+        <div class="tabs" id="modeTabs" style="margin:0">
+          <button type="button" class="tab active" data-mode="corridor">회랑 모드</button>
+          <button type="button" class="tab" data-mode="story">스토리 모드</button>
+        </div>
       </div>
     </div>
     <p class="muted" id="modeDesc" style="margin-top:8px">회랑 모드에 도전할 캐릭터를 선택하세요. 1층 10 · 2층 15 · 3층 17 스테이지로 구성된 로그라이크 모드입니다.</p>
     <div class="cards" id="characterChoices"></div>
+  </div>
+  <div id="storyPanel" class="panel" style="display:none">
+    <h2 class="section-title">기사 · 환화의 회랑 스토리</h2>
+    <p class="muted">세계 곳곳의 불의 회랑에서 흘러나오는 잿가루는 마물과 마인을 낳고 마을을 불태웁니다. 은퇴한 노기사(과거 명성 있는 기사였으나 딸을 잃고 몰락)가 환화의 회랑에 들어서며 겸손·용기·배려와 마주합니다.</p>
+    <div id="storyChapters"></div>
   </div>
 </section>
 
@@ -212,6 +152,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;bo
   </div>
   <div class="panel">
     <h2 class="section-title">다음 분기 선택</h2>
+    <p class="muted">갈 수 있는 경로 중 하나를 선택하세요. 매 스테이지의 분기 구성은 도전마다 무작위로 생성됩니다.</p>
     <div class="cards" id="routeChoices"></div>
   </div>
   <div class="panel">
@@ -224,6 +165,8 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;bo
   <div class="row between">
     <div class="row">
       <button class="btn small" id="inventoryMapBtn">보유 목록</button>
+      <button class="btn small" id="banListMapBtn">카드 밴 (0/7)</button>
+      <button class="btn small" id="masteryMapBtn">숙련도 · 해금</button>
       <button class="btn small" id="abandonBtn">도전 포기</button>
     </div>
     <span class="muted">3층 최종 보스 처치 시 클리어</span>
@@ -243,7 +186,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;bo
       <div class="hpbar"><div class="hpfill" id="heroHpFill"></div></div>
       <b id="heroHp">60 / 60</b>
       <div class="muted" id="heroGuard">방어도 0</div>
-      <div class="status-list" id="heroStatus"><span class="status-chip">상태이상 없음</span></div>
+      <div class="status-list" id="heroStatus" aria-label="용사 상태이상"><span class="status-chip">상태이상 없음</span></div>
     </div>
     <div class="vs">VS</div>
     <div class="unit">
@@ -253,8 +196,8 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;bo
       <div class="hpbar"><div class="hpfill enemyfill" id="enemyHpFill"></div></div>
       <b id="enemyHp">30 / 30</b>
       <div class="muted" id="enemyGuard">방어도 0</div>
-      <div class="status-list" id="enemyStatus"><span class="status-chip">상태이상 없음</span></div>
-      <button type="button" class="intent" id="enemyIntent">다음 행동: 공격 6 · 효과 보기</button>
+      <div class="status-list" id="enemyStatus" aria-label="적 상태이상"><span class="status-chip">상태이상 없음</span></div>
+      <button type="button" class="intent" id="enemyIntent" title="클릭하면 행동 효과를 확인할 수 있습니다">다음 행동: 공격 6 · 효과 보기</button>
     </div>
   </div>
   <div class="stats">
@@ -275,6 +218,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;bo
   <div class="row" style="margin-top:12px">
     <button class="btn" id="endTurnBtn">턴 종료</button>
     <button class="btn" id="potionBtn">포션 사용</button>
+    <button class="btn" id="pilesBattleBtn">전투 더미 보기</button>
     <button class="btn" id="inventoryBattleBtn">보유 목록</button>
   </div>
   <div class="log" id="battleLog">전투가 시작되었습니다.</div>
@@ -284,6 +228,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;bo
   <div class="panel">
     <h2 class="section-title" id="serviceTitle">상점</h2>
     <p class="muted" id="serviceDesc"></p>
+    <div id="shopTabs" class="tabs" style="display:none"></div>
     <div id="serviceItems"></div>
     <div class="row between" style="margin-top:12px">
       <span class="muted" id="serviceGold"></span>
@@ -315,197 +260,489 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;bo
 <script>
 const $=id=>document.getElementById(id);
 const floors=[10,15,17];
-
-// --- 필립 전용 도트 스프라이트 (변신 전 / 변신 후) ---
-const philipPreArt=`<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
-  <rect x="20" y="68" width="32" height="3" fill="#0b0a12"/>
-  <rect x="24" y="8" width="24" height="15" fill="#d8c3ab"/>
-  <rect x="28" y="13" width="5" height="2" fill="#292238"/>
-  <rect x="39" y="13" width="5" height="2" fill="#292238"/>
-  <rect x="19" y="23" width="34" height="26" fill="#544b6b"/>
-  <rect x="34" y="24" width="4" height="24" fill="#d4ac0d"/>
-  <rect x="22" y="51" width="11" height="17" fill="#2b2638"/>
-  <rect x="39" y="51" width="11" height="17" fill="#2b2638"/>
-  <rect x="57" y="14" width="4" height="36" fill="#b8c7d9"/>
-  <rect x="53" y="46" width="12" height="3" fill="#d4ac0d"/>
-</svg>`;
-
-const philipPostArt=`<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
-  <rect x="16" y="68" width="40" height="3" fill="#0b0a12"/>
-  <rect x="21" y="1" width="30" height="5" fill="#ff9e44"/>
-  <rect x="24" y="7" width="24" height="16" fill="#c2410c"/>
-  <rect x="28" y="13" width="5" height="3" fill="#ffe066"/>
-  <rect x="39" y="13" width="5" height="3" fill="#ffe066"/>
-  <rect x="14" y="23" width="44" height="27" fill="#991b1b"/>
-  <rect x="34" y="25" width="4" height="22" fill="#fef08a"/>
-  <rect x="21" y="50" width="12" height="18" fill="#29120b"/>
-  <rect x="39" y="50" width="12" height="18" fill="#29120b"/>
-  <rect x="58" y="3" width="5" height="45" fill="#ff7b00"/>
-  <rect x="53" y="45" width="15" height="4" fill="#ffe066"/>
-</svg>`;
-
-const heroPixelArtData={
- knight:`<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges"><rect x="18" y="68" width="36" height="3" fill="#0b0a12"/><rect x="30" y="2" width="12" height="4" fill="#e63946"/><rect x="26" y="7" width="20" height="17" fill="#8d9db0"/><rect x="21" y="26" width="30" height="21" fill="#7e90a6"/><rect x="3" y="24" width="15" height="26" fill="#3498db"/><rect x="61" y="4" width="4" height="42" fill="#9aaab8"/><rect x="22" y="51" width="11" height="16" fill="#6c7d94"/><rect x="39" y="51" width="11" height="16" fill="#6c7d94"/></svg>`,
- philip:philipPreArt
+const elements={
+ fire:{name:'불',glyph:'✹',desc:'화상 도트딜을 누적시키는 원소'},
+ ice:{name:'얼음',glyph:'❄',desc:'빙결로 일시 행동불가 및 다음 턴 공격 시 받는 피해 증가'},
+ lightning:{name:'번개',glyph:'ϟ',desc:'감전으로 2턴 행동불가 및 주변 적에게 연쇄 피해'}
 };
+const APP_VERSION='0.91';
+const PATCH_HISTORY=[
+ {version:'0.91',date:'2026-11',notes:[
+  '신규 플레이어블 캐릭터 [필립] 추가 (체력 64, 기초 코스트 4, 정신력 -45~+45, 물러서질 않을 용기 변신/해제 및 타오르는 일격, 생존 10% 도주)',
+  '보라눈물 0코스트 [자세고정] 5번째 손패(인덱스 4) 고정 및 미리 설정된 타 캐릭터 덱 연동 강화'
+ ]},
+ {version:'0.90',date:'2026-11',notes:[
+  '신규 플레이어블 캐릭터 [보라눈물] 추가',
+  '보스 50% 체력 이하 2페이즈 각성 기믹 추가'
+ ]}
+];
 
-// ==========================================
-// 필립 전용 모듈 (독립 캐릭터 · 정신력 · 변신 · 0피해 10% 도주)
-// ==========================================
-const PHILIP_SANITY_MIN=-45;
-const PHILIP_SANITY_MAX=45;
-const PHILIP_TRANSFORM_THRESHOLD=45;
-const PHILIP_BREAK_THRESHOLD=-40;
-const PHILIP_ESCAPE_CHANCE=0.10;
-const PHILIP_ESCAPE_HP=10;
+// --- PIXEL ART SPRITES ---
+const philipBeforeSvg=`<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+ <rect x="20" y="68" width="32" height="3" fill="#0b0a12"/>
+ <rect x="25" y="3" width="22" height="6" fill="#9c8966"/>
+ <rect x="23" y="8" width="26" height="6" fill="#7d6c4e"/>
+ <rect x="26" y="12" width="20" height="12" fill="#b89f78"/>
+ <rect x="27" y="14" width="8" height="4" fill="#d8e6f2" stroke="#2c2638" stroke-width="1"/>
+ <rect x="37" y="14" width="8" height="4" fill="#d8e6f2" stroke="#2c2638" stroke-width="1"/>
+ <rect x="29" y="15" width="4" height="2" fill="#2b2636"/>
+ <rect x="39" y="15" width="4" height="2" fill="#2b2636"/>
+ <rect x="28" y="24" width="16" height="4" fill="#8f7858"/>
+ <rect x="25" y="27" width="22" height="19" fill="#22202c"/>
+ <rect x="17" y="27" width="38" height="23" fill="#6d6a63"/>
+ <rect x="22" y="28" width="28" height="21" fill="#7d7971"/>
+ <rect x="33" y="28" width="6" height="19" fill="#2c2938"/>
+ <rect x="16" y="45" width="8" height="12" fill="#1f1d28"/>
+ <rect x="48" y="45" width="8" height="12" fill="#1f1d28"/>
+ <rect x="52" y="35" width="4" height="16" fill="#3a3742"/>
+ <rect x="50" y="37" width="8" height="2" fill="#cbd5e1"/>
+ <rect x="22" y="50" width="11" height="17" fill="#2f2e3a"/>
+ <rect x="39" y="50" width="11" height="17" fill="#2f2e3a"/>
+ <rect x="20" y="66" width="13" height="4" fill="#4a352c"/>
+ <rect x="39" y="66" width="13" height="4" fill="#4a352c"/>
+</svg>`;
 
-const PHILIP_MODULE={
- id:'philip',
- name:'필립',
- glyph:'✹',
- hp:64,
- energy:4,
- special:[
-  {name:'물러서질 않을 용기',glyph:'✹',cost:1,desc:'정신력 +15, 방어도 8 획득. 정신력 45 도달 시 변신 각성(-40 이하까지 유지).',kind:'philipCourage',block:8,sanityDelta:15,type:'필립 전용',rarity:'영웅'},
-  {name:'타오르는 일격',glyph:'⚔',cost:4,desc:'피해 30 및 화상 15 부여. (변신 상태 강화: 피해 +10, 화상 +10)',kind:'philipBurningStrike',damage:30,burn:15,type:'필립 전용',rarity:'영웅'}
- ],
- isPhilip(g){return !!(g && g.character==='philip');},
- getSprite(g){
-  if(!g)return philipPreArt;
-  return g.philipTransformed ? philipPostArt : philipPreArt;
- },
- resetForStage(g){
-  if(!this.isPhilip(g))return;
-  g.sanity=0;
-  g.philipTransformed=false;
-  g.philipStunTurns=0;
-  g.heroName=this.name;
- },
- clampSanity(val){
-  return Math.max(PHILIP_SANITY_MIN,Math.min(PHILIP_SANITY_MAX,val));
- },
- getSanityGainByCost(cost){
-  const c=Math.max(0,Math.floor(Number(cost)||0));
-  if(c===0)return 5;
-  if(c===1)return 10;
-  if(c===2)return 15;
-  if(c===3)return 20;
-  return 25;
- },
- getSanityLossByCost(cost){
-  const c=Math.max(0,Math.floor(Number(cost)||0));
-  if(c===0)return 2;
-  if(c===1)return 5;
-  if(c===2)return 7;
-  if(c===3)return 10;
-  return 12;
- },
- syncTransformState(g, logParts){
-  if(!this.isPhilip(g))return;
-  g.sanity=this.clampSanity(g.sanity||0);
+const philipAfterSvg=`<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+ <rect x="14" y="68" width="44" height="3" fill="#0b0a12"/>
+ <rect x="25" y="3" width="22" height="6" fill="#9c8966"/>
+ <rect x="26" y="12" width="20" height="12" fill="#b89f78"/>
+ <rect x="27" y="14" width="8" height="4" fill="#d8e6f2" stroke="#2c2638" stroke-width="1"/>
+ <rect x="37" y="14" width="8" height="4" fill="#d8e6f2" stroke="#2c2638" stroke-width="1"/>
+ <rect x="29" y="13" width="2" height="8" fill="#b91c1c"/>
+ <rect x="41" y="13" width="2" height="7" fill="#dc2626"/>
+ <rect x="17" y="27" width="38" height="23" fill="#6d6a63"/>
+ <rect x="38" y="24" width="19" height="14" fill="#b99c74"/>
+ <rect x="42" y="26" width="10" height="9" fill="#991b1b"/>
+ <rect x="44" y="28" width="6" height="5" fill="#f97316"/>
+ <rect x="36" y="31" width="10" height="11" fill="#7f1d1d"/>
+ <rect x="38" y="33" width="6" height="7" fill="#ea580c"/>
+ <rect x="44" y="36" width="12" height="17" fill="#a88b65"/>
+ <rect x="47" y="38" width="3" height="12" fill="#dc2626"/>
+ <rect x="48" y="53" width="8" height="16" fill="#9c805c"/>
+ <rect x="50" y="54" width="3" height="14" fill="#f97316"/>
+ <rect x="4" y="22" width="15" height="36" fill="#8f7756"/>
+ <rect x="7" y="26" width="9" height="28" fill="#b59870"/>
+ <rect x="9" y="28" width="3" height="22" fill="#ea580c"/>
+ <rect x="12" y="35" width="3" height="16" fill="#dc2626"/>
+ <rect x="22" y="50" width="11" height="17" fill="#2f2e3a"/>
+ <rect x="39" y="50" width="11" height="17" fill="#2f2e3a"/>
+ <rect x="20" y="66" width="13" height="4" fill="#4a352c"/>
+ <rect x="39" y="66" width="13" height="4" fill="#4a352c"/>
+</svg>`;
 
-  if(!g.philipTransformed && g.sanity>=PHILIP_TRANSFORM_THRESHOLD){
-   g.philipTransformed=true;
-   g.heroName='필립 · 용기 각성';
-   if(logParts)logParts.push('[물러서질 않을 용기 발동!] 정신력이 +45에 도달해 모습이 변하고 카드/화상 대미지가 강화됩니다!');
-  }else if(g.philipTransformed && g.sanity<=PHILIP_BREAK_THRESHOLD){
-   g.philipTransformed=false;
-   g.philipStunTurns=Math.max(g.philipStunTurns||0,1);
-   g.heroName=this.name;
-   if(logParts)logParts.push('[정신 붕괴 · -40 이하] 변신이 풀리고 1턴간 움직이지 못합니다!');
-  }
-
-  if($('heroName'))$('heroName').textContent=g.heroName;
-  if($('heroGlyph'))$('heroGlyph').innerHTML=this.getSprite(g);
- },
- onCardPlayed(g, card){
-  if(!this.isPhilip(g) || !card)return '';
-  const parts=[];
-  const cost=Math.max(0,Math.floor(Number(card.cost)||0));
-
-  if(g.philipTransformed){
-   const loss=this.getSanityLossByCost(cost);
-   g.sanity=this.clampSanity((g.sanity||0)-loss);
-   parts.push(`변신 상태 코스트(${cost}) 소모로 정신력 -${loss} (현재 ${g.sanity})`);
-  }else{
-   const gain=this.getSanityGainByCost(cost);
-   g.sanity=this.clampSanity((g.sanity||0)+gain);
-   parts.push(`코스트(${cost}) 카드로 정신력 +${gain} (현재 ${g.sanity})`);
-  }
-
-  this.syncTransformState(g,parts);
-  return parts.length?` [${parts.join(' · ')}]`:'';
- },
- getDamageMultiplier(g, card){
-  if(!this.isPhilip(g) || !g.philipTransformed)return 1;
-  return (card && card.kind==='philipBurningStrike') ? 1.2 : 1.35;
- },
- getBurnBonus(g, card){
-  if(!this.isPhilip(g) || !g.philipTransformed)return 0;
-  return (card && card.kind==='philipBurningStrike') ? 10 : 5;
- },
- playSpecialCard(g, card, hitFn){
-  if(!this.isPhilip(g) || !card)return null;
-  if(card.kind==='philipCourage'){
-   g.block+=(card.block||8);
-   let msg=`[물러서질 않을 용기] 방어도 ${card.block||8} 획득.`;
-   if(card.sanityDelta){
-    g.sanity=this.clampSanity((g.sanity||0)+card.sanityDelta);
-    msg+=` 추가 정신력 +${card.sanityDelta} (현재 ${g.sanity}).`;
-   }
-   return msg;
-  }
-  if(card.kind==='philipBurningStrike'){
-   const mult=this.getDamageMultiplier(g,card);
-   const rawDmg=Math.round(((card.damage||30)+(g.buffs.attack||0))*mult);
-   const dmg=hitFn(rawDmg);
-   const burnAmount=(card.burn||15)+this.getBurnBonus(g,card);
-   g.enemy.burn=(g.enemy.burn||0)+burnAmount;
-   return `[타오르는 일격] ${dmg} 피해 및 화상 ${burnAmount} 부여!`;
-  }
-  return null;
- },
- consumeStunIfNeeded(g){
-  if(!this.isPhilip(g))return false;
-  if((g.philipStunTurns||0)>0){
-   g.philipStunTurns=Math.max(0,g.philipStunTurns-1);
-   return true;
-  }
-  return false;
- },
- tryZeroHpEscape(g, onEscape){
-  if(!this.isPhilip(g) || g.hp>0)return false;
-  if(Math.random() < PHILIP_ESCAPE_CHANCE){
-   g.hp=Math.min(g.maxHp,PHILIP_ESCAPE_HP);
-   g.active=false;
-   g.philipTransformed=false;
-   g.philipStunTurns=0;
-   g.sanity=0;
-   g.heroName=this.name;
-   if($('heroName'))$('heroName').textContent=g.heroName;
-   if($('heroGlyph'))$('heroGlyph').innerHTML=this.getSprite(g);
-   $('battleLog').textContent='[필립 생존 도주 · 10% 발동] 치명상을 입었지만 10% 확률로 HP 10이 되어 스테이지를 마무리하고 다음 스테이지로 도망쳤습니다!';
-   showModal('필립 생존 도주','피가 0이 되는 피해를 입었지만 10% 확률로 HP 10으로 버텨내며 스테이지를 마무리하고 다음 스테이지로 도망칩니다!',[
-    {label:'다음 스테이지로 도주',desc:'HP 10 상태로 스테이지를 마무리하고 다음 스테이지로 이동합니다.',action:onEscape}
-   ]);
-   return true;
-  }
-  return false;
- }
+const heroPixelArtData = {
+ knight: `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="18" y="68" width="36" height="3" fill="#0b0a12"/>
+  <rect x="30" y="2" width="12" height="4" fill="#991b22"/>
+  <rect x="32" y="1" width="11" height="4" fill="#e63946"/>
+  <rect x="26" y="7" width="20" height="17" fill="#495668"/>
+  <rect x="28" y="7" width="16" height="15" fill="#8d9db0"/>
+  <rect x="25" y="13" width="22" height="7" fill="#1b2230"/>
+  <rect x="29" y="15" width="5" height="2" fill="#7ce0ff"/>
+  <rect x="38" y="15" width="5" height="2" fill="#7ce0ff"/>
+  <rect x="21" y="26" width="30" height="21" fill="#3b4656"/>
+  <rect x="24" y="26" width="24" height="21" fill="#7e90a6"/>
+  <rect x="34" y="29" width="4" height="15" fill="#1d6fa5"/>
+  <rect x="3" y="24" width="15" height="26" fill="#133854"/>
+  <rect x="5" y="26" width="11" height="21" fill="#3498db"/>
+  <rect x="61" y="4" width="4" height="42" fill="#9aaab8"/>
+  <rect x="55" y="46" width="16" height="4" fill="#d4ac0d"/>
+  <rect x="22" y="51" width="11" height="17" fill="#2b3445"/>
+  <rect x="39" y="51" width="11" height="17" fill="#2b3445"/>
+ </svg>`,
+ grailKnight: `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="18" y="68" width="36" height="3" fill="#0b0a12"/>
+  <rect x="20" y="2" width="32" height="5" fill="#f4c430"/>
+  <rect x="26" y="8" width="20" height="16" fill="#d4af37"/>
+  <rect x="29" y="15" width="5" height="2" fill="#fff6b3"/>
+  <rect x="38" y="15" width="5" height="2" fill="#fff6b3"/>
+  <rect x="22" y="26" width="28" height="21" fill="#e0b22b"/>
+  <rect x="34" y="29" width="4" height="16" fill="#e67e22"/>
+  <rect x="28" y="35" width="16" height="4" fill="#e67e22"/>
+  <rect x="4" y="25" width="13" height="24" fill="#e67e22"/>
+  <rect x="61" y="3" width="4" height="43" fill="#f4f9ff"/>
+  <rect x="22" y="51" width="11" height="17" fill="#b88b14"/>
+  <rect x="39" y="51" width="11" height="17" fill="#b88b14"/>
+ </svg>`,
+ mage: `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="18" y="68" width="36" height="3" fill="#0b0a12"/>
+  <rect x="28" y="6" width="16" height="5" fill="#4a1e6b"/>
+  <rect x="18" y="16" width="36" height="4" fill="#8e44ad"/>
+  <rect x="13" y="20" width="46" height="3" fill="#d4ac0d"/>
+  <rect x="24" y="23" width="24" height="9" fill="#2c123f"/>
+  <rect x="29" y="27" width="5" height="2" fill="#26f7e4"/>
+  <rect x="38" y="27" width="5" height="2" fill="#26f7e4"/>
+  <rect x="16" y="32" width="40" height="35" fill="#3b1854"/>
+  <rect x="21" y="32" width="30" height="35" fill="#1e2738"/>
+  <rect x="60" y="4" width="10" height="10" fill="#2e86c1"/>
+  <rect x="63" y="15" width="3" height="53" fill="#4a2e20"/>
+ </svg>`,
+ vampire: `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="20" y="68" width="32" height="3" fill="#0b0a12"/>
+  <rect x="16" y="6" width="12" height="10" fill="#780628"/>
+  <rect x="44" y="6" width="12" height="10" fill="#780628"/>
+  <rect x="28" y="10" width="16" height="13" fill="#f9fafa"/>
+  <rect x="29" y="14" width="5" height="2" fill="#9e0b36"/>
+  <rect x="38" y="14" width="5" height="2" fill="#9e0b36"/>
+  <rect x="15" y="24" width="42" height="39" fill="#8f0a30"/>
+  <rect x="21" y="26" width="30" height="37" fill="#1d0d1c"/>
+  <rect x="34" y="26" width="4" height="37" fill="#c9184a"/>
+  <rect x="22" y="63" width="11" height="7" fill="#161221"/>
+  <rect x="39" y="63" width="11" height="7" fill="#161221"/>
+ </svg>`,
+ swordsman: `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="20" y="68" width="32" height="3" fill="#0b0a12"/>
+  <rect x="24" y="8" width="24" height="8" fill="#465362"/>
+  <rect x="25" y="11" width="22" height="3" fill="#b5173b"/>
+  <rect x="29" y="16" width="5" height="2" fill="#ffe066"/>
+  <rect x="38" y="16" width="5" height="2" fill="#ffe066"/>
+  <rect x="23" y="21" width="26" height="28" fill="#4e5d6e"/>
+  <rect x="6" y="7" width="4" height="37" fill="#d91e4a"/>
+  <rect x="62" y="7" width="4" height="37" fill="#1f78c1"/>
+  <rect x="22" y="49" width="11" height="18" fill="#1e2736"/>
+  <rect x="39" y="49" width="11" height="18" fill="#1e2736"/>
+ </svg>`,
+ purpleTear: `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="19" y="68" width="34" height="3" fill="#0b0a12"/>
+  <rect x="24" y="4" width="24" height="8" fill="#4c1d95"/>
+  <rect x="26" y="12" width="20" height="13" fill="#1e1b2e"/>
+  <rect x="29" y="16" width="5" height="2" fill="#e879f9"/>
+  <rect x="38" y="16" width="5" height="2" fill="#c084fc"/>
+  <rect x="15" y="25" width="42" height="24" fill="#2e1065"/>
+  <rect x="22" y="25" width="28" height="24" fill="#581c87"/>
+  <rect x="33" y="26" width="6" height="22" fill="#a855f7"/>
+  <rect x="61" y="6" width="4" height="44" fill="#e9d5ff"/>
+  <rect x="22" y="49" width="11" height="18" fill="#1e1b2e"/>
+  <rect x="39" y="49" width="11" height="18" fill="#1e1b2e"/>
+ </svg>`,
+ philip: philipBeforeSvg
 };
 
 function getHeroPixelArt(charKey){
- const k=charKey||(game&&game.character)||'knight';
- if(k==='philip')return PHILIP_MODULE.getSprite(game);
- return heroPixelArtData[k] || heroPixelArtData.knight;
+ if(charKey==='philip' || (game && game.character==='philip')){
+  return (game && game.philipCourageActive) ? philipAfterSvg : philipBeforeSvg;
+ }
+ return heroPixelArtData[charKey] || heroPixelArtData.knight;
 }
+
+// --- STORAGE & PROGRESSION ---
+const GRAIL_UNLOCK_KEY='ashen_heroes_grail_knight_unlocked';
+const VAMPIRE_UNLOCK_KEY='ashen_heroes_vampire_unlocked';
+const SWORDSMAN_UNLOCK_KEY='ashen_heroes_swordsman_unlocked';
+const MASTERY_STORAGE_KEY='ashen_heroes_mastery_v1';
+const BANNED_CARDS_KEY='ashen_heroes_banned_cards_v1';
+const MAX_BANNED_CARDS=7;
+const SAVE_SCHEMA_VERSION=1;
+const PROGRESS_BUNDLE_KEY='ashen_heroes_persistent_progress_v1';
+const CONTINUE_RUN_KEY='ashen_heroes_continue_run_v1';
+const ACHIEVEMENT_STORAGE_KEY='ashen_heroes_achievements_v1';
+const COLLECTION_STORAGE_KEY='ashen_heroes_collections_v1';
+const SHARD_STORAGE_KEY='ashen_heroes_shards_v1';
+const SHARD_MILESTONE_KEY='ashen_heroes_shard_milestones_v1';
+const SKIN_STORAGE_KEY='ashen_heroes_skins_v1';
+const OWNED_SKINS_KEY='ashen_heroes_owned_skins_v1';
+
+function readStorageSafe(key){
+ try{const v=localStorage.getItem(key);if(v!==null)return v;}catch(e){}
+ try{
+  if(window.name && window.name.startsWith('ASHEN_HEROES_WIN_STORE:')){
+   const parsed=JSON.parse(window.name.slice('ASHEN_HEROES_WIN_STORE:'.length));
+   if(parsed && Object.prototype.hasOwnProperty.call(parsed,key))return parsed[key];
+  }
+ }catch(e){}
+ return null;
+}
+
+function writeStorageSafe(key,val){
+ try{localStorage.setItem(key,val);}catch(e){}
+ try{
+  let bag={};
+  if(window.name && window.name.startsWith('ASHEN_HEROES_WIN_STORE:')){
+   bag=JSON.parse(window.name.slice('ASHEN_HEROES_WIN_STORE:'.length))||{};
+  }
+  bag[key]=val;
+  window.name='ASHEN_HEROES_WIN_STORE:'+JSON.stringify(bag);
+ }catch(e){}
+}
+
+function isGrailKnightUnlocked(){return readStorageSafe(GRAIL_UNLOCK_KEY)==='1';}
+function unlockGrailKnight(){writeStorageSafe(GRAIL_UNLOCK_KEY,'1');exportProgressSnapshot();}
+function isVampireUnlocked(){return readStorageSafe(VAMPIRE_UNLOCK_KEY)==='1';}
+function unlockVampire(){writeStorageSafe(VAMPIRE_UNLOCK_KEY,'1');exportProgressSnapshot();}
+function isSwordsmanUnlocked(){return readStorageSafe(SWORDSMAN_UNLOCK_KEY)==='1';}
+function unlockSwordsman(){writeStorageSafe(SWORDSMAN_UNLOCK_KEY,'1');exportProgressSnapshot();}
+function isAshenWardenDefeated(){return readStorageSafe('ashen_heroes_ashen_warden_defeated_v1')==='1';}
+function markAshenWardenDefeated(){writeStorageSafe('ashen_heroes_ashen_warden_defeated_v1','1');exportProgressSnapshot();}
+function hasFangRelic(){return !!(game && Array.isArray(game.items) && game.items.some(x=>x.name==='포식자의 송곳니' || x.effect==='killHeal'));}
+
+function loadUnlockedAchievements(){try{const r=readStorageSafe(ACHIEVEMENT_STORAGE_KEY);const a=r?JSON.parse(r):[];return Array.isArray(a)?a:[];}catch(e){return[];}}
+function saveUnlockedAchievements(list){writeStorageSafe(ACHIEVEMENT_STORAGE_KEY,JSON.stringify([...new Set(list)]));exportProgressSnapshot();}
+function loadUnlockedCollections(){try{const r=readStorageSafe(COLLECTION_STORAGE_KEY);const a=r?JSON.parse(r):[];return Array.isArray(a)?a:[];}catch(e){return[];}}
+function saveUnlockedCollections(list){writeStorageSafe(COLLECTION_STORAGE_KEY,JSON.stringify([...new Set(list)]));exportProgressSnapshot();}
+function grantAchievementAndCollection(achId,colId){
+ const achs=loadUnlockedAchievements();const cols=loadUnlockedCollections();
+ const newlyUnlockedAch=!achs.includes(achId);const newlyUnlockedCol=colId && !cols.includes(colId);
+ if(newlyUnlockedAch){achs.push(achId);saveUnlockedAchievements(achs);}
+ if(colId && newlyUnlockedCol){cols.push(colId);saveUnlockedCollections(cols);}
+ return {newlyUnlockedAch,newlyUnlockedCol};
+}
+
+function getShards(){const v=parseInt(readStorageSafe(SHARD_STORAGE_KEY)||'0',10);return Number.isFinite(v)&&v>=0?v:0;}
+function setShards(amount){const s=Math.max(0,Math.floor(Number(amount)||0));writeStorageSafe(SHARD_STORAGE_KEY,String(s));exportProgressSnapshot();updateHeaderActionLabels();return s;}
+function addShards(delta){const d=Math.floor(Number(delta)||0);return d<=0?getShards():setShards(getShards()+d);}
+function loadClaimedShardMilestones(){try{const r=readStorageSafe(SHARD_MILESTONE_KEY);const a=r?JSON.parse(r):[];return Array.isArray(a)?a:[];}catch(e){return[];}}
+function saveClaimedShardMilestones(list){writeStorageSafe(SHARD_MILESTONE_KEY,JSON.stringify([...new Set(list)]));exportProgressSnapshot();}
+function awardCorridorProgressShards(reason='stage'){
+ if(!game || game.mode==='story')return 0;
+ const claimed=new Set(loadClaimedShardMilestones());let gained=0;
+ const f=game.floor||0;const s=game.stage||0;
+ if(s>=1 && s%5===0){const k=`stage_${f}_${s}`;if(!claimed.has(k)){claimed.add(k);gained+=5;}}
+ if(reason==='elite'){const k=`elite_${f}_${s}_${game.battles||0}`;if(!claimed.has(k)){claimed.add(k);gained+=6;}}
+ if(reason==='boss'){const k=`boss_${f}`;if(!claimed.has(k)){claimed.add(k);gained+=15;}}
+ if(gained>0){saveClaimedShardMilestones([...claimed]);addShards(gained);}
+ return gained;
+}
+
+function loadMasteryData(){try{const r=readStorageSafe(MASTERY_STORAGE_KEY);const p=r?JSON.parse(r):{};return p&&typeof p==='object'?p:{};}catch(e){return{};}}
+function saveMasteryData(data){writeStorageSafe(MASTERY_STORAGE_KEY,JSON.stringify(data));exportProgressSnapshot();}
+function calcMasteryLevel(exp){const s=Math.max(0,Number(exp)||0);const level=Math.min(5,1+Math.floor(s/30));return {level,exp:s,curLevelExp:s%30,nextExp:30};}
+function getCharMastery(charKey){const k=charKey||(game&&game.character)||'knight';const all=loadMasteryData();return calcMasteryLevel((all[k]&&typeof all[k].exp==='number')?all[k].exp:0);}
+function gainCharMastery(charKey,amount){
+ const k=charKey||(game&&game.character)||'knight';const all=loadMasteryData();
+ const prevExp=(all[k]&&typeof all[k].exp==='number')?all[k].exp:0;
+ const prevLv=calcMasteryLevel(prevExp).level;
+ const nextExp=prevExp+Math.max(0,amount);
+ all[k]={exp:nextExp};saveMasteryData(all);
+ const nextLvInfo=calcMasteryLevel(nextExp);
+ updateHeaderActionLabels();
+ return {...nextLvInfo,leveledUp:nextLvInfo.level>prevLv,unlockedCards:[]};
+}
+
+function resolveBanChar(charKey=null){
+ if(charKey && chars[charKey])return charKey;
+ if(game && game.character && chars[game.character])return game.character;
+ if(selectedBanChar && chars[selectedBanChar])return selectedBanChar;
+ return 'knight';
+}
+function loadAllBannedCardsMap(){try{const r=readStorageSafe(BANNED_CARDS_KEY);const p=r?JSON.parse(r):{};return p&&typeof p==='object'?p:{};}catch(e){return{};}}
+function loadBannedCards(charKey=null){const k=resolveBanChar(charKey);const m=loadAllBannedCardsMap();return Array.isArray(m[k])?m[k].slice(0,MAX_BANNED_CARDS):[];}
+function saveBannedCards(list,charKey=null){const k=resolveBanChar(charKey);const m=loadAllBannedCardsMap();m[k]=list.slice(0,MAX_BANNED_CARDS);writeStorageSafe(BANNED_CARDS_KEY,JSON.stringify(m));exportProgressSnapshot();updateHeaderActionLabels();}
+function toggleBanCard(cardName,charKey=null){
+ const k=resolveBanChar(charKey);const list=loadBannedCards(k);const idx=list.indexOf(cardName);
+ if(idx>=0){list.splice(idx,1);saveBannedCards(list,k);return{ok:true,banned:false,count:list.length};}
+ if(list.length>=MAX_BANNED_CARDS)return{ok:false,msg:`[${chars[k].name}] 카드는 최대 ${MAX_BANNED_CARDS}장까지만 밴할 수 있습니다.`};
+ list.push(cardName);saveBannedCards(list,k);return{ok:true,banned:true,count:list.length};
+}
+
+function exportProgressSnapshot(){
+ const payload={
+  schemaVersion:SAVE_SCHEMA_VERSION,savedAt:new Date().toISOString(),
+  grailKnightUnlocked:isGrailKnightUnlocked(),vampireUnlocked:isVampireUnlocked(),
+  swordsmanUnlocked:isSwordsmanUnlocked(),ashenWardenDefeated:isAshenWardenDefeated(),
+  achievements:loadUnlockedAchievements(),collections:loadUnlockedCollections(),
+  shards:getShards(),claimedShardMilestones:loadClaimedShardMilestones(),
+  mastery:loadMasteryData(),bannedCards:loadAllBannedCardsMap()
+ };
+ writeStorageSafe(PROGRESS_BUNDLE_KEY,JSON.stringify(payload));
+ return payload;
+}
+
+function restoreProgressSnapshot(rawObj){
+ if(!rawObj || typeof rawObj!=='object')return false;
+ if(rawObj.grailKnightUnlocked===true)writeStorageSafe(GRAIL_UNLOCK_KEY,'1');
+ if(rawObj.vampireUnlocked===true)writeStorageSafe(VAMPIRE_UNLOCK_KEY,'1');
+ if(rawObj.swordsmanUnlocked===true)writeStorageSafe(SWORDSMAN_UNLOCK_KEY,'1');
+ if(rawObj.ashenWardenDefeated===true)writeStorageSafe('ashen_heroes_ashen_warden_defeated_v1','1');
+ if(rawObj.mastery && typeof rawObj.mastery==='object'){
+  const cur=loadMasteryData();const merged={...cur};
+  Object.keys(rawObj.mastery).forEach(k=>{merged[k]={exp:Math.max(Number(cur[k]?.exp||0),Number(rawObj.mastery[k]?.exp||0))};});
+  writeStorageSafe(MASTERY_STORAGE_KEY,JSON.stringify(merged));
+ }
+ if(rawObj.bannedCards && typeof rawObj.bannedCards==='object'){
+  const curBan=loadAllBannedCardsMap();const mergedBan={...curBan};
+  Object.keys(rawObj.bannedCards).forEach(k=>{if(Array.isArray(rawObj.bannedCards[k]))mergedBan[k]=rawObj.bannedCards[k].slice(0,MAX_BANNED_CARDS);});
+  writeStorageSafe(BANNED_CARDS_KEY,JSON.stringify(mergedBan));
+ }
+ if(Array.isArray(rawObj.achievements))saveUnlockedAchievements([...loadUnlockedAchievements(),...rawObj.achievements]);
+ if(Array.isArray(rawObj.collections))saveUnlockedCollections([...loadUnlockedCollections(),...rawObj.collections]);
+ if(typeof rawObj.shards==='number')setShards(Math.max(getShards(),rawObj.shards));
+ return true;
+}
+
+(function(){try{const raw=readStorageSafe(PROGRESS_BUNDLE_KEY);if(raw)restoreProgressSnapshot(JSON.parse(raw));}catch(e){}})();
+
+// --- PURPLE TEAR PRESET OTHER-CHARACTER DECK & 0-COST 5TH-SLOT STANCE LOCK CARD ---
+const STANCE_LOCK_CARD_TEMPLATE={
+ name:'자세고정',
+ glyph:'◈',
+ cost:0,
+ desc:'자세고정(2턴) 발동, 방어도 5 획득, 카드 1장 뽑기.',
+ kind:'tearStanceLockCard',
+ stanceLockTurns:2,
+ block:5,
+ draw:1,
+ type:'자세고정',
+ rarity:'고급'
+};
+
+// 미리 설정해 둔 타 캐릭터 덱(필요시 'knight','grailKnight','mage','vampire','swordsman' 중 변경)
+const PURPLE_TEAR_DEFAULT_TARGET_CHAR='swordsman';
+
+const purpleTearExclusiveSkills=[
+ {name:'뱀의 표적',glyph:'⌖',cost:1,desc:'표적·취약 부여 및 피해 5. 자세고정 시 코스트 +1, 카드 1장 뽑기.',kind:'tearTarget',damage:5,draw:1,type:'보라눈물 전용',rarity:'일반'},
+ {name:'사검술',glyph:'⚔',cost:1,desc:'피해 5×2 및 자세고정 2턴.',kind:'tearSerpentArt',hits:2,damage:5,stanceLockTurns:2,type:'보라눈물 전용',rarity:'일반'},
+ {name:'뱀가르기',glyph:'➤',cost:2,desc:'피해 14, 화상 3, 취약 2턴. 자세고정 시 코스트 -1.',kind:'tearSerpentCleaver',damage:14,poison:3,vulnerable:2,type:'보라눈물 전용',rarity:'고급'},
+ {name:'흘려 보내기',glyph:'◈',cost:1,desc:'방어도 8, 자세고정 1턴. 자세고정 시 다음 턴 드로우 +1·정화.',kind:'tearDivert',block:8,stanceLockTurns:1,type:'보라눈물 전용',rarity:'희귀'},
+ {name:'환영 난무',glyph:'✦',cost:2,desc:'피해 5×4. 자세고정 시 타격당 피해 +2 및 코스트 +1.',kind:'tearPhantomDance',hits:4,damage:5,lockHitBonus:2,lockEnergyGain:1,type:'보라눈물 전용',rarity:'영웅'}
+];
+
+// --- PHILIP SKILLS & COURAGE SKILL ---
+const philipSkillCards=[
+ {name:'낙인',glyph:'✹',cost:2,desc:'피해 14, 화상 7 부여.',kind:'philipSkill',damage:14,burn:7,type:'필립 스킬',rarity:'일반'},
+ {name:'불 다루기',glyph:'✹',cost:3,desc:'피해 12, 화상 13 부여.',kind:'philipSkill',damage:12,burn:13,type:'필립 스킬',rarity:'고급'},
+ {name:'불지피기',glyph:'✹',cost:0,desc:'대상 화상이 10 이상이면 효과 1.5배(반올림).',kind:'philipIgnite',burn:6,damage:6,type:'필립 스킬',rarity:'고급'},
+ {name:'차례 배기',glyph:'⚔',cost:1,desc:'피해 10, 화상 2 부여.',kind:'philipSkill',damage:10,burn:2,type:'필립 스킬',rarity:'일반'},
+ {name:'새벽의 은혜',glyph:'✦',cost:1,desc:'자신에게 화상 3 부여, 피해 12.',kind:'philipDawnGrace',selfBurn:3,damage:12,type:'필립 스킬',rarity:'고급'},
+ {name:'뜨겁게 타올라라',glyph:'✹',cost:2,desc:'피해 7, 화상 10 부여.',kind:'philipSkill',damage:7,burn:10,type:'필립 스킬',rarity:'고급'},
+ {name:'파열감',glyph:'⌖',cost:0,desc:'피해 5, 취약 2 부여.',kind:'philipSkill',damage:5,vulnerable:2,type:'필립 스킬',rarity:'일반'}
+];
+
+const philipCourageStrikeCard={
+ name:'타오르는 일격',
+ glyph:'✹',
+ cost:4,
+ desc:'피해 30, 화상 15 부여, 정신력 15 감소.',
+ kind:'philipCourageStrike',
+ damage:30,
+ burn:15,
+ sanityLoss:15,
+ type:'물러서질 않을 용기',
+ rarity:'영웅',
+ courageOnly:true
+};
 
 const chars={
  knight:{name:'기사',glyph:'♙',hp:60,energy:3,special:[
-  {name:'방패 강타',glyph:'▣',cost:1,desc:'적에게 피해 6, 방어도 5 획득.',kind:'mixed',damage:6,block:5,type:'특수기',rarity:'일반'},
-  {name:'강력한 일격',glyph:'⚔',cost:2,desc:'적에게 피해 13.',kind:'damage',damage:13,type:'특수기',rarity:'일반'}]},
- philip:{name:PHILIP_MODULE.name,glyph:PHILIP_MODULE.glyph,hp:PHILIP_MODULE.hp,energy:PHILIP_MODULE.energy,special:PHILIP_MODULE.special}
+  {name:'방패 강타',glyph:'▣',cost:1,desc:'피해 6, 방어도 5.',kind:'mixed',damage:6,block:5,type:'특수기',rarity:'일반'},
+  {name:'강력한 일격',glyph:'⚔',cost:2,desc:'피해 13.',kind:'damage',damage:13,type:'특수기',rarity:'일반'}]},
+ grailKnight:{name:'성배기사',glyph:'♛',unlockable:true,hp:68,energy:3,special:[
+  {name:'성배의 빛',glyph:'✦',cost:1,desc:'피해 9, 방어도 6, 체력 3 회복.',kind:'mixed',damage:9,block:6,heal:3,type:'특수기',rarity:'희귀'},
+  {name:'맹세의 단죄',glyph:'⚔',cost:2,desc:'피해 16, 취약 2턴.',kind:'damage',damage:16,debuff:'vulnerable',type:'특수기',rarity:'희귀'}]},
+ mage:{name:'마법사',glyph:'✧',hp:48,energy:3,special:[
+  {name:'원소 작렬',glyph:'✹',cost:1,manaCost:1,desc:'마나 1 소모, 피해 8 및 원소 효과.',kind:'elementalStrike',damage:8,type:'원소 특수기',rarity:'일반'},
+  {name:'원소 쇄도',glyph:'✧',cost:2,manaCost:1,desc:'마나 1 소모, 피해 12 및 원소 쇄도.',kind:'elementalSurge',damage:12,type:'원소 특수기',rarity:'일반'}]},
+ vampire:{name:'혈귀',glyph:'☽',unlockable:true,unlockType:'vampire',hp:56,energy:3,special:[
+  {name:'피의 송곳니',glyph:'☽',cost:1,hpCost:3,lifesteal:4,desc:'체력 3 소모, 피해 9, 흡혈 4.',kind:'bloodStrike',damage:9,type:'혈귀 전용',rarity:'일반'},
+  {name:'진홍의 갈증',glyph:'✹',cost:1,hpCost:4,lifesteal:6,desc:'체력 4 소모, 피해 11, 흡혈 6.',kind:'bloodStrike',damage:11,type:'혈귀 전용',rarity:'일반'}]},
+ swordsman:{name:'검무가',glyph:'⚔',unlockable:true,unlockType:'swordsman',hp:58,energy:3,special:[
+  {name:'맹공의 검무',glyph:'⚔',cost:1,desc:'맹공 전환 및 피해 7, 연계 시 +4.',kind:'stanceStrike',stance:'assault',damage:7,comboBonus:4,type:'검무가 전용',rarity:'일반'},
+  {name:'철벽의 검무',glyph:'▣',cost:1,desc:'철벽 전환 및 방어도 6, 연계 시 피해 6.',kind:'stanceGuard',stance:'iron',block:6,comboDmg:6,type:'검무가 전용',rarity:'일반'}]},
+ purpleTear:{name:'보라눈물',glyph:'◈',hp:56,energy:3,special:[
+  {...STANCE_LOCK_CARD_TEMPLATE},
+  {...purpleTearExclusiveSkills[0]},
+  {...purpleTearExclusiveSkills[1]}
+ ]},
+ philip:{name:'필립',glyph:'✹',hp:64,energy:4,special:philipSkillCards.slice(0,4)}
 };
+
+function buildPresetDeckForTargetChar(targetChar='swordsman'){
+ const k=chars[targetChar]&&targetChar!=='purpleTear'&&targetChar!=='philip'?targetChar:'swordsman';
+ const strike=Array.from({length:3},()=>({name:'타격',glyph:'⚔',cost:1,desc:'적에게 피해 6.',kind:'damage',damage:6,type:'공통 카드',rarity:'기본'}));
+ const defend=Array.from({length:3},()=>({name:'방어',glyph:'▣',cost:1,desc:'방어도 6 획득.',kind:'block',block:6,type:'공통 카드',rarity:'기본'}));
+ const specials=(chars[k]?.special||chars.knight.special).map(c=>({...c}));
+ return shuffle([...strike,...defend,...specials]);
+}
+
+function isStanceLockFixedCard(card){
+ return !!(card && card.kind==='tearStanceLockCard');
+}
+
+function pinStanceLockCardToFifthSlot(){
+ if(!game || game.character!=='purpleTear')return;
+ const found=[];
+ const normalHand=[];
+ (game.hand||[]).forEach(c=>{
+  if(isStanceLockFixedCard(c))found.push(c);
+  else normalHand.push(c);
+ });
+ game.drawPile=(game.drawPile||[]).filter(c=>{
+  if(isStanceLockFixedCard(c)){found.push(c);return false;}
+  return true;
+ });
+ game.discard=(game.discard||[]).filter(c=>{
+  if(isStanceLockFixedCard(c)){found.push(c);return false;}
+  return true;
+ });
+
+ const lockCard=found[0] || {...STANCE_LOCK_CARD_TEMPLATE};
+ lockCard.cost=0;
+ lockCard.kind='tearStanceLockCard';
+
+ while(normalHand.length<4){
+  if(!game.drawPile.length){
+   if(!game.discard.length)break;
+   game.drawPile=shuffle(game.discard);
+   game.discard=[];
+  }
+  const drawn=game.drawPile.pop();
+  if(!drawn)break;
+  if(isStanceLockFixedCard(drawn))continue;
+  normalHand.push(drawn);
+ }
+
+ const firstFour=normalHand.slice(0,4);
+ const rest=normalHand.slice(4);
+ if(rest.length){
+  game.drawPile=[...rest,...game.drawPile];
+ }
+ game.hand=[...firstFour,lockCard];
+}
+
+function syncPhilipCourageHandCard(){
+ if(!game || game.character!=='philip')return;
+ game.hand=(game.hand||[]).filter(c=>!c.courageOnly);
+ game.drawPile=(game.drawPile||[]).filter(c=>!c.courageOnly);
+ game.discard=(game.discard||[]).filter(c=>!c.courageOnly);
+ if(game.philipCourageActive){
+  game.hand.push({...philipCourageStrikeCard});
+ }
+}
+
+function clampSanity(val){
+ return Math.max(-45,Math.min(45,Math.round(val)));
+}
+
+function applyPhilipSanityAfterCard(cardCost){
+ if(!game || game.character!=='philip')return '';
+ const c=Math.max(0,Math.min(3,Math.round(Number(cardCost)||0)));
+ let note='';
+ if(!game.philipCourageActive){
+  const gainMap={0:5,1:10,2:15,3:20};
+  const gain=gainMap[c]??5;
+  game.sanity=clampSanity((game.sanity||0)+gain);
+  note=` 정신력 +${gain} (현재 ${game.sanity}).`;
+  if(game.sanity>=45){
+   game.sanity=45;
+   game.philipCourageActive=true;
+   syncPhilipCourageHandCard();
+   $('heroGlyph').innerHTML=getHeroPixelArt('philip');
+   note+=' [물러서질 않을 용기 활성화!] 외형이 변하고 모든 카드 피해 +5, 화상 +2 및 [타오르는 일격] 활성화!';
+  }
+ }else{
+  const lossMap={0:2,1:5,2:7,3:10};
+  const loss=lossMap[c]??2;
+  game.sanity=clampSanity((game.sanity||0)-loss);
+  note=` 정신력 -${loss} (현재 ${game.sanity}).`;
+  if(game.sanity<=-40){
+   game.philipCourageActive=false;
+   game.philipStunnedTurns=Math.max(game.philipStunnedTurns||0,1);
+   syncPhilipCourageHandCard();
+   $('heroGlyph').innerHTML=getHeroPixelArt('philip');
+   note+=' 정신력이 -40 이하가 되어 변신이 풀리고 1턴간 행동 불가!';
+  }
+ }
+ return note;
+}
 
 const monsters=[
  {name:'잿빛 망령',glyph:'◈',hp:28,atk:6},{name:'유적의 사냥개',glyph:'◆',hp:34,atk:7},
@@ -515,28 +752,39 @@ const elites=[
  {name:'검은 갑주 기사',glyph:'♜',hp:58,atk:10},{name:'균열의 포식자',glyph:'♠',hp:52,atk:12}
 ];
 const bosses=[
- {name:'회랑의 문지기',glyph:'♛',hp:85,atk:12},
- {name:'잿빛 군주',glyph:'☗',hp:125,atk:16},
- {name:'회랑의 종언자',glyph:'✦',hp:175,atk:20}
+ {name:'회랑의 문지기',glyph:'♛',hp:85,atk:12,phase2Name:'각성한 회랑의 문지기'},
+ {name:'잿빛 군주',glyph:'☗',hp:125,atk:16,phase2Name:'타락한 잿빛 군주'},
+ {name:'회랑의 종언자',glyph:'✦',hp:175,atk:20,phase2Name:'종언의 화신'},
+ {name:'잿빛 검수',glyph:'⚔',hp:140,atk:15,bleedBoss:true,phase2Name:'피에 젖은 잿빛 검수'}
+];
+const relicPool=[
+ {name:'금 간 나침반',desc:'첫 턴 카드 1장 추가 드로우.',effect:'firstDraw',rarity:'일반'},
+ {name:'포식자의 송곳니',desc:'적 처치 시 체력 3 회복.',effect:'killHeal',rarity:'일반'},
+ {name:'잔불의 심장',desc:'전투 시작 시 코스트 +1.',effect:'battleEnergy',rarity:'희귀'}
 ];
 const potionTypes=[
  {name:'회복 포션',desc:'체력 15 회복',use:g=>{let n=Math.min(15,g.maxHp-g.hp);g.hp+=n;return `체력 ${n} 회복`}},
- {name:'과충전 포션',desc:'이번 턴 코스트 +2',use:g=>{g.energy+=2;return '이번 턴 코스트가 2 증가'}},
- {name:'광폭 포션',desc:'이번 턴 공격 피해 +5',use:g=>{g.buffs.attack=5;return '이번 턴 공격 피해 +5'}},
- {name:'철벽 포션',desc:'방어도 15 획득',use:g=>{g.block+=15;return '방어도 15 획득'}}
+ {name:'과충전 포션',desc:'이번 턴 코스트 +2',use:g=>{g.energy+=2;return '이번 턴 코스트 +2'}}
 ];
 
 let game=null;
-const CONTINUE_RUN_KEY='ashen_heroes_philip_run_v1';
+let selectedMode='corridor';
+let selectedBanChar='knight';
 
 function rand(a){return a[Math.floor(Math.random()*a.length)]}
 function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
 
-function makeBaseDeck(character){
+function makeBaseDeck(character,element='fire',presetSource=null){
+ if(character==='purpleTear'){
+  return buildPresetDeckForTargetChar(presetSource || PURPLE_TEAR_DEFAULT_TARGET_CHAR);
+ }
+ if(character==='philip'){
+  return shuffle(philipSkillCards.map(c=>({...c})));
+ }
  const strike=Array.from({length:4},()=>({name:'타격',glyph:'⚔',cost:1,desc:'적에게 피해 6.',kind:'damage',damage:6,type:'공통 카드',rarity:'기본'}));
  const defend=Array.from({length:4},()=>({name:'방어',glyph:'▣',cost:1,desc:'방어도 6 획득.',kind:'block',block:6,type:'공통 카드',rarity:'기본'}));
- const specials=(chars[character]?.special||[]).map(c=>({...c}));
+ const specials=(chars[character]?.special||chars.knight.special).map(c=>({...c}));
  return shuffle([...strike,...defend,...specials]);
 }
 
@@ -544,87 +792,91 @@ function chooseCharacter(){
  $('characterChoices').innerHTML='';
  Object.keys(chars).forEach(key=>{
   const c=chars[key];
-  const descText=key==='philip'
-   ?'체력 64 · 기초 코스트 4 · 정신력(-45~+45) · 변신 & 0피해 시 10% HP10 도주'
-   :'기본 특수기 2종';
-  const b=document.createElement('button');
-  b.type='button';
-  b.className='choice';
-  b.innerHTML=`<div class="glyph" style="width:52px;height:52px;margin-bottom:6px">${getHeroPixelArt(key)}</div><h3>${c.name}</h3><p>체력 ${c.hp} · 기초 코스트 ${c.energy}<br>${descText}</p>`;
-  b.onclick=()=>startRun(key);
+  const isVamp=key==='vampire';
+  const isSword=key==='swordsman';
+  const isTear=key==='purpleTear';
+  const isPhilip=key==='philip';
+  const locked=(!!c.unlockable && (
+   isVamp ? !isVampireUnlocked() :
+   isSword ? !isSwordsmanUnlocked() :
+   !isGrailKnightUnlocked()
+  ));
+  const presetCharName=chars[PURPLE_TEAR_DEFAULT_TARGET_CHAR]?.name||'검무가';
+  const descText=isTear
+   ?`0코스트 자세고정(5번 손패 고정) · ${presetCharName} 덱 사용`
+   :isPhilip
+    ?'체력 64 · 기초 코스트 4 · 정신력 -45~+45 · 변신(물러서질 않을 용기)'
+    :'기본 특수기 2종';
+  const b=document.createElement('button');b.className='choice';
+  b.disabled=locked;
+  b.innerHTML=`<div class="glyph" style="width:44px;height:44px;margin-bottom:6px">${getHeroPixelArt(key)}</div><h3>${c.name}${locked?' (잠김)':''}</h3><p>체력 ${c.hp} · 기초 코스트 ${c.energy}<br>${descText}</p>`;
+  b.onclick=()=>{
+   if(locked)return;
+   if(key==='purpleTear')startRun('purpleTear',PURPLE_TEAR_DEFAULT_TARGET_CHAR);
+   else startRun(key,'fire');
+  };
   $('characterChoices').appendChild(b);
  });
+ updateHeaderActionLabels();
 }
 
-function startRun(key){
+function startRun(key,element='fire'){
+ selectedBanChar=key;
+ const presetSrc=(key==='purpleTear')?(chars[element]&&element!=='purpleTear'?element:PURPLE_TEAR_DEFAULT_TARGET_CHAR):null;
  game={
   character:key,
+  element:key==='mage'?element:null,
+  presetDeckSource:presetSrc,
   heroName:chars[key].name,
   hp:chars[key].hp,
   maxHp:chars[key].hp,
   block:0,
   energy:chars[key].energy,
   maxEnergy:chars[key].energy,
-  sanity:0,
-  philipTransformed:false,
-  philipStunTurns:0,
   gold:30,
   potions:{},
-  deck:makeBaseDeck(key),
+  deck:makeBaseDeck(key,element,presetSrc),
   discard:[],
   hand:[],
+  drawPile:[],
   floor:0,
   stage:0,
   route:null,
+  cleared:0,
   turn:1,
   enemy:null,
   enemyBlock:0,
   active:false,
   items:[],
   passives:[],
-  status:{poison:0,weak:0,vulnerable:0},
-  buffs:{attack:0}
+  status:{poison:0,weak:0,vulnerable:0,bleed:0},
+  buffs:{attack:0},
+  mana:0,
+  maxMana:0,
+  manaRegen:1,
+  battles:0,
+  firstGuard:true,
+  firstDraw:true,
+  removedCard:false,
+  removePrice:37,
+  shopTab:'cards',
+  shopOffers:null,
+  shopRefreshCost:9,
+  stance:'assault',
+  stanceCombo:false,
+  stanceDrawUsedTurn:false,
+  stanceLockTurns:0,
+  nextTurnDrawBonus:0,
+  sanity:0,
+  philipCourageActive:false,
+  philipStunnedTurns:0,
+  escapeToNextStage:false
  };
- PHILIP_MODULE.resetForStage(game);
  makeFloor();
  show('mapScreen');
  renderMap();
+ updateHeaderActionLabels();
  saveContinueRun();
-}
-
-function saveContinueRun(){
- if(!game || !game.hp || game.hp<=0)return;
- try{localStorage.setItem(CONTINUE_RUN_KEY,JSON.stringify(game));refreshContinueButton();}catch(e){}
-}
-function clearContinueRun(){
- try{localStorage.removeItem(CONTINUE_RUN_KEY);}catch(e){}
- refreshContinueButton();
-}
-function refreshContinueButton(){
- const btn=$('continueRunBtn');
- if(!btn)return;
- try{
-  const raw=localStorage.getItem(CONTINUE_RUN_KEY);
-  if(raw){
-   const s=JSON.parse(raw);
-   if(s && s.character && chars[s.character]){
-    btn.disabled=false;
-    btn.textContent=`이어하기 (${chars[s.character].name} · ${(s.floor||0)+1}층 ${(s.stage||0)+1}스테이지)`;
-    return;
-   }
-  }
- }catch(e){}
- btn.disabled=true;
- btn.textContent='이어하기';
-}
-function continueSavedRun(){
- try{
-  const raw=localStorage.getItem(CONTINUE_RUN_KEY);
-  if(!raw)return;
-  game=JSON.parse(raw);
-  if(game.active && game.enemy){renderBattle();show('battleScreen');}
-  else{show('mapScreen');renderMap();}
- }catch(e){}
 }
 
 function makeFloor(){
@@ -633,14 +885,17 @@ function makeFloor(){
  game.stage=0;
  game.routeOptions=generateOptions();
 }
+
 function generateOptions(){
  const total=floors[game.floor];
  if(game.stage>=total)return [];
  if(game.stage===total-1)return [{id:`${game.floor}-${game.stage}-boss`,type:'boss'}];
- const pool=['battle','battle','battle','battle','event','shop','elite'];
+ const pool=['battle','battle','battle','event','shop','elite'];
  const count=Math.random()<.45?3:2;
  const opts=[];
- for(let i=0;i<count;i++)opts.push({id:`${game.floor}-${game.stage}-${i}-${Math.random()}`,type:rand(pool)});
+ for(let i=0;i<count;i++){
+  opts.push({id:`${game.floor}-${game.stage}-${i}-${Math.random()}`,type:rand(pool)});
+ }
  return opts;
 }
 
@@ -656,7 +911,7 @@ function renderMap(){
  const total=floors[game.floor];
  $('floorTitle').textContent=`${game.floor+1}층 회랑`;
  $('stageText').textContent=`${game.stage+1} / ${total} 스테이지`;
- $('mapStats').innerHTML=`<div class="stat"><span>체력</span><b>${game.hp}/${game.maxHp}</b></div><div class="stat"><span>골드</span><b>${game.gold}</b></div><div class="stat"><span>포션</span><b>${potionTotal()}</b></div><div class="stat"><span>덱</span><b>${game.deck.length+game.discard.length+game.hand.length}장</b></div>`;
+ $('mapStats').innerHTML=`<div class="stat"><span>체력</span><b>${game.hp}/${game.maxHp}</b></div><div class="stat"><span>골드</span><b>${game.gold}</b></div><div class="stat"><span>정신력</span><b>${game.character==='philip'?game.sanity:0}</b></div><div class="stat"><span>덱</span><b>${game.deck.length+game.discard.length+game.hand.length}장</b></div>`;
  $('mapProgress').textContent=`${game.stage} / ${total} 진행`;
  $('mapNodes').innerHTML='';
  for(let i=0;i<total;i++){
@@ -665,7 +920,7 @@ function renderMap(){
   b.innerHTML=`${info?info[0]:'?'}<small>${i+1}. ${info?info[1]:'미탐색'}</small>`;$('mapNodes').appendChild(b);
  }
  $('routeChoices').innerHTML='';
- game.routeOptions.forEach(opt=>{
+ game.routeOptions.forEach((opt)=>{
   const info=nodeInfo[opt.type],b=document.createElement('button');b.className='choice';
   b.innerHTML=`<div class="glyph">${info[0]}</div><h3>${info[1]}</h3><p>${info[2]}</p>`;
   b.onclick=()=>chooseNode(opt.type);$('routeChoices').appendChild(b);
@@ -681,38 +936,53 @@ function chooseNode(type){
 
 function buildEnemy(type){
  const base=type==='boss'?bosses[Math.min(2,game.floor)]:type==='elite'?rand(elites):rand(monsters);
- const hpScale=(type==='boss'?2.0:type==='elite'?1.75:1.65)+game.floor*.65;
- const atkScale=1.15+game.floor*.45;
- const hp=Math.round(base.hp*hpScale);
- const atk=Math.round(base.atk*atkScale);
- return {name:base.name,glyph:base.glyph,maxHp:hp,hp,atk,intent:atk,type,burn:0,freeze:0,shock:0,vulnerable:0};
+ const hpScale=(type==='boss'?2.05:type==='elite'?1.8:1.7)+game.floor*.68;
+ const atkScale=1.18+game.floor*.48;
+ const scaledAtk=Math.round(base.atk*atkScale);
+ const scaledHp=Math.round(base.hp*hpScale);
+ return {name:base.name,baseName:base.name,phase2Name:base.phase2Name||`각성한 ${base.name}`,glyph:base.glyph,maxHp:scaledHp,hp:scaledHp,atk:scaledAtk,baseAtk:scaledAtk,intent:scaledAtk,type,pattern:0,burn:0,phase2Triggered:false};
 }
 
 function startBattle(type){
+ if(game.character==='philip'){
+  game.sanity=0;
+  game.philipCourageActive=false;
+  game.philipStunnedTurns=0;
+ }
+ game.escapeToNextStage=false;
  game.enemy=buildEnemy(type);
+ enemyChooseIntent();
  game.enemyBlock=0;
  game.turn=1;
  game.active=true;
+ game.firstGuard=true;
+ game.stance='assault';
+ game.stanceCombo=false;
+ game.stanceLockTurns=0;
+ game.nextTurnDrawBonus=0;
+ game.status={poison:0,weak:0,vulnerable:0,bleed:0};
  game.buffs={attack:0};
- game.block=0;
- PHILIP_MODULE.resetForStage(game);
-
  game.hand=[];
  game.discard=[];
- game.deck=makeBaseDeck(game.character);
  game.drawPile=shuffle([...game.deck]);
  game.energy=game.maxEnergy;
+ game.block=0;
  draw(5);
-
+ if(game.character==='purpleTear'){
+  pinStanceLockCardToFifthSlot();
+ }
+ if(game.character==='philip'){
+  syncPhilipCourageHandCard();
+ }
  $('battleFloor').textContent=`${game.floor+1}층`;
  $('battleStage').textContent=`${game.stage+1}번째 스테이지`;
  $('enemyKind').textContent=nodeInfo[type][1];
  $('heroName').textContent=game.heroName;
  $('heroGlyph').innerHTML=getHeroPixelArt(game.character);
  $('enemyName').textContent=game.enemy.name;
- $('enemyGlyph').textContent=game.enemy.glyph||'☠';
+ $('enemyGlyph').textContent=game.enemy.glyph;
  $('enemyRank').textContent=type==='boss'?'보스':type==='elite'?'엘리트 마수':'마수';
- $('battleLog').textContent=`${game.enemy.name}이(가) 길을 막아섰다. (필립 정신력 0 시작)`;
+ $('battleLog').textContent=`${game.enemy.name}이(가) 길을 막아섰다.`;
  renderBattle();
  show('battleScreen');
  saveContinueRun();
@@ -728,6 +998,12 @@ function draw(n){
   }
   game.hand.push(game.drawPile.pop());
  }
+ if(game.character==='purpleTear'){
+  pinStanceLockCardToFifthSlot();
+ }
+ if(game.character==='philip'){
+  syncPhilipCourageHandCard();
+ }
 }
 
 function renderStatusList(elementId, statuses){
@@ -741,26 +1017,43 @@ function renderStatusList(elementId, statuses){
  });
 }
 
+function getEffectiveCardCost(card){
+ if(!card)return 0;
+ if(isStanceLockFixedCard(card))return 0;
+ let cost=Number(card.cost||0);
+ if(game && card.kind==='tearSerpentCleaver' && (game.stanceLockTurns||0)>0){
+  cost=Math.max(0,cost-1);
+ }
+ return cost;
+}
+
 function renderBattle(){
+ if(game.character==='purpleTear'){
+  pinStanceLockCardToFifthSlot();
+ }
+ if(game.character==='philip'){
+  syncPhilipCourageHandCard();
+ }
+ $('heroGlyph').innerHTML=getHeroPixelArt(game.character);
  $('heroHp').textContent=`${game.hp}/${game.maxHp}`;
  $('heroHpFill').style.width=`${Math.max(0,game.hp/game.maxHp*100)}%`;
  $('heroGuard').textContent=`방어도 ${game.block}`;
  $('enemyHp').textContent=`${game.enemy.hp}/${game.enemy.maxHp}`;
- $('enemyHpFill').style.width=`${Math.max(0,game.enemy.hp/game.maxHp*100)}%`;
+ $('enemyHpFill').style.width=`${Math.max(0,game.enemy.hp/game.enemy.maxHp*100)}%`;
  $('enemyGuard').textContent=`방어도 ${game.enemyBlock}`;
- $('enemyIntent').textContent=`다음 행동: 공격 ${game.enemy.intent} · 효과 보기`;
- $('heroGlyph').innerHTML=getHeroPixelArt(game.character);
+ $('enemyIntent').textContent=`다음 행동: ${game.enemy.intentLabel||'공격'} ${game.enemy.intent} · 효과 보기`;
 
  const heroStatuses=[];
- if(PHILIP_MODULE.isPhilip(game)){
-  heroStatuses.push({name:`정신력 ${game.sanity>=0?'+':''}${game.sanity}`,turns:0,buff:game.philipTransformed||game.sanity>0});
-  if(game.philipTransformed)heroStatuses.push({name:'변신 강화 중',turns:0,buff:true});
-  if((game.philipStunTurns||0)>0)heroStatuses.push({name:'행동 불가(정신 붕괴)',turns:game.philipStunTurns});
- }
+ if(game.status.poison>0)heroStatuses.push({name:'중독',turns:game.status.poison});
+ if(game.status.weak>0)heroStatuses.push({name:'약화',turns:game.status.weak});
+ if(game.status.vulnerable>0)heroStatuses.push({name:'취약',turns:game.status.vulnerable});
+ if((game.stanceLockTurns||0)>0)heroStatuses.push({name:'자세고정',turns:game.stanceLockTurns,buff:true});
+ if(game.character==='philip' && game.philipCourageActive)heroStatuses.push({name:'물러서질 않을 용기',turns:0,buff:true});
+ if(game.character==='philip' && (game.philipStunnedTurns||0)>0)heroStatuses.push({name:'행동불가',turns:game.philipStunnedTurns});
  renderStatusList('heroStatus',heroStatuses);
 
  const enemyStatuses=[];
- if(game.enemy.burn>0)enemyStatuses.push({name:'화상',turns:game.enemy.burn});
+ if((game.enemy.burn||0)>0)enemyStatuses.push({name:'화상',turns:game.enemy.burn});
  if(game.enemy.vulnerable>0)enemyStatuses.push({name:'취약',turns:game.enemy.vulnerable});
  renderStatusList('enemyStatus',enemyStatuses);
 
@@ -770,22 +1063,26 @@ function renderBattle(){
  $('turnStat').textContent=game.turn;
  $('drawInfo').textContent=`뽑을 카드 ${game.drawPile.length}장 · 버린 카드 ${game.discard.length}장`;
 
- if(PHILIP_MODULE.isPhilip(game)){
-  const stateLabel=game.philipTransformed?'변신 활성(공격/화상 강화 · 코스트별 정신력 감소)':'일반 상태(코스트별 정신력 +5/+10/+15/+20 · +45 도달 시 변신)';
-  $('statusInfo').innerHTML=`<span class="sanity-pill ${game.philipTransformed?'transformed':''}">필립 정신력 ${game.sanity>=0?'+':''}${game.sanity} (-45~+45) · ${stateLabel}</span>`;
+ if(game.character==='purpleTear'){
+  const locked=(game.stanceLockTurns||0)>0;
+  const presetName=chars[game.presetDeckSource||PURPLE_TEAR_DEFAULT_TARGET_CHAR]?.name||'검무가';
+  $('statusInfo').innerHTML=`<span class="stance-pill ${locked?'locked':''}">${locked?`자세고정 (${game.stanceLockTurns}턴)`:'자세고정 해제'}</span> <span class="muted">· ${presetName} 덱 · 5번째 손패 고정</span>`;
+ }else if(game.character==='philip'){
+  const cActive=!!game.philipCourageActive;
+  $('statusInfo').innerHTML=`<span class="stance-pill ${cActive?'courage':''}">정신력 ${game.sanity} (-45~+45) · ${cActive?'물러서질 않을 용기 활성':'일반 상태'}</span>`;
  }else{
   $('statusInfo').textContent='';
  }
- $('relicInfo').textContent=`아이템 ${game.items.length}`;
+ $('relicInfo').textContent=`패시브 ${game.passives.length}/3 · 아이템 ${game.items.length}`;
 
  $('hand').innerHTML='';
  game.hand.forEach((c,i)=>{
-  if(!c)return;
+  const effCost=getEffectiveCardCost(c);
   const b=document.createElement('button');
   b.className='card';
-  const stunBlocked=PHILIP_MODULE.isPhilip(game) && (game.philipStunTurns||0)>0;
-  b.disabled=!game.active || stunBlocked || c.cost>game.energy;
-  b.innerHTML=`<span class="cost">${c.cost}</span><span class="glyph">${c.glyph}</span><strong>${c.name}</strong><small>${c.desc}</small><em>${c.type}</em>`;
+  b.disabled=!game.active||effCost>game.energy;
+  const slotBadge=(game.character==='purpleTear' && isStanceLockFixedCard(c))?'5번째 슬롯 고정 · 0코스트':c.type;
+  b.innerHTML=`<span class="cost">${effCost}</span><span class="glyph">${c.glyph}</span><strong>${c.name}</strong><small>${c.desc}</small><em>${slotBadge}</em>`;
   b.onclick=()=>playCard(i);
   $('hand').appendChild(b);
  });
@@ -800,208 +1097,446 @@ function hitEnemy(dmg){
  const actual=Math.max(0,dmg-game.enemyBlock);
  game.enemyBlock=Math.max(0,game.enemyBlock-dmg);
  game.enemy.hp=Math.max(0,game.enemy.hp-actual);
+ checkBossPhase2();
  return actual;
+}
+
+function checkBossPhase2(){
+ const e=game&&game.enemy;
+ if(!e || e.type!=='boss' || e.phase2Triggered || e.hp<=0)return;
+ if(e.hp <= Math.floor(e.maxHp*0.5)){
+  e.phase2Triggered=true;
+  e.name=e.phase2Name||`각성한 ${e.baseName||e.name}`;
+  e.atk=Math.round(e.atk*1.25)+3;
+  game.enemyBlock+=12;
+  $('enemyName').textContent=e.name;
+  enemyChooseIntent();
+ }
+}
+
+function getPhilipBonusDamage(){
+ return (game && game.character==='philip' && game.philipCourageActive)?5:0;
+}
+
+function getPhilipBonusBurn(){
+ return (game && game.character==='philip' && game.philipCourageActive)?2:0;
 }
 
 function playCard(i){
  if(!game.active)return;
- if(PHILIP_MODULE.isPhilip(game) && (game.philipStunTurns||0)>0){
-  $('battleLog').textContent='정신력이 -40 이하로 떨어져 1턴간 움직이지 못합니다! [턴 종료]를 누르세요.';
-  renderBattle();
-  return;
- }
  const c=game.hand[i];
- if(!c || c.cost>game.energy)return;
-
- game.energy-=c.cost;
+ const effCost=getEffectiveCardCost(c);
+ if(!c||effCost>game.energy)return;
+ game.energy-=effCost;
  let msg='';
+ const courageDmgBonus=getPhilipBonusDamage();
+ const courageBurnBonus=getPhilipBonusBurn();
 
- const specialMsg=PHILIP_MODULE.playSpecialCard(game,c,hitEnemy);
- if(specialMsg){
-  msg=specialMsg;
- }else if(c.kind==='damage'){
-  const mult=PHILIP_MODULE.getDamageMultiplier(game,c);
-  const raw=Math.round(((c.damage||0)+(game.buffs.attack||0))*mult);
-  const d=hitEnemy(raw);
-  msg=`${c.name}! ${d} 피해.`;
-  const burnBonus=PHILIP_MODULE.getBurnBonus(game,c);
-  if(burnBonus>0){
-   game.enemy.burn=(game.enemy.burn||0)+burnBonus;
-   msg+=` 강화 화상 +${burnBonus} 부여.`;
+ if(c.kind==='tearStanceLockCard'){
+  game.stanceLockTurns=Math.max(game.stanceLockTurns||0,c.stanceLockTurns||2);
+  game.block+=(c.block||5);
+  draw(c.draw||1);
+  msg=`자세고정(0코스트)! 자세고정 ${c.stanceLockTurns||2}턴 발동, 방어도 ${c.block||5} 획득 및 카드 ${c.draw||1}장 뽑기.`;
+ }
+ else if(c.kind==='tearTarget'){
+  game.enemy.vulnerable=Math.max(game.enemy.vulnerable||0,1);
+  const d=hitEnemy(Math.max(0,(c.damage||5)+game.buffs.attack));
+  msg=`뱀의 표적! ${d} 피해 및 취약 1턴.`;
+  if((game.stanceLockTurns||0)>0){
+   game.energy+=1;
+   draw(c.draw||1);
+   msg+=` [자세고정] 코스트 +1 및 카드 ${c.draw||1}장 뽑기!`;
   }
- }else if(c.kind==='block'){
+ }
+ else if(c.kind==='tearSerpentArt'){
+  game.stanceLockTurns=Math.max(game.stanceLockTurns||0,c.stanceLockTurns||2);
+  let total=0;
+  for(let h=0;h<(c.hits||2);h++)total+=hitEnemy(Math.max(0,(c.damage||5)+game.buffs.attack));
+  msg=`사검술! 자세고정 ${c.stanceLockTurns||2}턴 발동 및 2연타 총 ${total} 피해.`;
+ }
+ else if(c.kind==='tearSerpentCleaver'){
+  const d=hitEnemy(Math.max(0,(c.damage||14)+game.buffs.attack));
+  game.enemy.burn=(game.enemy.burn||0)+(c.poison||3);
+  game.enemy.vulnerable=Math.max(game.enemy.vulnerable||0,c.vulnerable||2);
+  msg=`뱀가르기! ${d} 피해, 화상 ${c.poison||3} 및 취약 ${c.vulnerable||2}턴.`;
+ }
+ else if(c.kind==='tearDivert'){
+  game.block+=(c.block||8);
+  game.stanceLockTurns=Math.max(game.stanceLockTurns||0,c.stanceLockTurns||1);
+  msg=`흘려 보내기! 방어도 ${c.block||8} 획득 및 자세고정 유지.`;
+  if((game.stanceLockTurns||0)>0){
+   game.nextTurnDrawBonus=(game.nextTurnDrawBonus||0)+1;
+   game.status.poison=0;game.status.weak=0;game.status.vulnerable=0;
+   msg+=` [자세고정] 다음 턴 드로우 +1 및 정화!`;
+  }
+ }
+ else if(c.kind==='tearPhantomDance'){
+  const locked=(game.stanceLockTurns||0)>0;
+  let total=0;
+  for(let h=0;h<(c.hits||4);h++)total+=hitEnemy(Math.max(0,(c.damage||5)+(locked?(c.lockHitBonus||2):0)+game.buffs.attack));
+  msg=`환영 난무! 4연타 총 ${total} 피해.`;
+  if(locked && (c.lockEnergyGain||0)>0)game.energy+=(c.lockEnergyGain||1);
+ }
+ else if(c.kind==='philipSkill'){
+  const dmg=Math.max(0,(c.damage||0)+game.buffs.attack+courageDmgBonus);
+  const d=hitEnemy(dmg);
+  const bAmt=(c.burn||0)+courageBurnBonus;
+  if(bAmt>0)game.enemy.burn=(game.enemy.burn||0)+bAmt;
+  if(c.vulnerable)game.enemy.vulnerable=Math.max(game.enemy.vulnerable||0,c.vulnerable);
+  msg=`${c.name}! ${d} 피해${bAmt>0?`, 화상 ${bAmt} 부여`:''}${c.vulnerable?`, 취약 ${c.vulnerable}턴 부여`:''}.`;
+ }
+ else if(c.kind==='philipIgnite'){
+  const highBurn=(game.enemy.burn||0)>=10;
+  const mult=highBurn?1.5:1;
+  const dmg=Math.round(((c.damage||6)+game.buffs.attack+courageDmgBonus)*mult);
+  const d=hitEnemy(Math.max(0,dmg));
+  const burnAdd=Math.round(((c.burn||6)+courageBurnBonus)*mult);
+  game.enemy.burn=(game.enemy.burn||0)+burnAdd;
+  msg=`불지피기${highBurn?' [화상 10 이상 · 1.5배 반올림!]':''}! ${d} 피해, 화상 ${burnAdd} 부여.`;
+ }
+ else if(c.kind==='philipDawnGrace'){
+  const selfB=(c.selfBurn||3)+courageBurnBonus;
+  game.status.burn=(game.status.burn||0)+selfB;
+  const d=hitEnemy(Math.max(0,(c.damage||12)+game.buffs.attack+courageDmgBonus));
+  msg=`새벽의 은혜! 자신에게 화상 ${selfB} 부여 및 ${d} 피해.`;
+ }
+ else if(c.kind==='philipCourageStrike'){
+  const d=hitEnemy(Math.max(0,(c.damage||30)+game.buffs.attack+courageDmgBonus));
+  const burnAdd=(c.burn||15)+courageBurnBonus;
+  game.enemy.burn=(game.enemy.burn||0)+burnAdd;
+  game.sanity=clampSanity((game.sanity||0)-(c.sanityLoss||15));
+  msg=`타오르는 일격! ${d} 피해, 화상 ${burnAdd} 부여, 정신력 -${c.sanityLoss||15} (현재 ${game.sanity}).`;
+  if(game.sanity<=-40){
+   game.philipCourageActive=false;
+   game.philipStunnedTurns=Math.max(game.philipStunnedTurns||0,1);
+   syncPhilipCourageHandCard();
+   msg+=' 정신력이 -40 이하가 되어 변신이 풀리고 1턴간 행동 불가!';
+  }
+ }
+ else if(c.kind==='damage'){
+  const d=hitEnemy(Math.max(0,(c.damage||0)+game.buffs.attack));
+  msg=`${c.name}! ${d} 피해.`;
+ }
+ else if(c.kind==='block'){
   game.block+=(c.block||0);
   msg=`방어도 ${c.block||0} 획득.`;
- }else if(c.kind==='mixed'){
-  const mult=PHILIP_MODULE.getDamageMultiplier(game,c);
-  const raw=Math.round(((c.damage||0)+(game.buffs.attack||0))*mult);
-  const d=hitEnemy(raw);
+ }
+ else if(c.kind==='mixed'){
+  const d=hitEnemy(Math.max(0,(c.damage||0)+game.buffs.attack));
   game.block+=(c.block||0);
+  if(c.heal)game.hp=Math.min(game.maxHp,game.hp+c.heal);
   msg=`${c.name}! ${d} 피해, 방어도 ${c.block||0} 획득.`;
  }
 
- msg+=PHILIP_MODULE.onCardPlayed(game,c);
- game.discard.push(c);
  game.hand.splice(i,1);
+ if(isStanceLockFixedCard(c)){
+  game.drawPile.push({...STANCE_LOCK_CARD_TEMPLATE});
+ }else if(!c.courageOnly){
+  game.discard.push(c);
+ }
+
+ if(game.character==='philip' && !c.courageOnly){
+  msg+=applyPhilipSanityAfterCard(effCost);
+ }
+ if(game.character==='purpleTear'){
+  pinStanceLockCardToFifthSlot();
+ }
+ if(game.character==='philip'){
+  syncPhilipCourageHandCard();
+ }
+
  $('battleLog').textContent=msg;
- if(game.enemy.hp<=0){winBattle();return;}
+ if(game.enemy.hp<=0){winBattle();return}
  renderBattle();
+}
+
+function showEnemyIntentHelp(){
+ if(!game.enemy)return;
+ showModal(`적의 행동: ${game.enemy.intentLabel||'공격'}`,`예상 피해 ${game.enemy.intent}입니다.`,[]);
+}
+
+function enemyChooseIntent(){
+ const e=game.enemy;
+ e.intentLabel='공격';
+ e.intent=e.atk;
+}
+
+function damageHeroWithEscapeCheck(incomingAmount){
+ let d=Math.max(0,incomingAmount-game.block);
+ game.block=Math.max(0,game.block-incomingAmount);
+ game.hp-=d;
+ if(game.hp<=0 && game.character==='philip' && Math.random()<0.1){
+  game.hp=10;
+  game.escapeToNextStage=true;
+  return {escaped:true,damageTaken:d};
+ }
+ return {escaped:false,damageTaken:d};
 }
 
 function enemyAct(){
  const e=game.enemy;
  let msg='';
- const d=Math.max(0,e.intent-game.block);
- game.block=Math.max(0,game.block-e.intent);
- game.hp=Math.max(0,game.hp-d);
- msg=`적의 공격! ${d} 피해를 받았습니다.`;
-
- if(PHILIP_MODULE.tryZeroHpEscape(game,advanceStage))return msg;
-
- if(e.burn>0 && e.hp>0){
-  e.hp=Math.max(0,e.hp-e.burn);
-  msg+=` 화상 피해 ${e.burn}!`;
+ if((game.philipStunnedTurns||0)>0){
+  game.philipStunnedTurns=Math.max(0,game.philipStunnedTurns-1);
+  msg=`필립이 행동 불가 상태라 이번 턴을 움직일 수 없습니다. `;
  }
- return msg;
-}
+ const res=damageHeroWithEscapeCheck(e.intent);
+ msg+=`${e.name}의 공격! ${res.damageTaken} 피해.`;
 
-function discardHand(){
- while(game.hand.length){
-  const c=game.hand.pop();
-  if(c)game.discard.push(c);
+ if((e.burn||0)>0 && e.hp>0){
+  const bDmg=e.burn;
+  e.hp=Math.max(0,e.hp-bDmg);
+  msg+=` 적 화상 피해 ${bDmg}!`;
  }
+ if((game.status.burn||0)>0 && !res.escaped){
+  const selfBDmg=game.status.burn;
+  game.hp-=selfBDmg;
+  msg+=` 자신 화상 피해 ${selfBDmg}!`;
+  if(game.hp<=0 && game.character==='philip' && Math.random()<0.1){
+   game.hp=10;
+   game.escapeToNextStage=true;
+  }
+ }
+ checkBossPhase2();
+ $('battleLog').textContent=msg;
+
+ if(res.escaped || game.escapeToNextStage){
+  game.active=false;
+  game.deck=[...game.deck,...game.discard,...game.hand.filter(c=>!c.courageOnly && !isStanceLockFixedCard(c))];
+  game.discard=[];game.hand=[];
+  showModal('생존 도주!',`체력이 0이 될 위기에서 10% 확률 발동! 체력 10으로 스테이지를 마무리하고 다음 스테이지로 도망칩니다.`,[{
+   label:'다음 스테이지로 도망치기',
+   desc:'현재 스테이지를 종료하고 다음 경로로 이동합니다.',
+   action:()=>{
+    $('modalOverlay').classList.remove('show');
+    game.stage++;
+    game.routeOptions=generateOptions();
+    renderMap();
+    show('mapScreen');
+    saveContinueRun();
+   }
+  }]);
+  return;
+ }
+
+ if(game.hp<=0){
+  game.active=false;clearContinueRun();show('resultScreen');
+  $('resultTitle').textContent='회랑에서 쓰러졌습니다';
+  $('resultDesc').textContent=`${game.floor+1}층 · 처치 횟수 ${game.cleared}회`;
+  return;
+ }
+ if(e.hp<=0){winBattle();return;}
+
+ game.turn++;
+ game.energy=game.maxEnergy;
+ game.block=0;
+ game.buffs={attack:0};
+ const extraNextDraw=game.nextTurnDrawBonus||0;
+ game.nextTurnDrawBonus=0;
+ draw(5+extraNextDraw);
+ if(game.character==='purpleTear'){
+  pinStanceLockCardToFifthSlot();
+ }
+ if(game.character==='philip'){
+  syncPhilipCourageHandCard();
+ }
+ enemyChooseIntent();
+ renderBattle();
+ saveContinueRun();
 }
 
 function endTurn(){
  if(!game.active)return;
- discardHand();
- const msg=enemyAct();
- if(!game.active)return;
- if(game.enemy.hp<=0){winBattle();return;}
- if(game.hp<=0){
-  if(PHILIP_MODULE.tryZeroHpEscape(game,advanceStage))return;
-  game.active=false;
-  clearContinueRun();
-  finishRun(false);
-  return;
- }
- PHILIP_MODULE.consumeStunIfNeeded(game);
- game.block=0;
- game.turn++;
- game.buffs.attack=0;
- game.energy=game.maxEnergy;
- draw(5);
- $('battleLog').textContent=msg+' 새 턴이 시작되었습니다.';
- renderBattle();
-}
-
-function potionTotal(){return Object.values(game?.potions||{}).reduce((a,b)=>a+b,0)}
-function addPotion(name,count=1){game.potions[name]=(game.potions[name]||0)+count}
-function usePotion(){
- if(!game.active||potionTotal()<=0)return;
- const owned=potionTypes.filter(p=>(game.potions[p.name]||0)>0);
- showModal('포션 보관함','보유한 포션을 선택하여 사용하세요.',owned.map(p=>({label:`${p.name} ×${game.potions[p.name]}`,desc:p.desc,action:()=>{const m=p.use(game);game.potions[p.name]--;if(game.potions[p.name]<=0)delete game.potions[p.name];$('battleLog').textContent=`${p.name}: ${m}`;renderBattle()}})));
+ game.discard.push(...game.hand.filter(c=>!c.courageOnly && !isStanceLockFixedCard(c)));
+ game.hand=[];
+ $('hand').innerHTML='';
+ $('endTurnBtn').disabled=true;
+ $('potionBtn').disabled=true;
+ $('battleLog').textContent=`${game.enemy.name}의 행동 중...`;
+ setTimeout(enemyAct,350);
 }
 
 function winBattle(){
  game.active=false;
- const earned=game.route==='boss'?45:game.route==='elite'?24:12;
- game.gold+=earned;
- showModal('전투 승리!',`${game.enemy.name}을(를) 쓰러뜨렸습니다! 골드 +${earned}`,[
-  {label:'보상 수령 및 진행',desc:`골드 +${earned} 획득 후 다음 스테이지로 이동합니다.`,action:()=>advanceStage()}
- ]);
-}
+ game.cleared++;
+ game.battles++;
+ const wasBoss=game.enemy.type==='boss';
+ const gold=15+Math.floor(Math.random()*5);
+ game.gold+=gold;
+ game.deck=[...game.deck,...game.discard,...game.hand.filter(c=>!c.courageOnly && !isStanceLockFixedCard(c))];
+ game.discard=[];game.hand=[];
 
-function advanceStage(){
- const total=floors[game.floor];
- game.stage++;
- PHILIP_MODULE.resetForStage(game);
- if(game.stage>=total){
-  if(game.floor===2){clearContinueRun();finishRun(true);return;}
-  game.floor++;
-  game.hp=Math.min(game.maxHp,game.hp+Math.round(game.maxHp*.35));
-  makeFloor();
-  show('mapScreen');
+ const finishReward=()=>{
+  if(wasBoss){
+   if(game.floor<floors.length-1){game.floor++;makeFloor();renderMap();show('mapScreen');saveContinueRun();}
+   else{clearContinueRun();show('resultScreen');$('resultTitle').textContent='회랑 돌파 완료!';$('resultDesc').textContent=`${game.heroName}이(가) 3층 보스를 쓰러뜨렸습니다!`;}
+   return;
+  }
+  game.stage++;
+  game.routeOptions=generateOptions();
   renderMap();
+  show('mapScreen');
   saveContinueRun();
-  return;
- }
- game.routeOptions=generateOptions();
- show('mapScreen');
- renderMap();
- saveContinueRun();
+ };
+
+ showModal('전투 승리!',`골드 ${gold} 획득!`,[{label:'다음 단계로',desc:'경로로 돌아갑니다.',action:finishReward}]);
 }
 
 function openShop(){
- show('serviceScreen');
+ $('shopTabs').style.display='none';
  $('serviceTitle').textContent='회랑 상점';
- $('serviceDesc').textContent='체력을 회복할 수 있습니다.';
- $('serviceGold').textContent=`보유 골드: ${game.gold}`;
- $('serviceItems').innerHTML='';
- const d=document.createElement('div');
- d.className='reward row between';
- d.innerHTML=`<div><h3>체력 15 회복</h3><p>현재 체력을 15 회복합니다.</p></div><button class="btn small" ${game.gold<15?'disabled':''}>구매 15G</button>`;
- d.querySelector('button').onclick=()=>{if(game.gold<15)return;game.gold-=15;game.hp=Math.min(game.maxHp,game.hp+15);$('serviceGold').textContent=`보유 골드: ${game.gold}`;};
- $('serviceItems').appendChild(d);
+ $('serviceDesc').textContent='상점입니다.';
+ $('serviceItems').innerHTML='<div class="reward"><h3>체력 회복 · 15G</h3><p>체력을 12 회복합니다.</p><button class="btn small" id="shopHealBtn">구매</button></div>';
+ $('shopHealBtn').onclick=()=>{if(game.gold>=15){game.gold-=15;game.hp=Math.min(game.maxHp,game.hp+12);$('serviceGold').textContent=`보유 골드: ${game.gold}G`;}};
+ $('serviceGold').textContent=`보유 골드: ${game.gold}G`;
+ show('serviceScreen');
 }
 
 function openEvent(){
- show('serviceScreen');
+ $('shopTabs').style.display='none';
  $('serviceTitle').textContent='특수 이벤트';
- $('serviceDesc').textContent='회랑에서 낯선 흔적을 발견했습니다.';
- $('serviceGold').textContent=`체력 ${game.hp}/${game.maxHp} · 골드 ${game.gold}`;
- $('serviceItems').innerHTML='';
- const d=document.createElement('div');
- d.className='reward row between';
- d.innerHTML=`<div><h3>고대 샘터</h3><p>체력 15 회복 및 골드 +15</p></div><button class="btn small">선택</button>`;
- d.querySelector('button').onclick=()=>{game.hp=Math.min(game.maxHp,game.hp+15);game.gold+=15;$('serviceGold').textContent=`체력 ${game.hp}/${game.maxHp} · 골드 ${game.gold}`;};
- $('serviceItems').appendChild(d);
+ $('serviceDesc').textContent='회랑에서 휴식처를 만났습니다.';
+ $('serviceItems').innerHTML='<div class="reward"><h3>휴식</h3><p>체력을 12 회복합니다.</p><button class="btn small gold" id="evRestBtn">선택</button></div>';
+ $('evRestBtn').onclick=()=>{game.hp=Math.min(game.maxHp,game.hp+12);leaveService();};
+ $('serviceGold').textContent=`보유 골드: ${game.gold}G`;
+ show('serviceScreen');
 }
 
-function showInventory(){
- if(!game)return;
- $('modalTitle').textContent='보유 덱 목록';
- $('modalText').textContent=`현재 ${game.deck.length}장`;
- const root=$('modalChoices');root.innerHTML='';
- game.deck.forEach(c=>{
-  const box=document.createElement('div');box.className='choice';
-  box.innerHTML=`<h3>${c.glyph||'✦'} ${c.name} (${c.cost})</h3><p>${c.desc}</p>`;
-  root.appendChild(box);
- });
+function leaveService(){
+ game.stage++;
+ game.routeOptions=generateOptions();
+ renderMap();
+ show('mapScreen');
+ saveContinueRun();
+}
+
+function potionTotal(){return Object.values(game.potions).reduce((a,b)=>a+b,0)}
+function openPotions(){showModal('포션 보관함','보유한 포션이 없습니다.',[]);}
+function openInventory(){
+ const allCards=[...game.deck,...game.discard,...game.hand];
+ showModal('보유 목록','',[]);
+ $('modalTitle').textContent='보유 목록';
+ $('modalText').innerHTML=`<p><b>덱 카드 (${allCards.length}장)</b></p><div class="inventory">${allCards.map(c=>`<div class="inventory-item"><b>${c.glyph} ${c.name} (${getEffectiveCardCost(c)}코스트)</b><p class="muted" style="margin:4px 0 0">${c.desc}</p></div>`).join('')}</div>`;
  $('modalOverlay').classList.add('show');
+}
+function openBattlePilesModal(){
+ if(!game)return;
+ showModal('전투 더미 보기','',[]);
+ $('modalTitle').textContent='전투 더미 보기';
+ $('modalText').innerHTML=`<p>뽑을 카드 ${(game.drawPile||[]).length}장 · 버린 카드 ${(game.discard||[]).length}장</p>`;
+ $('modalOverlay').classList.add('show');
+}
+function openBanListModal(){openBanListInfo();}
+function openBanListInfo(){showModal('카드 밴','카드 밴 설정 메뉴입니다.',[]);}
+function openMasteryModal(){showModal('숙련도','숙련도 정보 메뉴입니다.',[]);}
+function openPatchNotesModal(){showModal('업데이트 내역',PATCH_HISTORY.map(p=>`VER ${p.version}: ${p.notes.join(' / ')}`).join('\n'),[]);}
+function openBackupModal(){showModal('진행도 백업','진행도가 자동 저장됩니다.',[]);}
+function openAchievementAndCollectionModal(){showModal('업적 · 수집품','업적 및 수집품 보관소입니다.',[]);}
+function updateHeaderActionLabels(){
+ if($('shardTag'))$('shardTag').textContent=`✦ ${getShards()} 샤드`;
 }
 
 function showModal(title,text,choices){
  $('modalTitle').textContent=title;$('modalText').textContent=text;$('modalChoices').innerHTML='';
- choices.forEach(c=>{
+ choices.forEach(ch=>{
   const b=document.createElement('button');b.className='choice';
-  b.innerHTML=`<h3>${c.label}</h3><p style="white-space:pre-line">${c.desc}</p>`;
-  b.onclick=()=>{$('modalOverlay').classList.remove('show');c.action()};
-  $('modalChoices').appendChild(b);
+  b.innerHTML=`<h3>${ch.label}</h3><p>${ch.desc}</p>`;
+  b.onclick=ch.action;$('modalChoices').appendChild(b);
  });
  $('modalOverlay').classList.add('show');
 }
 
-function finishRun(win){
- show('resultScreen');
- $('resultTitle').textContent=win?'회랑 돌파 성공!':'용사단 전멸...';
- $('resultDesc').textContent=win?'회랑을 완주했습니다.':'이번 회랑 도전이 종료되었습니다.';
+function saveContinueRun(){
+ if(!game || !game.hp || game.hp<=0)return;
+ try{
+  const snap={...game,savedScreen:document.querySelector('.screen.active')?.id||'mapScreen'};
+  writeStorageSafe(CONTINUE_RUN_KEY,JSON.stringify(snap));
+  refreshContinueButton();
+ }catch(e){}
 }
 
-$('leaveServiceBtn').onclick=()=>advanceStage();
-$('closeModalBtn').onclick=()=>$('modalOverlay').classList.remove('show');
-$('modalOverlay').addEventListener('click',e=>{if(e.target===$('modalOverlay'))$('modalOverlay').classList.remove('show')});
-$('endTurnBtn').onclick=endTurn;
-$('potionBtn').onclick=usePotion;
-$('enemyIntent').onclick=()=>showModal('적 행동 정보',`예상 피해 ${game.enemy?.intent||0}`,[]);
-$('inventoryMapBtn').onclick=showInventory;
-$('inventoryBattleBtn').onclick=showInventory;
-$('abandonBtn').onclick=()=>{if(confirm('이번 회랑 도전을 포기할까요?')){clearContinueRun();finishRun(false);}};
-$('newRunBtn').onclick=()=>{show('selectScreen');chooseCharacter()};
-$('continueRunBtn').onclick=continueSavedRun;
+function clearContinueRun(){
+ try{localStorage.removeItem(CONTINUE_RUN_KEY);}catch(e){}
+ writeStorageSafe(CONTINUE_RUN_KEY,'');
+ refreshContinueButton();
+}
 
+function loadContinueRun(){
+ try{
+  const raw=readStorageSafe(CONTINUE_RUN_KEY);
+  if(!raw)return null;
+  const p=JSON.parse(raw);
+  if(!p || !p.character || !chars[p.character] || !(p.hp>0))return null;
+  return p;
+ }catch(e){return null;}
+}
+
+function refreshContinueButton(){
+ const btn=$('continueRunBtn');
+ if(!btn)return;
+ const saved=loadContinueRun();
+ if(saved){
+  btn.disabled=false;
+  btn.textContent=`이어하기 (${chars[saved.character]?.name||'용사'} · ${(saved.floor||0)+1}층 ${(saved.stage||0)+1}스테이지)`;
+ }else{
+  btn.disabled=true;
+  btn.textContent='이어하기';
+ }
+}
+
+function continueSavedRun(){
+ const saved=loadContinueRun();
+ if(!saved)return;
+ game={...saved};
+ if(game.character==='purpleTear')pinStanceLockCardToFifthSlot();
+ if(game.character==='philip')syncPhilipCourageHandCard();
+ if(game.active && game.enemy){
+  $('battleFloor').textContent=`${game.floor+1}층`;
+  $('battleStage').textContent=`${game.stage+1}번째 스테이지`;
+  $('heroName').textContent=game.heroName;
+  $('heroGlyph').innerHTML=getHeroPixelArt(game.character);
+  $('enemyName').textContent=game.enemy.name;
+  $('enemyGlyph').textContent=game.enemy.glyph;
+  renderBattle();
+  show('battleScreen');
+ }else{
+  show('mapScreen');
+  renderMap();
+ }
+ updateHeaderActionLabels();
+}
+
+document.querySelectorAll('#modeTabs .tab').forEach(t=>{
+ t.addEventListener('click',()=>{
+  selectedMode=t.dataset.mode;
+  document.querySelectorAll('#modeTabs .tab').forEach(x=>x.classList.toggle('active',x.dataset.mode===selectedMode));
+  chooseCharacter();
+ });
+});
+
+$('closeModalBtn').onclick=()=>$('modalOverlay').classList.remove('show');
+$('endTurnBtn').onclick=endTurn;
+$('potionBtn').onclick=openPotions;
+$('pilesBattleBtn').onclick=openBattlePilesModal;
+$('inventoryBattleBtn').onclick=openInventory;
+$('inventoryMapBtn').onclick=openInventory;
+$('banListMapBtn').onclick=()=>openBanListModal();
+$('banListSelectBtn').onclick=()=>openBanListModal();
+$('masteryMapBtn').onclick=()=>openMasteryModal();
+$('masterySelectBtn').onclick=()=>openMasteryModal();
+$('collectionVaultBtn').onclick=()=>openAchievementAndCollectionModal();
+$('patchNotesBtn').onclick=openPatchNotesModal;
+$('headerBackupBtn').onclick=openBackupModal;
+$('continueRunBtn').onclick=continueSavedRun;
+$('leaveServiceBtn').onclick=leaveService;
+$('enemyIntent').onclick=showEnemyIntentHelp;
+$('abandonBtn').onclick=()=>{clearContinueRun();show('selectScreen');chooseCharacter();refreshContinueButton();};
+$('newRunBtn').onclick=()=>{clearContinueRun();show('selectScreen');chooseCharacter();refreshContinueButton();};
+
+if($('versionTag'))$('versionTag').textContent=`VER ${APP_VERSION}`;
 chooseCharacter();
 refreshContinueButton();
+updateHeaderActionLabels();
 </script>
 </body>
 </html>
