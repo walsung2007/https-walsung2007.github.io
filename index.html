@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>잿가루 용사단 (ASHEN HEROES) v0.90</title>
+<title>잿가루 용사단 (ASHEN HEROES) v0.91</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+KR:wght@400;600;700;900&display=swap');
 :root{--bg:#11101b;--panel:#242238;--panel2:#302c49;--line:#716987;--text:#f3ebd4;--muted:#b9b1ca;--gold:#f2c66d;--red:#e87979;--blue:#79bce0;--green:#8dc99a;--purple:#b99ae8}
@@ -90,6 +90,14 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;bo
 .stance-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:3px;font-size:11px;font-weight:900;border:1px solid #9c88c4;background:#261f38;color:#f3ebd4}
 .stance-pill.assault{border-color:#e87979;background:#3c1f2b;color:#ffc4c4}
 .stance-pill.iron{border-color:#79bce0;background:#1c2e3d;color:#bde6ff}
+.stance-pill.philip-ego{border-color:#ff9e44;background:linear-gradient(135deg,#4a1c12,#7c2d12);color:#ffe8a3;box-shadow:0 0 10px rgba(255,158,68,0.45)}
+.stance-pill.philip-normal{border-color:#f97316;background:#2b1a17;color:#fed7aa}
+.fx-philip-ego{
+  position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 45%, rgba(255,220,110,0.72), rgba(249,115,22,0.34) 55%, transparent 80%);
+  box-shadow:inset 0 0 110px rgba(255,165,55,0.85);
+  animation:heroSilverFlash 0.95s ease-out forwards;
+}
 @media(max-width:700px){body{padding:6px}.app{padding:9px}.stats{grid-template-columns:repeat(2,1fr)}.hand{grid-template-columns:repeat(3,minmax(0,1fr))}.arena{padding:8px;min-height:175px}.unit .sprite{font-size:42px;width:48px;height:48px}.mapgrid{grid-template-columns:repeat(3,minmax(0,1fr))}.tag{font-size:9px}}
 @media(max-width:420px){.hand{grid-template-columns:repeat(2,minmax(0,1fr))}.logo{font-size:11px}}
 
@@ -190,7 +198,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;bo
   <div class="row">
     <button type="button" class="btn small" id="headerBackupBtn">진행도 백업</button>
     <button type="button" class="btn small" id="patchNotesBtn">업데이트 내역</button>
-    <div class="tag" id="shardTag">✦ 0 샤드</div><div class="tag" id="versionTag">VER 0.90</div>
+    <div class="tag" id="shardTag">✦ 0 샤드</div><div class="tag" id="versionTag">VER 0.91</div>
   </div>
 </header>
 
@@ -345,8 +353,14 @@ const elements={
  ice:{name:'얼음',glyph:'❄',desc:'빙결로 일시 행동불가 및 다음 턴 공격 시 받는 피해 증가'},
  lightning:{name:'번개',glyph:'ϟ',desc:'감전으로 2턴 행동불가 및 주변 적에게 연쇄 피해'}
 };
-const APP_VERSION='0.90';
+const APP_VERSION='0.91';
 const PATCH_HISTORY=[
+ {version:'0.91',date:'2026-11',notes:[
+  '신규 용사 [필립] 추가 (HP 64 · 기초 코스트 4 · 정신력 -45 ~ +45 시스템)',
+  '필립 전용 에고 개화 「물러서지 않을 용기」 구현 (정신력 +45 도달 시 활성화: 모든 카드 대미지 +5 & 화상 +2, 4코스트 영웅 스킬 [타오르는 일격] 해금)',
+  '정신력 -40 이하 도달 시 에고 개화 해제 및 1턴 행동 불가 패널티, 체력 0 피해 시 10% 확률 체력 10 상태로 다음 스테이지 도주 기믹 추가',
+  '필립 전용 스킬 7종(낙인·불 다루기·불지피기·차례 배기·새벽의 은혜·뜨겁게 타올라라·파열감) 및 72x72 도트 아트·스킨·숙련도 추가'
+ ]},
  {version:'0.90',date:'2026-11',notes:[
   '보스 50% 체력 이하 2페이즈 각성 기믹 추가 및 신규 보스 3종(잿불 대사제·심연의 집행자·균열의 폭군) 추가',
   '신규 보스 3종 전용 16x16 도트 아트 추가',
@@ -582,6 +596,63 @@ const heroPixelArtData = {
   <rect x="61" y="28" width="8" height="8" fill="#d91e4a"/>
   <rect x="62" y="29" width="4" height="4" fill="#ff8fab"/>
   <rect x="63" y="30" width="2" height="2" fill="#ffffff"/>
+</svg>`,
+ philip: `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="18" y="68" width="36" height="3" fill="#0b0a12"/>
+  <rect x="57" y="62" width="14" height="3" fill="#0b0a12"/>
+  <rect x="26" y="4" width="20" height="6" fill="#5c3a21"/>
+  <rect x="24" y="8" width="24" height="6" fill="#7c4d2b"/>
+  <rect x="27" y="12" width="18" height="12" fill="#f1c6a7"/>
+  <rect x="29" y="15" width="4" height="2" fill="#d97706"/>
+  <rect x="39" y="15" width="4" height="2" fill="#d97706"/>
+  <rect x="33" y="20" width="6" height="2" fill="#b45309"/>
+  <rect x="18" y="24" width="36" height="24" fill="#7c2d12"/>
+  <rect x="22" y="24" width="28" height="24" fill="#b91c1c"/>
+  <rect x="27" y="26" width="18" height="20" fill="#fef3c7"/>
+  <rect x="34" y="26" width="4" height="20" fill="#ea580c"/>
+  <rect x="28" y="34" width="16" height="3" fill="#f59e0b"/>
+  <rect x="13" y="25" width="8" height="15" fill="#9a3412"/>
+  <rect x="51" y="25" width="8" height="15" fill="#9a3412"/>
+  <rect x="21" y="47" width="30" height="4" fill="#451a03"/>
+  <rect x="33" y="47" width="6" height="4" fill="#f59e0b"/>
+  <rect x="22" y="51" width="11" height="16" fill="#374151"/>
+  <rect x="39" y="51" width="11" height="16" fill="#374151"/>
+  <rect x="20" y="66" width="13" height="4" fill="#78350f"/>
+  <rect x="39" y="66" width="13" height="4" fill="#78350f"/>
+  <rect x="61" y="6" width="4" height="40" fill="#fed7aa"/>
+  <rect x="62" y="5" width="2" height="41" fill="#ffffff"/>
+  <rect x="60" y="12" width="1" height="18" fill="#f97316"/>
+  <rect x="65" y="16" width="1" height="20" fill="#ea580c"/>
+  <rect x="55" y="46" width="16" height="4" fill="#f59e0b"/>
+  <rect x="61" y="50" width="4" height="9" fill="#451a03"/>
+  <rect x="60" y="59" width="6" height="3" fill="#fbbf24"/>
+</svg>`,
+ philipEgo: `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="18" y="68" width="36" height="3" fill="#0b0a12"/>
+  <rect x="57" y="62" width="14" height="3" fill="#0b0a12"/>
+  <rect x="14" y="2" width="44" height="4" fill="#fde047"/>
+  <rect x="20" y="5" width="32" height="4" fill="#fb923c"/>
+  <rect x="26" y="6" width="20" height="6" fill="#fef08a"/>
+  <rect x="27" y="12" width="18" height="12" fill="#fde68a"/>
+  <rect x="29" y="15" width="5" height="2" fill="#ffffff"/>
+  <rect x="38" y="15" width="5" height="2" fill="#ffffff"/>
+  <rect x="14" y="23" width="44" height="26" fill="#ea580c"/>
+  <rect x="20" y="24" width="32" height="24" fill="#f97316"/>
+  <rect x="26" y="26" width="20" height="20" fill="#fffbeb"/>
+  <rect x="34" y="26" width="4" height="20" fill="#f59e0b"/>
+  <rect x="27" y="34" width="18" height="4" fill="#ef4444"/>
+  <rect x="10" y="24" width="9" height="17" fill="#fbbf24"/>
+  <rect x="53" y="24" width="9" height="17" fill="#fbbf24"/>
+  <rect x="22" y="51" width="11" height="16" fill="#7c2d12"/>
+  <rect x="39" y="51" width="11" height="16" fill="#7c2d12"/>
+  <rect x="20" y="66" width="13" height="4" fill="#f59e0b"/>
+  <rect x="39" y="66" width="13" height="4" fill="#f59e0b"/>
+  <rect x="60" y="2" width="6" height="44" fill="#fb923c"/>
+  <rect x="61" y="2" width="4" height="44" fill="#fef08a"/>
+  <rect x="62" y="3" width="2" height="42" fill="#ffffff"/>
+  <rect x="54" y="46" width="18" height="4" fill="#fde047"/>
+  <rect x="61" y="50" width="4" height="9" fill="#9a3412"/>
+  <rect x="60" y="59" width="6" height="3" fill="#ffffff"/>
 </svg>`,
  swordsman: `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
   <rect x="20" y="68" width="32" height="3" fill="#0b0a12"/>
@@ -1109,6 +1180,24 @@ const CHARACTER_SKINS={
    art:`<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges"><rect x="20" y="68" width="32" height="3" fill="#0b0a12"/><rect x="20" y="3" width="32" height="7" fill="#3b0764"/><rect x="13" y="9" width="46" height="10" fill="#701a75"/><rect x="27" y="9" width="18" height="15" fill="#f8fafc"/><rect x="29" y="14" width="5" height="2" fill="#e11d48"/><rect x="38" y="14" width="5" height="2" fill="#e11d48"/><rect x="33" y="21" width="2" height="3" fill="#ffd43b"/><rect x="37" y="21" width="2" height="3" fill="#ffd43b"/><rect x="12" y="24" width="48" height="39" fill="#4a044e"/><rect x="21" y="26" width="30" height="37" fill="#18181b"/><rect x="34" y="26" width="4" height="37" fill="#e11d48"/><rect x="60" y="27" width="10" height="10" fill="#f59f00"/><rect x="22" y="63" width="11" height="7" fill="#27272a"/><rect x="39" y="63" width="11" height="7" fill="#27272a"/></svg>`
   }
  ],
+ philip:[
+  {
+   id:'default',
+   name:'새벽 불꽃의 필립',
+   desc:'붉은 깃발 망토와 불꽃 검을 지닌 필립의 기본 도트 외형입니다.',
+   shardCost:0,
+   isUnlocked:()=>true,
+   lockHint:'',
+   art:heroPixelArtData.philip
+  },
+  {
+   id:'philip_dawn_captain',
+   name:'타오르는 용기의 지휘관',
+   desc:'금빛 새벽 갑주와 백열의 검기를 두른 필립 전용 스킨입니다.',
+   shardCost:20,
+   art:heroPixelArtData.philipEgo
+  }
+ ],
  swordsman:[
   {
    id:'default',
@@ -1220,6 +1309,9 @@ function setSelectedSkinId(charKey, skinId){
 
 function getActiveHeroPixelArt(charKey){
  const k=charKey||(game&&game.character)||'knight';
+ if(k==='philip' && game && game.character==='philip' && game.egoBloom){
+  return heroPixelArtData.philipEgo;
+ }
  const skins=CHARACTER_SKINS[k];
  if(skins && skins.length){
   const activeId=getSelectedSkinId(k);
@@ -1489,10 +1581,30 @@ const chars={
  vampire:{name:'혈귀',glyph:'☽',unlockable:true,unlockType:'vampire',hp:56,energy:3,special:[
   {name:'피의 송곳니',glyph:'☽',cost:1,hpCost:3,lifesteal:4,desc:'체력 3 소모, 피해 9 및 피해량의 4만큼 흡혈.',kind:'bloodStrike',damage:9,type:'혈귀 전용',rarity:'일반'},
   {name:'진홍의 갈증',glyph:'✹',cost:1,hpCost:4,lifesteal:6,desc:'체력 4 소모, 피해 11 및 체력 6 흡혈.',kind:'bloodStrike',damage:11,type:'혈귀 전용',rarity:'일반'}]},
+ philip:{name:'필립',glyph:'✹',hp:64,energy:4,special:[
+  {name:'낙인',glyph:'✹',cost:2,desc:'2코스트 14대미지를 넣고 화상 7을 부여.',kind:'philipBrand',damage:14,burn:7,type:'필립 전용',rarity:'일반'},
+  {name:'불 다루기',glyph:'✹',cost:3,desc:'3코스트 12대미지를 넣고 화상 13을 부여.',kind:'philipHandleFire',damage:12,burn:13,type:'필립 전용',rarity:'고급'},
+  {name:'불지피기',glyph:'✦',cost:0,desc:'0코스트 화상이 10 이상이면 1.5배(반올림).',kind:'philipStoke',damage:0,burn:0,type:'필립 전용',rarity:'고급'},
+  {name:'차례 배기',glyph:'⚔',cost:1,desc:'1코스트 10댐 화상 2 부여.',kind:'philipOrderSlash',damage:10,burn:2,type:'필립 전용',rarity:'일반'},
+  {name:'새벽의 은혜',glyph:'☀',cost:1,desc:'1코스트 자신에게 화상 3을 부여하고 12댐을 넣음.',kind:'philipDawnGrace',damage:12,burn:0,selfBurn:3,type:'필립 전용',rarity:'고급'},
+  {name:'뜨겁게 타올라라',glyph:'✹',cost:2,desc:'2코스트 7댐을 넣고 화상 10부여.',kind:'philipBurnHot',damage:7,burn:10,type:'필립 전용',rarity:'희귀'},
+  {name:'파열감',glyph:'⌖',cost:0,desc:'0코스트 5댐을 넣고 취약 2부여.',kind:'philipRupture',damage:5,burn:0,debuff:'vulnerable',type:'필립 전용',rarity:'고급'}
+ ]},
  swordsman:{name:'검무가',glyph:'⚔',unlockable:true,unlockType:'swordsman',hp:58,energy:3,special:[
   {name:'맹공의 검무',glyph:'⚔',cost:1,desc:'맹공 자세 전환(공격 피해 +3) 및 적에게 피해 7, 연계 시 +4.',kind:'stanceStrike',stance:'assault',damage:7,comboBonus:4,type:'검무가 전용',rarity:'일반'},
   {name:'철벽의 검무',glyph:'▣',cost:1,desc:'철벽 자세 전환(방어도 +3) 및 방어도 6 획득, 연계 시 피해 6.',kind:'stanceGuard',stance:'iron',block:6,comboDmg:6,type:'검무가 전용',rarity:'일반'}]}
 };
+
+const philipExclusiveSkills=[
+ {name:'낙인',glyph:'✹',cost:2,desc:'2코스트 14대미지를 넣고 화상 7을 부여.',kind:'philipBrand',damage:14,burn:7,type:'필립 전용',rarity:'일반'},
+ {name:'불 다루기',glyph:'✹',cost:3,desc:'3코스트 12대미지를 넣고 화상 13을 부여.',kind:'philipHandleFire',damage:12,burn:13,type:'필립 전용',rarity:'고급'},
+ {name:'불지피기',glyph:'✦',cost:0,desc:'0코스트 화상이 10 이상이면 1.5배(반올림).',kind:'philipStoke',damage:0,burn:0,type:'필립 전용',rarity:'고급'},
+ {name:'차례 배기',glyph:'⚔',cost:1,desc:'1코스트 10댐 화상 2 부여.',kind:'philipOrderSlash',damage:10,burn:2,type:'필립 전용',rarity:'일반'},
+ {name:'새벽의 은혜',glyph:'☀',cost:1,desc:'1코스트 자신에게 화상 3을 부여하고 12댐을 넣음.',kind:'philipDawnGrace',damage:12,burn:0,selfBurn:3,type:'필립 전용',rarity:'고급'},
+ {name:'뜨겁게 타올라라',glyph:'✹',cost:2,desc:'2코스트 7댐을 넣고 화상 10부여.',kind:'philipBurnHot',damage:7,burn:10,type:'필립 전용',rarity:'희귀'},
+ {name:'파열감',glyph:'⌖',cost:0,desc:'0코스트 5댐을 넣고 취약 2부여.',kind:'philipRupture',damage:5,burn:0,debuff:'vulnerable',type:'필립 전용',rarity:'고급'}
+];
+const PHILIP_HERO_SKILL={name:'타오르는 일격',glyph:'♛',cost:4,desc:'4코스트 영웅 스킬: 30의 대미지를 넣고 화상 15 부여, 정신력 15 감소.',kind:'philipBlazingStrike',damage:30,burn:15,sanityDelta:-15,type:'필립 영웅 스킬',rarity:'영웅',volatile:true};
 
 const swordsmanExclusiveSkills=[
  {name:'쌍검 난무',glyph:'⚔',cost:1,desc:'피해 7. 직전 자세와 다르면 연계 피해 +4.',kind:'stanceStrike',damage:7,comboBonus:4,type:'검무가 전용',rarity:'일반'},
@@ -1623,6 +1735,11 @@ const mageElementalSkills={
 };
 
 const passivePool={
+ philip:[
+  {name:'불굴의 불씨',desc:'전투 시작 시 방어도 5 및 정신력 +5 획득.',effect:'startBlock',value:5,rarity:'일반'},
+  {name:'타오르는 투지',desc:'모든 공격 카드 피해 +2.',effect:'damage',value:2,rarity:'고급'},
+  {name:'새벽의 결의',desc:'매 턴 시작 시 정신력 +3 회복 및 방어도 2 획득.',effect:'turnBlock',value:2,rarity:'희귀'}
+ ],
  knight:[
   {name:'굳건한 방패',desc:'전투 시작 시 방어도 5 획득.',effect:'startBlock',value:5,rarity:'일반'},
   {name:'전장의 기세',desc:'모든 공격 카드 피해 +2.',effect:'damage',value:2,rarity:'고급'},
@@ -1781,6 +1898,10 @@ function saveContinueRun(){
    stance:game.stance||'assault',
    stanceCombo:!!game.stanceCombo,
    stanceDrawUsedTurn:!!game.stanceDrawUsedTurn,
+   sanity:typeof game.sanity==='number'?game.sanity:0,
+   egoBloom:!!game.egoBloom,
+   philipStunTurns:game.philipStunTurns||0,
+   philipEscapeUsed:!!game.philipEscapeUsed,
    fangKills:game.fangKills||0,
    masteryExpGain:game.masteryExpGain||0,
    masteryLevelStart:game.masteryLevelStart||1,
@@ -1954,6 +2075,11 @@ function updateHeaderActionLabels(){
 }
 
 const masteryUnlockCards={
+ philip:{
+  2:[{name:'불 다루기',glyph:'✹',cost:3,desc:'3코스트 12대미지를 넣고 화상 13을 부여.',kind:'philipHandleFire',damage:12,burn:13,type:'필립 전용',rarity:'고급'}],
+  3:[{name:'뜨겁게 타올라라',glyph:'✹',cost:2,desc:'2코스트 7댐을 넣고 화상 10부여.',kind:'philipBurnHot',damage:7,burn:10,type:'필립 전용',rarity:'희귀'}],
+  4:[{name:'파열감',glyph:'⌖',cost:0,desc:'0코스트 5댐을 넣고 취약 2부여.',kind:'philipRupture',damage:5,burn:0,debuff:'vulnerable',type:'필립 전용',rarity:'고급'}]
+ },
  knight:{
   2:[{name:'단단한 보루',glyph:'▣',cost:1,desc:'방어도 9 획득, 카드 1장 뽑기.',kind:'block',block:9,type:'기사 전용',rarity:'일반'}],
   3:[{name:'방패 격파',glyph:'▣',cost:2,desc:'피해 14, 적 취약 2턴.',kind:'damage',damage:14,type:'기사 전용',rarity:'희귀'}],
@@ -2082,6 +2208,8 @@ function chooseCharacter(){
    ?'시작 시 불·얼음·번개 원소 선택'
    :isVamp
     ?'피를 소모해 공격하고 흡혈 · 전용 스킬 15종'
+   :key==='philip'
+    ?'정신력(-45~+45) & 에고 개화 「물러서지 않을 용기」 · 전용 스킬 7종'
    :isSword
     ?'맹공/철벽 자세 전환 & 연계 · 전용 스킬 30종'
     :'기본 특수기 2종';
@@ -2159,6 +2287,10 @@ function startRun(key,element='fire'){
   stance:'assault',
   stanceCombo:false,
   stanceDrawUsedTurn:false,
+  sanity:0,
+  egoBloom:false,
+  philipStunTurns:0,
+  philipEscapeUsed:false,
   fangKills:0,
   masteryExpGain:0,
   masteryLevelStart:mState.level
@@ -2297,6 +2429,13 @@ function startBattle(type){
  game.stanceCombo=false;
  game.stanceDrawUsedTurn=false;
  game.status.bleed=0;
+ game.status.selfBurn=0;
+ game.philipStunTurns=0;
+ if(game.character==='philip'){
+  game.sanity=Math.max(-45,Math.min(45,typeof game.sanity==='number'?game.sanity:0));
+  if(game.passives.some(x=>x.effect==='startBlock'))game.sanity=Math.min(45,game.sanity+5);
+  game.egoBloom=(game.sanity>=45);
+ }
  game.buffs={attack:0};
  if(game.items.some(x=>x.effect==='swordsmanWindStone')){game.stance='assault';game.buffs.attack+=2;}
  game.hand=[];
@@ -2358,6 +2497,54 @@ function renderStatusList(elementId, statuses){
  });
 }
 
+function adjustPhilipSanity(delta){
+ if(!game || game.character!=='philip')return '';
+ const prev=typeof game.sanity==='number'?game.sanity:0;
+ game.sanity=Math.max(-45,Math.min(45,prev+delta));
+ let note='';
+ if(game.sanity>=45 && !game.egoBloom){
+  game.egoBloom=true;
+  if(!game.hand.some(c=>c.name===PHILIP_HERO_SKILL.name)){
+   game.hand.push({...PHILIP_HERO_SKILL});
+  }
+  $('heroGlyph').innerHTML=getHeroPixelArt('philip');
+  triggerHeroicCardEffect({rarity:'영웅'});
+  note=' [에고 개화: 물러서지 않을 용기 활성화!] 외형이 변하고 모든 카드 대미지 +5 · 화상 +2 부여 및 4코스트 영웅 스킬 [타오르는 일격]이 해금되었습니다!';
+ }else if(game.sanity<=-40){
+  if(game.egoBloom){
+   game.egoBloom=false;
+   game.hand=game.hand.filter(c=>c.name!==PHILIP_HERO_SKILL.name);
+   game.discard=game.discard.filter(c=>c.name!==PHILIP_HERO_SKILL.name);
+   $('heroGlyph').innerHTML=getHeroPixelArt('philip');
+  }
+  game.philipStunTurns=Math.max(game.philipStunTurns||0,1);
+  note=' [정신력 붕괴 (-40 이하)!] 에고 개화가 해제되고 다음 1턴 동안 행동 불가 상태가 됩니다!';
+ }
+ return note;
+}
+
+function checkPhilipSurvivalEscape(){
+ if(!game || game.character!=='philip' || game.hp>0)return false;
+ if(game.route==='boss')return false;
+ if(Math.random()<0.10){
+  game.hp=Math.min(game.maxHp,10);
+  game.active=false;
+  game.block=0;
+  game.status={poison:0,weak:0,vulnerable:0,bleed:0,selfBurn:0};
+  showModal(
+   '필립 생존 기믹 발동 · 구사일생 도주!',
+   '치명적인 일격을 받았지만 10% 확률의 생존 본능이 발동하여 체력 10 상태로 다음 스테이지로 도주했습니다!',
+   [{
+    label:'다음 스테이지로 이동',
+    desc:'전투 보상 없이 체력 10 상태로 다음 경로로 도주합니다.',
+    action:()=>advanceStage()
+   }]
+  );
+  return true;
+ }
+ return false;
+}
+
 function renderBattle(){
  $('heroHp').textContent=`${game.hp}/${game.maxHp}`;
  $('heroHpFill').style.width=`${Math.max(0,game.hp/game.maxHp*100)}%`;
@@ -2372,6 +2559,8 @@ function renderBattle(){
  if(game.status.weak>0)heroStatuses.push({name:'약화',turns:game.status.weak,description:'공격 카드의 피해가 감소합니다.'});
  if(game.status.vulnerable>0)heroStatuses.push({name:'취약',turns:game.status.vulnerable,description:'적에게 받는 피해가 1.5배가 됩니다.'});
  if((game.status.bleed||0)>0)heroStatuses.push({name:'출혈',turns:game.status.bleed,description:'출혈 수치만큼 매 턴 종료 시 추가 피해를 입습니다(잿빛 검수 주력 기믹).'});
+ if((game.status.selfBurn||0)>0)heroStatuses.push({name:'화상',turns:game.status.selfBurn,description:'매 턴 종료 시 자신의 화상 수치만큼 피해를 입습니다.'});
+ if((game.philipStunTurns||0)>0)heroStatuses.push({name:'행동 불가',turns:game.philipStunTurns,description:'정신력 -40 이하 패널티로 이번 턴 카드를 사용할 수 없습니다.'});
  renderStatusList('heroStatus',heroStatuses);
  
  const enemyStatuses=[];
@@ -2395,17 +2584,25 @@ function renderBattle(){
   const stLabel=game.stance==='iron'?'철벽 자세':'맹공 자세';
   const comboTxt=game.stanceCombo?'연계 활성화!':'자세 전환 대기';
   $('statusInfo').innerHTML=`<span class="stance-pill ${game.stance==='iron'?'iron':'assault'}">${stLabel} · ${comboTxt}</span>`;
+ }else if(game.character==='philip'){
+  const egoTxt=game.egoBloom?'에고 개화: 물러서지 않을 용기 (대미지 +5 · 화상 +2)':'에고 개화 대기 (+45 도달 시 개화)';
+  $('statusInfo').innerHTML=`<span class="stance-pill ${game.egoBloom?'philip-ego':'philip-normal'}">정신력 ${game.sanity>0?'+':''}${game.sanity} / 45 · ${egoTxt}</span>`;
  }else{
   $('statusInfo').textContent='';
  }
  $('relicInfo').textContent=`패시브 ${game.passives.length}/3 · 아이템 ${game.items.length}`;
 
  $('hand').innerHTML='';
+ const philipStunned=(game.character==='philip' && (game.philipStunTurns||0)>0);
  game.hand.forEach((c,i)=>{
   const b=document.createElement('button');
   b.className='card';
-  b.disabled=!game.active||c.cost>game.energy||(c.manaCost||0)>game.mana;
-  b.innerHTML=`<span class="cost">${c.cost}</span><span class="glyph">${c.glyph}</span><strong>${c.name}</strong><small>${c.desc}</small><em>${c.type}</em>`;
+  b.disabled=!game.active||philipStunned||c.cost>game.energy||(c.manaCost||0)>game.mana;
+  let dispDesc=c.desc;
+  if(game.character==='philip' && game.egoBloom && c.kind!=='philipBlazingStrike'){
+   dispDesc+=` [개화: 대미지+5, 화상+2]`;
+  }
+  b.innerHTML=`<span class="cost">${c.cost}</span><span class="glyph">${c.glyph}</span><strong>${c.name}</strong><small>${dispDesc}</small><em>${c.type}</em>`;
   b.onclick=()=>playCard(i);
   $('hand').appendChild(b);
  });
@@ -2492,6 +2689,10 @@ function triggerHeroicCardEffect(card){
   const blood=document.createElement('div');
   blood.className='fx-vampire-blood';
   layer.appendChild(blood);
+ }else if(charKey==='philip'){
+  const aura=document.createElement('div');
+  aura.className='fx-philip-ego';
+  layer.appendChild(aura);
  }else if(charKey==='swordsman'){
   const petalCount=22;
   for(let idx=0;idx<petalCount;idx++){
@@ -2513,6 +2714,7 @@ function playCard(i){
  if(!game.active)return;
  const c=game.hand[i];
  const hpCost=c.hpCost||0;
+ if(game.character==='philip' && (game.philipStunTurns||0)>0)return;
  if(!c||c.cost>game.energy||(c.manaCost||0)>game.mana||(hpCost>0 && game.hp<=hpCost))return;
  triggerHeroicCardEffect(c);
  game.energy-=c.cost;
@@ -2535,6 +2737,7 @@ function playCard(i){
   if(game.items.some(x=>x.effect==='oldKnightMedal'))bonus+=2;
   if(game.items.some(x=>x.effect==='hopeGrail'))bonus+=3;
   if(game.hp<=game.maxHp/2)bonus+=game.items.filter(x=>x.effect==='lowHpDamage').reduce((a)=>a+3,0);
+  if(game.character==='philip' && game.egoBloom)bonus+=5;
   let d=hitEnemy(Math.max(0,c.damage+bonus));
   msg=`${c.name}! ${d} 피해.`;
   if(c.kind==='elementalStrike')msg+=applyElementEffect(1);
@@ -2551,6 +2754,7 @@ function playCard(i){
   if(game.enemy.vulnerable>0&&game.items.some(x=>x.effect==='knightJudgment'))bonus+=4;
   if(game.items.some(x=>x.effect==='oldKnightMedal'))bonus+=2;
   if(game.items.some(x=>x.effect==='hopeGrail'))bonus+=3;
+  if(game.character==='philip' && game.egoBloom)bonus+=5;
   let d=hitEnemy(Math.max(0,c.damage+bonus));game.block+=c.block;msg=`${c.name}! ${d} 피해, 방어도 ${c.block} 획득.`;
   if(c.heal){let h=Math.min(c.heal,game.maxHp-game.hp);game.hp+=h;msg+=` 체력 ${h} 회복.`}
  }
@@ -2575,6 +2779,58 @@ function playCard(i){
  if(c.kind==='mana'){game.mana=Math.min(game.maxMana,game.mana+(c.mana||1));msg=`마나 ${c.mana||1} 회복.`}
  if(c.kind==='debuff'){game.enemy[c.debuff==='vulnerable'?'vulnerable':'weak']=2;msg='적에게 상태이상을 부여했습니다.'}
  if(c.kind==='curse'){game.hp=Math.max(1,game.hp-4);msg='재의 저주가 사라지며 체력 4를 잃었습니다.'}
+ if(c.kind && c.kind.startsWith('philip')){
+  let bonus=game.buffs.attack+(game.status.weak>0?-2:0);
+  bonus+=game.passives.filter(x=>x.effect==='damage').reduce((a,x)=>a+x.value,0);
+  if(game.hp<=game.maxHp/2)bonus+=game.items.filter(x=>x.effect==='lowHpDamage').reduce((a)=>a+3,0);
+  const egoActive=(game.character==='philip' && game.egoBloom && c.kind!=='philipBlazingStrike');
+  if(egoActive)bonus+=5;
+  let totalDmg=0;
+  if((c.damage||0)>0 || egoActive){
+   totalDmg=hitEnemy(Math.max(0,(c.damage||0)+bonus));
+  }
+  let addBurn=(c.burn||0)+(egoActive?2:0);
+  if(addBurn>0){
+   game.enemy.burn=(game.enemy.burn||0)+addBurn;
+  }
+  let parts=[];
+  if(totalDmg>0)parts.push(`${totalDmg} 피해`);
+  if(addBurn>0)parts.push(`화상 ${addBurn} 부여`);
+  if(c.kind==='philipStoke'){
+   const curB=game.enemy.burn||0;
+   if(curB>=10){
+    const nextB=Math.round(curB*1.5);
+    game.enemy.burn=nextB;
+    parts.push(`화상 1.5배 증폭(${curB}→${nextB})`);
+   }else{
+    parts.push(`적 화상 ${curB}(10 미만이라 증폭 미발동)`);
+   }
+  }
+  if(c.selfBurn){
+   game.status.selfBurn=(game.status.selfBurn||0)+c.selfBurn;
+   parts.push(`자신 화상 ${c.selfBurn} 부여`);
+  }
+  if(c.debuff==='vulnerable'){
+   game.enemy.vulnerable=2;
+   parts.push('취약 2턴 부여');
+  }
+  msg=`${c.name}! ${parts.join(', ')}.`;
+ }else if(game.character==='philip' && game.egoBloom){
+  game.enemy.burn=(game.enemy.burn||0)+2;
+  msg+=` [에고 개화: 화상 +2 추가 부여]`;
+ }
+ if(game.character==='philip'){
+  if(c.kind==='philipBlazingStrike'){
+   msg+=adjustPhilipSanity(c.sanityDelta||-15);
+   game.egoBloom=false;
+   $('heroGlyph').innerHTML=getHeroPixelArt('philip');
+   msg+=' [타오르는 일격 사용 후 에고 개화가 종료됩니다.]';
+  }else{
+   const costSanityMap={0:5,1:10,2:15,3:20};
+   const gainSan=costSanityMap[c.cost]!=null?costSanityMap[c.cost]:Math.min(20,5+(c.cost||0)*5);
+   msg+=` (정신력 +${gainSan})`+adjustPhilipSanity(gainSan);
+  }
+ }
  if(c.kind==='stanceFlip'){
   const changed=switchStance();
   let extra='';
@@ -2743,6 +2999,12 @@ function enemyAct(){
   msg+=` 화상 도트 피해 ${burnDmg}!`;
  }
  if(game.hp>0&&game.status.poison>0){game.hp=Math.max(0,game.hp-game.status.poison);msg+=` 중독으로 ${game.status.poison} 추가 피해.`;game.status.poison--}
+ if(game.hp>0&&(game.status.selfBurn||0)>0){
+  const sb=game.status.selfBurn;
+  game.hp=Math.max(0,game.hp-sb);
+  msg+=` 자신의 화상으로 ${sb} 피해!`;
+  game.status.selfBurn=Math.max(0,sb-1);
+ }
  if(game.hp>0&&(game.status.bleed||0)>0){
   const bDmg=game.status.bleed;
   game.hp=Math.max(0,game.hp-bDmg);
@@ -2766,7 +3028,10 @@ function endTurn(){
  discardHand();
  const msg=enemyAct();
  if(game.enemy.hp<=0){winBattle();return}
- if(game.hp<=0){game.active=false;clearContinueRun();finishRun(false);return}
+ if(game.hp<=0){
+  if(checkPhilipSurvivalEscape())return;
+  game.active=false;clearContinueRun();finishRun(false);return;
+ }
  if((game.bloodPotionDrain||0)>0){
   game.hp=Math.max(1,game.hp-game.bloodPotionDrain);
   game.bloodPotionDrain=0;
@@ -2776,6 +3041,14 @@ function endTurn(){
  else game.block=0;
  if(game.items.some(x=>x.effect==='sanctuaryEcho')&&game.hp<game.maxHp*0.5){game.block+=6;}
  game.turn++;game.buffs.attack=0;game.stanceCombo=false;game.stanceDrawUsedTurn=false;game.energy=game.maxEnergy+(game.items.some(x=>x.effect==='battleEnergy')?1:0);
+ if(game.character==='philip'){
+  if((game.philipStunTurns||0)>0){
+   game.philipStunTurns--;
+  }
+  if(game.passives.some(x=>x.effect==='turnBlock')){
+   adjustPhilipSanity(3);
+  }
+ }
  if(game.character==='mage')game.mana=Math.min(game.maxMana,game.mana+game.manaRegen+game.passives.filter(x=>x.effect==='manaRegen').reduce((a,x)=>a+x.value,0));
  enemyChooseIntent();draw(5);
  $('battleLog').textContent=msg+' 턴을 종료하고 새로운 손패를 받았습니다.';renderBattle();
@@ -2864,6 +3137,9 @@ function getAllCatalogCards(){
   if(!map.has(c.name))map.set(c.name,c);
  });
  swordsmanExclusiveSkills.forEach(c=>{
+  if(!map.has(c.name))map.set(c.name,c);
+ });
+ philipExclusiveSkills.forEach(c=>{
   if(!map.has(c.name))map.set(c.name,c);
  });
  return [...map.values()];
@@ -3048,6 +3324,7 @@ function openCardBanModal(statusMsg='',charKey=null){
   if(activeChar==='vampire' && c.type==='혈귀 전용') return true;
   if(activeChar==='grailKnight' && c.type==='성배기사 전용') return true;
   if(activeChar==='swordsman' && c.type==='검무가 전용') return true;
+  if(activeChar==='philip' && c.type==='필립 전용') return true;
   return false;
  });
  const displayCards=relevantCards.length?relevantCards:catalog;
@@ -3092,6 +3369,7 @@ function buildSlayTheSpireCardPool(){
   if(activeChar==='vampire' && c.type==='혈귀 전용') return true;
   if(activeChar==='grailKnight' && c.type==='성배기사 전용') return true;
   if(activeChar==='swordsman' && c.type==='검무가 전용') return true;
+  if(activeChar==='philip' && c.type==='필립 전용') return true;
   return false;
  });
  
