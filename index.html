@@ -224,7 +224,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;bo
         <div class="tabs" id="modeTabs" style="margin:0">
           <button type="button" class="tab active" data-mode="corridor">회랑 모드</button>
           <button type="button" class="tab" data-mode="story">스토리 모드</button>
-        </div>
+        <button type="button" class="tab" data-mode="event">이벤트 모드</button></div>
       </div>
     </div>
     <p class="muted" id="modeDesc" style="margin-top:8px">회랑 모드에 도전할 캐릭터를 선택하세요. 1층 10 · 2층 15 · 3층 17 스테이지로 구성된 로그라이크 모드입니다.</p>
@@ -863,6 +863,12 @@ const ACHIEVEMENTS=[
   title:'업적 · 잿빛 검수 처치하기',
   desc:'보스 [잿빛 검수]를 쓰러뜨리세요.',
   rewardLabel:'검무가 전용 [방랑 낭인] 업적 스킨 획득'
+ }
+   ,{
+  id:'black_silence_no_hero_card',
+  title:'업적 · 어렵개 전하는 마음',
+  desc:'영웅 카드를 사용하지 않고 [검은 침묵 접대(롤랑)]에서 승리하세요.',
+  rewardLabel:'롤랑 전용 스킨 획득'
  }
 ];
 
@@ -4151,6 +4157,11 @@ function setModeTab(mode){
  if(mode==='corridor'){
   $('modeDesc').textContent='회랑 모드에 도전할 캐릭터를 선택하세요. 1층 10 · 2층 15 · 3층 17 스테이지로 구성된 로그라이크 모드입니다.';
   $('storyPanel').style.display='none';
+    }else if(mode==='event'){
+  if($('storyPanel'))$('storyPanel').style.display='none';
+  if(typeof window.renderBlackSilenceEventTab==='function'){
+   window.renderBlackSilenceEventTab();
+  }
   chooseCharacter();
  }else{
   $('modeDesc').textContent='기사 스토리 모드에서는 [기사] 캐릭터만 선택할 수 있습니다. 1층(10) · 2층(15) · 3층(17)이 하나의 묶음으로 이어지며 각 층 막스테이지는 보스전입니다.';
@@ -4647,6 +4658,266 @@ refreshContinueButton();
       const { casterBounds } = getUnitGeometry();
       redMistFx.updateAndDraw(ctx, cvs.height, isEgo, casterBounds);
     }
+   (function initBlackSilenceEventModule(){
+ const ROLAND_UNLOCK_KEY='ashen_heroes_roland_unlocked_v1';
+ const ROLAND_SKIN_KEY='ashen_heroes_roland_skin_unlocked_v1';
+ const ROLAND_NO_HERO_ACH_ID='black_silence_no_hero_card';
+ const LIBRARIAN_CARD_CAP=13;
+
+ const ROLAND_WEAPON_NAMES=[
+  '로직 아틀리에 공방 쌍권총','묵공방 태도','크리스탈 아틀리에 쌍검',
+  '랑아공방 단검','로직 아틀리에 샷건','알라스 공방 렌스',
+  '알라스 공방 건틀릿','휠스 인더스트리 대검','느티나무 공방 도끼와 메이스',
+  '늙은 아이 공방 망치','뒤랑달','로직 아틀리에 공방 샷건'
+ ];
+
+ const LIBRARIAN_CARDS_13=[
+  {name:'사서 타격 I',glyph:'⚔',cost:1,desc:'적에게 피해 8.',kind:'damage',damage:8,type:'사서 전용',rarity:'일반'},
+  {name:'사서 타격 II',glyph:'⚔',cost:1,desc:'적에게 피해 8.',kind:'damage',damage:8,type:'사서 전용',rarity:'일반'},
+  {name:'사서 수호 I',glyph:'▣',cost:1,desc:'방어도 7 획득.',kind:'block',block:7,type:'사서 전용',rarity:'일반'},
+  {name:'사서 수호 II',glyph:'▣',cost:1,desc:'방어도 7 획득.',kind:'block',block:7,type:'사서 전용',rarity:'일반'},
+  {name:'서고 탐색 I',glyph:'✦',cost:0,desc:'카드 1장 뽑기.',kind:'draw',draw:1,type:'사서 전용',rarity:'일반'},
+  {name:'서고 탐색 II',glyph:'✦',cost:0,desc:'카드 1장 뽑기.',kind:'draw',draw:1,type:'사서 전용',rarity:'일반'},
+  {name:'단죄의 일격',glyph:'⚔',cost:2,desc:'적에게 피해 15.',kind:'damage',damage:15,type:'사서 전용',rarity:'고급'},
+  {name:'결계의 장막',glyph:'▣',cost:2,desc:'방어도 14 획득.',kind:'block',block:14,type:'사서 전용',rarity:'고급'},
+  {name:'속독 전개',glyph:'✦',cost:1,desc:'카드 2장 뽑기.',kind:'draw',draw:2,type:'사서 전용',rarity:'고급'},
+  {name:'기록과 균형',glyph:'⚔',cost:1,desc:'적에게 피해 7, 방어도 4 획득.',kind:'mixed',damage:7,block:4,type:'사서 전용',rarity:'일반'},
+  {name:'절제의 숨결',glyph:'▣',cost:1,desc:'방어도 6, 체력 2 회복.',kind:'guardHeal',block:6,heal:2,type:'사서 전용',rarity:'일반'},
+  {name:'마력 환류',glyph:'✦',cost:0,desc:'코스트 1 획득.',kind:'energy',energyGain:1,type:'사서 전용',rarity:'고급'},
+  {name:'침묵의 심판',glyph:'⚔',cost:2,desc:'적에게 피해 17.',kind:'damage',damage:17,type:'사서 전용',rarity:'희귀'}
+ ];
+
+ function isRolandUnlockedEvent(){
+  return readStorageSafe(ROLAND_UNLOCK_KEY)==='1';
+ }
+ function isRolandSkinUnlockedEvent(){
+  return readStorageSafe(ROLAND_SKIN_KEY)==='1';
+ }
+ function calcEmotionStage(turn){
+  return Math.min(5,Math.max(0,Math.floor((Math.max(1,turn)-1)/2)));
+ }
+
+ // 업적 목록에 영웅 카드 미사용 업적 등록
+ if(typeof ACHIEVEMENTS!=='undefined' && !ACHIEVEMENTS.some(a=>a.id===ROLAND_NO_HERO_ACH_ID)){
+  ACHIEVEMENTS.push({
+   id:ROLAND_NO_HERO_ACH_ID,
+   title:'업적 · 영웅 없는 접대 돌파',
+   desc:'영웅 카드를 사용하지 않고 [검은 침묵 접대(롤랑)]에서 승리하세요.',
+   rewardLabel:'롤랑 전용 스킨 획득'
+  });
+ }
+
+ // 덱 편성 검증(롤랑 카드 금지 + 사서 카드 최대 13장)
+ window.validateEventDeckCards=function(cards){
+  const list=Array.isArray(cards)?cards:[];
+  const forbidden=list.find(c=>c && (c.type==='롤랑 전용' || ROLAND_WEAPON_NAMES.includes(c.name)));
+  if(forbidden){
+   return {ok:false,msg:`이벤트전에서는 롤랑 카드 [${forbidden.name}]를 사용할 수 없습니다.`};
+  }
+  const libCount=list.filter(c=>c && c.type==='사서 전용').length;
+  if(libCount>LIBRARIAN_CARD_CAP){
+   return {ok:false,msg:`사서 카드는 최대 ${LIBRARIAN_CARD_CAP}장까지만 덱에 채용할 수 있습니다. (현재 ${libCount}장)`};
+  }
+  return {ok:true,libCount};
+ };
+
+ // 3페이즈 '이해와 설득' 카드 처리 래핑
+ const origPlayCard=window.playCard;
+ window.playCard=function(i){
+  if(!game || !game.active)return;
+  if(game.mode==='event_black_silence'){
+   const c=game.hand[i];
+   if(!c || c.cost>game.energy)return;
+   if(game.phase===3 && c.kind!=='persuadeCard'){
+    $('battleLog').textContent='3페이즈에서는 [이해와 설득] 카드만 사용할 수 있습니다.';
+    return;
+   }
+   if(c.rarity==='영웅'){
+    game.usedHeroCardInEvent=true;
+   }
+   if(c.kind==='persuadeCard'){
+    game.energy-=c.cost;
+    game.persuadeNullify=true;
+    game.hand.splice(i,1);
+    const dealt=dealBlackSilenceDamage(c.damage||10);
+    if(!game.active)return;
+    $('battleLog').textContent=`[이해와 설득] 발동! 이번 턴 뒤랑달 피해 무효화 및 ${dealt} 피해.`;
+    renderBattle();
+    return;
+   }
+  }
+  return origPlayCard(i);
+ };
+
+ // 검은 침묵 피해 적용(감정 1단계 30% 흡혈, 감정 4단계 1.5배 피해, 2페이즈 안젤리카와의 추억 선피해)
+ window.dealBlackSilenceDamage=function(baseDmg){
+  if(!game || game.mode!=='event_black_silence')return baseDmg;
+  game.emotionStage=calcEmotionStage(game.turn);
+  let dmg=Math.max(0,Math.floor(baseDmg));
+  if(game.emotionStage>=4){
+   dmg=Math.floor(dmg*1.5);
+  }
+  let dealt=0;
+  if(game.phase===2 && (game.angelicaHp||0)>0){
+   const take=Math.min(game.angelicaHp,dmg);
+   game.angelicaHp-=take;
+   dealt=take;
+   if(game.angelicaHp<=0){
+    game.enemy.hp=0;
+   }
+  }else{
+   const before=game.enemy.hp;
+   game.enemy.hp=Math.max(0,game.enemy.hp-dmg);
+   dealt=before-game.enemy.hp;
+  }
+  if(game.emotionStage>=1 && dealt>0){
+   const heal=Math.floor(dealt*0.3);
+   if(heal>0)game.hp=Math.min(game.maxHp,game.hp+heal);
+  }
+  checkBlackSilenceTransitions();
+  return dealt;
+ };
+
+ function syncBlackSilenceIntent(){
+  if(!game || game.mode!=='event_black_silence')return;
+  game.emotionStage=calcEmotionStage(game.turn);
+  const e=game.enemy;
+  if(game.phase===1){
+   if(game.turn%6===0){
+    const v=game.emotionStage>=5?11:21;
+    e.intent=v;e.intentLabel=`퓨리우소 (피해 ${v} + 취약)`;e.next='bs_furioso';
+   }else if(game.turn%5===0){
+    e.intent=13;e.intentLabel='단일 공격';e.next='bs_p1_one';
+   }else{
+    e.intent=11;e.intentLabel='기본 공격 ×2';e.next='bs_p1_two';
+   }
+  }else if(game.phase===2){
+   if(game.turn%4===0){
+    const v=game.emotionStage>=5?11:21;
+    e.intent=v;e.intentLabel=`퓨리우소 (피해 ${v} + 취약)`;e.next='bs_furioso';
+   }else if(game.turn%3===0){
+    e.intent=10;e.intentLabel='검고 흰 왈츠 (피해 10 + 기절 · 시작 코스트 2 이상 시 무효)';e.next='bs_waltz';
+   }else{
+    e.intent=10;e.intentLabel=`롤랑 공격 + 안젤리카와의 추억(HP ${game.angelicaHp}) 공격`;e.next='bs_p2_both';
+   }
+  }else if(game.phase===3){
+   e.intent=16;e.intentLabel='뒤랑달 (공격 전용 · [이해와 설득]으로 무효화)';e.next='bs_durandal';
+  }
+ }
+
+ function checkBlackSilenceTransitions(){
+  if(!game || game.mode!=='event_black_silence')return false;
+  const e=game.enemy;
+  if(game.phase===1 && e.hp<=0){
+   game.phase=2;
+   e.hp=100;e.maxHp=100;
+   game.angelicaHp=170;game.angelicaMaxHp=170;
+   $('enemyKind').textContent='2페이즈 · 안젤리카와의 추억';
+   syncBlackSilenceIntent();
+   $('battleLog').textContent='2페이즈 전환! 롤랑(HP 100) 대신 [안젤리카와의 추억](HP 170)이 피해를 받습니다.';
+   return true;
+  }
+  if(game.phase===2 && (e.hp<=0 || game.angelicaHp<=0)){
+   game.phase=3;
+   e.hp=50;e.maxHp=50;
+   game.angelicaHp=0;
+   game.hand=Array.from({length:5},()=>({
+    name:'이해와 설득',glyph:'✦',cost:1,
+    desc:'뒤랑달 피해 무효화 + 10 피해.',
+    kind:'persuadeCard',damage:10,type:'3페이즈 전용',rarity:'일반'
+   }));
+   $('enemyKind').textContent='3페이즈 · 뒤랑달';
+   syncBlackSilenceIntent();
+   $('battleLog').textContent='3페이즈 진입! 롤랑은 [뒤랑달]만 사용하며 손패가 [이해와 설득]으로 채워졌습니다.';
+   return true;
+  }
+  if(game.phase===3 && e.hp<=0){
+   game.active=false;
+   writeStorageSafe(ROLAND_UNLOCK_KEY,'1');
+   const noHero=!game.usedHeroCardInEvent;
+   if(noHero){
+    writeStorageSafe(ROLAND_SKIN_KEY,'1');
+    if(typeof grantAchievementAndCollection==='function'){
+     grantAchievementAndCollection(ROLAND_NO_HERO_ACH_ID,null);
+    }
+   }
+   if(typeof exportProgressSnapshot==='function')exportProgressSnapshot();
+   showModal(
+    '검은 침묵 접대 승리!',
+    noHero
+     ?'검은 침묵 접대를 클리어했습니다! [롤랑]이 해금되었으며(기믹 미정으로 실제 플레이 불가), 영웅 카드 미사용 업적 달성으로 [롤랑 스킨]을 획득했습니다.'
+     :'검은 침묵 접대를 클리어했습니다! [롤랑]이 해금되었습니다(기믹 미정으로 실제 플레이 불가). 영웅 카드를 사용하지 않고 승리 시 롤랑 스킨 업적도 달성됩니다.',
+    [{label:'회랑 모드로 복귀',desc:'해금 및 업적 상태를 반영합니다.',action:()=>{show('selectScreen');setModeTab('corridor');}}]
+   );
+   return true;
+  }
+  return false;
+ }
+
+ // 이벤트 모드 탭 연동
+ const origSetModeTab=window.setModeTab;
+ window.setModeTab=function(mode){
+  if(mode==='event'){
+   selectedMode='event';
+   document.querySelectorAll('#modeTabs .tab').forEach(b=>b.classList.toggle('active',b.dataset.mode==='event'));
+   if($('storyPanel'))$('storyPanel').style.display='none';
+   $('modeDesc').textContent='이벤트 모드 — 검은 침묵 접대(롤랑): 사서 전용 플레이 · 롤랑 카드 금지 · 사서 카드 최대 13장 · 감정 단계(2턴마다 +1, 최대 5단계).';
+   $('characterChoices').innerHTML='';
+   const b=document.createElement('button');
+   b.className='choice';
+   const skinBadge=isRolandSkinUnlockedEvent()?' · 롤랑 스킨 보유':'';
+   const lockBadge=isRolandUnlockedEvent()?' · 롤랑 해금됨(기믹 미정·플레이 불가)':'';
+   b.innerHTML=`<div class="glyph" style="width:44px;height:44px;margin-bottom:6px">⚔</div><h3>검은 침묵 접대 (롤랑)</h3><p>플레이어: 사서 · 사서 카드 최대 13장<br>1~3페이즈 · 감정 1~5단계${lockBadge}${skinBadge}</p>`;
+   b.onclick=()=>startBlackSilenceReception();
+   $('characterChoices').appendChild(b);
+   updateHeaderActionLabels();
+   return;
+  }
+  return origSetModeTab(mode);
+ };
+
+ window.startBlackSilenceReception=function(){
+  const deck=LIBRARIAN_CARDS_13.map(c=>({...c}));
+  const check=window.validateEventDeckCards(deck);
+  if(!check.ok){alert(check.msg);return;}
+  game={
+   character:'librarian',
+   mode:'event_black_silence',
+   heroName:'사서',
+   hp:85,maxHp:85,block:0,
+   energy:3,maxEnergy:3,
+   gold:0,potions:{},
+   deck,drawPile:shuffle([...deck]),discard:[],hand:[],
+   floor:0,stage:0,route:'boss',
+   turn:1,emotionStage:0,
+   usedHeroCardInEvent:false,
+   persuadeNullify:false,
+   phase:1,angelicaHp:170,angelicaMaxHp:170,
+   enemy:{
+    name:'검은 침묵 롤랑',glyph:'⚔',
+    hp:270,maxHp:270,atk:11,baseAtk:11,
+    intent:11,intentLabel:'기본 공격 ×2',next:'bs_p1_two',
+    type:'boss',burn:0,freeze:0,shock:0,vulnerable:0
+   },
+   enemyBlock:0,active:true,
+   items:[],passives:[],
+   status:{poison:0,weak:0,vulnerable:0,bleed:0,selfBurn:0},
+   buffs:{attack:0},
+   mana:0,maxMana:0,manaRegen:0,
+   battles:0,firstGuard:true,firstDraw:true
+  };
+  draw(5);
+  syncBlackSilenceIntent();
+  $('battleFloor').textContent='이벤트 모드';
+  $('battleStage').textContent='검은 침묵 접대 (롤랑)';
+  $('enemyKind').textContent='1페이즈 (HP 270)';
+  $('heroName').textContent=game.heroName;
+  $('enemyName').textContent=game.enemy.name;
+  renderBattle();
+  show('battleScreen');
+ };
+})();
+ 
     requestAnimationFrame(fxLoop);
   }
   fxLoop();
