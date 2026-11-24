@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>잿가루 용사단 (ASHEN HEROES) v0.91</title>
+<title>잿가루 용사단 (ASHEN HEROES) v0.92</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+KR:wght@400;600;700;900&display=swap');
 :root{--bg:#11101b;--panel:#242238;--panel2:#302c49;--line:#716987;--text:#f3ebd4;--muted:#b9b1ca;--gold:#f2c66d;--red:#e87979;--blue:#79bce0;--green:#8dc99a;--purple:#b99ae8}
@@ -186,6 +186,13 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;bo
 .achievement-badge.done{background:#203d2c;color:var(--green);border:1px solid #67b082}
 .achievement-badge.todo{background:#2c283d;color:var(--muted);border:1px solid #655d7d}
 
+
+.stance-pill.redmist-normal{border-color:#e87979;background:#351924;color:#ffc4c8}
+.stance-pill.redmist-ego{border-color:#ff4d6d;background:linear-gradient(135deg,#590d22,#9d0208);color:#ffe5ec;box-shadow:0 0 12px rgba(255,55,95,0.65)}
+.hero-red-mist-aura{box-shadow:0 0 18px rgba(230,25,65,0.9),0 0 36px rgba(180,10,40,0.65),inset 0 0 14px rgba(255,70,100,0.45)!important;border-radius:50%;animation:redMistPulse 1.4s ease-in-out infinite alternate}
+@keyframes redMistPulse{0%{transform:scale(1);filter:drop-shadow(0 0 6px rgba(235,30,65,0.75))}100%{transform:scale(1.04);filter:drop-shadow(0 0 16px rgba(255,60,95,0.95))}}
+.fx-redmist-ego{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,rgba(230,20,55,0.65),rgba(120,5,25,0.35) 55%,transparent 82%);box-shadow:inset 0 0 120px rgba(220,20,60,0.85);animation:bloodVortex 0.95s ease-out forwards}
+
 </style>
 </head>
 <body>
@@ -198,7 +205,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;bo
   <div class="row">
     <button type="button" class="btn small" id="headerBackupBtn">진행도 백업</button>
     <button type="button" class="btn small" id="patchNotesBtn">업데이트 내역</button>
-    <div class="tag" id="shardTag">✦ 0 샤드</div><div class="tag" id="versionTag">VER 0.91</div>
+    <div class="tag" id="shardTag">✦ 0 샤드</div><div class="tag" id="versionTag">VER 0.92</div>
   </div>
 </header>
 
@@ -353,8 +360,19 @@ const elements={
  ice:{name:'얼음',glyph:'❄',desc:'빙결로 일시 행동불가 및 다음 턴 공격 시 받는 피해 증가'},
  lightning:{name:'번개',glyph:'ϟ',desc:'감전으로 2턴 행동불가 및 주변 적에게 연쇄 피해'}
 };
-const APP_VERSION='0.91';
+const APP_VERSION='0.92';
 const PATCH_HISTORY=[
+ {version:'0.92',date:'2026-11',notes:[
+  '신규 용사 [붉은 안개] 추가 (최대 코스트 4 · 안개기억 0~30+ · 붉은빛 스택 시스템)',
+  '안개기억: 매 턴 +5, 돌진 사용 시 +10 획득 / 30 도달 시 0코스트 [에고 개화: 붉은 안개] 손패 무조건 추가',
+  '붉은빛: 돌진 사용 시 +1 획득 / 보유한 붉은빛 스택 수만큼 모든 스킬 대미지 상승',
+  '붉은 안개 기본 스킬 7종(타격·방어·횡베기·종베기·찌르기·돌진·대절단: 가로) 및 E.G.O 개화 상태(붉은 아우라·강화된 대절단: 가로·대절단: 세로·패시브 [최강의 강림]) 구현'
+ ]},
+ {version:'0.91a',date:'2026-11',notes:[
+  '필립 에고 개화 유지/해제 규칙 개편: 에고 개화 상태에서 카드 1장 사용 시마다 정신력 -10 소모',
+  '정신력 -40 이하 도달 시 에고 개화 즉시 해제 및 다음 1턴 행동 불가(기절/경직) 패널티 발동',
+  '스테이지 클리어(종료) 시 잔여 정신력이나 상태와 무관하게 에고 개화 변신 자동 해제'
+ ]},
  {version:'0.91',date:'2026-11',notes:[
   '신규 용사 [필립] 추가 (HP 64 · 기초 코스트 4 · 정신력 -45 ~ +45 시스템)',
   '필립 전용 에고 개화 「물러서지 않을 용기」 구현 (정신력 +45 도달 시 활성화: 모든 카드 대미지 +5 & 화상 +2, 4코스트 영웅 스킬 [타오르는 일격] 해금)',
@@ -736,6 +754,54 @@ const heroPixelArtData = {
   <rect x="21" y="67" width="13" height="2" fill="#7a7d85"/>
   <rect x="37" y="64" width="13" height="3" fill="#3a2c2b"/>
   <rect x="37" y="67" width="13" height="2" fill="#7a7d85"/>
+</svg>`,
+ redmist: `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="18" y="68" width="36" height="3" fill="#09080e"/>
+  <rect x="24" y="5" width="24" height="5" fill="#9b2226"/>
+  <rect x="21" y="9" width="30" height="5" fill="#ae2012"/>
+  <rect x="19" y="13" width="34" height="5" fill="#780000"/>
+  <rect x="26" y="15" width="20" height="10" fill="#d8c3b5"/>
+  <rect x="28" y="17" width="6" height="3" fill="#2b0912"/>
+  <rect x="29" y="18" width="4" height="1" fill="#ff4d6d"/>
+  <rect x="38" y="17" width="6" height="3" fill="#2b0912"/>
+  <rect x="39" y="18" width="4" height="1" fill="#ff4d6d"/>
+  <rect x="16" y="25" width="40" height="23" fill="#2b121b"/>
+  <rect x="20" y="26" width="32" height="21" fill="#780000"/>
+  <rect x="26" y="27" width="20" height="19" fill="#b5173b"/>
+  <rect x="33" y="28" width="6" height="17" fill="#e63946"/>
+  <rect x="11" y="26" width="7" height="18" fill="#590d22"/>
+  <rect x="54" y="26" width="7" height="18" fill="#590d22"/>
+  <rect x="58" y="4" width="4" height="44" fill="#e8f1f8"/>
+  <rect x="59" y="3" width="2" height="45" fill="#ffffff"/>
+  <rect x="53" y="47" width="15" height="4" fill="#d90429"/>
+  <rect x="58" y="51" width="4" height="10" fill="#3b0916"/>
+  <rect x="22" y="48" width="11" height="18" fill="#1d1118"/>
+  <rect x="39" y="48" width="11" height="18" fill="#1d1118"/>
+  <rect x="20" y="66" width="13" height="3" fill="#6a040f"/>
+  <rect x="39" y="66" width="13" height="3" fill="#6a040f"/>
+</svg>`,
+ redmistEgo: `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
+  <rect x="14" y="68" width="44" height="3" fill="#1a0208"/>
+  <rect x="14" y="14" width="10" height="34" fill="#ff4d6d"/>
+  <rect x="48" y="14" width="10" height="34" fill="#ff4d6d"/>
+  <rect x="22" y="4" width="28" height="6" fill="#ff0a54"/>
+  <rect x="25" y="10" width="22" height="14" fill="#f8edeb"/>
+  <rect x="28" y="15" width="6" height="3" fill="#590d22"/>
+  <rect x="30" y="15" width="2" height="2" fill="#ff0a54"/>
+  <rect x="38" y="15" width="6" height="3" fill="#590d22"/>
+  <rect x="40" y="15" width="2" height="2" fill="#ff0a54"/>
+  <rect x="15" y="24" width="42" height="25" fill="#590d22"/>
+  <rect x="21" y="25" width="30" height="23" fill="#c9184a"/>
+  <rect x="28" y="26" width="16" height="21" fill="#ff4d6d"/>
+  <rect x="34" y="27" width="4" height="19" fill="#ffe5ec"/>
+  <rect x="57" y="2" width="5" height="48" fill="#ffffff"/>
+  <rect x="58" y="2" width="3" height="48" fill="#ff758f"/>
+  <rect x="51" y="49" width="18" height="4" fill="#ffb703"/>
+  <rect x="57" y="53" width="5" height="11" fill="#800f2f"/>
+  <rect x="21" y="49" width="12" height="18" fill="#2b0912"/>
+  <rect x="39" y="49" width="12" height="18" fill="#2b0912"/>
+  <rect x="19" y="66" width="14" height="4" fill="#c9184a"/>
+  <rect x="39" y="66" width="14" height="4" fill="#c9184a"/>
 </svg>`,
  swordsman: `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">
   <rect x="20" y="68" width="32" height="3" fill="#0b0a12"/>
@@ -1281,6 +1347,24 @@ const CHARACTER_SKINS={
    art:heroPixelArtData.philipEgo
   }
  ],
+ redmist:[
+  {
+   id:'default',
+   name:'붉은 안개의 검사',
+   desc:'핏빛 외투와 장검을 두른 붉은 안개의 기본 도트 외형입니다.',
+   shardCost:0,
+   isUnlocked:()=>true,
+   lockHint:'',
+   art:heroPixelArtData.redmist
+  },
+  {
+   id:'redmist_crimson_reaper',
+   name:'선홍의 잔영',
+   desc:'짙은 선홍빛 망토와 붉은 기운이 감도는 붉은 안개 전용 스킨입니다.',
+   shardCost:20,
+   art:heroPixelArtData.redmistEgo
+  }
+ ],
  swordsman:[
   {
    id:'default',
@@ -1395,6 +1479,9 @@ function getActiveHeroPixelArt(charKey){
  if(k==='philip' && game && game.character==='philip' && game.egoBloom){
   return heroPixelArtData.philipEgo;
  }
+ if(k==='redmist' && game && game.character==='redmist' && game.redMistEgo){
+  return heroPixelArtData.redmistEgo;
+ }
  const skins=CHARACTER_SKINS[k];
  if(skins && skins.length){
   const activeId=getSelectedSkinId(k);
@@ -1496,6 +1583,17 @@ function getBossPixelArt(enemy){
   <rect x="4" y="13" width="3" height="3" fill="#4a235a"/>
   <rect x="9" y="13" width="3" height="3" fill="#4a235a"/>
  </svg>`;
+}
+
+
+function syncHeroAuraClass(){
+ const g=$('heroGlyph');
+ if(!g)return;
+ if(game && game.character==='redmist' && game.redMistEgo){
+  g.classList.add('hero-red-mist-aura');
+ }else{
+  g.classList.remove('hero-red-mist-aura');
+ }
 }
 
 function renderEnemySprite(){
@@ -1673,6 +1771,15 @@ const chars={
   {name:'뜨겁게 타올라라',glyph:'✹',cost:2,desc:'2코스트 7댐을 넣고 화상 10부여.',kind:'philipBurnHot',damage:7,burn:10,type:'필립 전용',rarity:'희귀'},
   {name:'파열감',glyph:'⌖',cost:0,desc:'0코스트 5댐을 넣고 취약 2부여.',kind:'philipRupture',damage:5,burn:0,debuff:'vulnerable',type:'필립 전용',rarity:'고급'}
  ]},
+ redmist:{name:'붉은 안개',glyph:'✹',hp:66,energy:4,special:[
+  {name:'타격',glyph:'⚔',cost:1,desc:'공방 일체형 기본기: 피해 6 및 방어도 4 획득.',kind:'redMistHybrid',damage:6,block:4,type:'붉은 안개 기본',rarity:'기본'},
+  {name:'방어',glyph:'▣',cost:1,desc:'방어 중심 스킬: 방어도 9 획득.',kind:'block',block:9,type:'붉은 안개 기본',rarity:'기본'},
+  {name:'횡베기',glyph:'⚔',cost:1,desc:'공방 일체형: 피해 7 및 방어도 5 획득.',kind:'redMistHybrid',damage:7,block:5,type:'붉은 안개 기본',rarity:'일반'},
+  {name:'종베기',glyph:'⚔',cost:1,desc:'공방 일체형: 피해 8 및 방어도 4 획득.',kind:'redMistHybrid',damage:8,block:4,type:'붉은 안개 기본',rarity:'일반'},
+  {name:'찌르기',glyph:'➤',cost:1,desc:'공방 일체형: 피해 9 및 방어도 3 획득.',kind:'redMistHybrid',damage:9,block:3,type:'붉은 안개 기본',rarity:'일반'},
+  {name:'돌진',glyph:'✦',cost:2,desc:'방어 겸 예열기: 방어도 8 획득, 안개기억 +10, 붉은빛 +1.',kind:'redMistDash',damage:0,block:8,type:'붉은 안개 기본',rarity:'고급'},
+  {name:'대절단: 가로',glyph:'♛',cost:3,desc:'고위력 주력기: 피해 18 및 방어도 8 획득.',kind:'redMistHybrid',damage:18,block:8,type:'붉은 안개 기본',rarity:'희귀'}
+ ]},
  swordsman:{name:'검무가',glyph:'⚔',unlockable:true,unlockType:'swordsman',hp:58,energy:3,special:[
   {name:'맹공의 검무',glyph:'⚔',cost:1,desc:'맹공 자세 전환(공격 피해 +3) 및 적에게 피해 7, 연계 시 +4.',kind:'stanceStrike',stance:'assault',damage:7,comboBonus:4,type:'검무가 전용',rarity:'일반'},
   {name:'철벽의 검무',glyph:'▣',cost:1,desc:'철벽 자세 전환(방어도 +3) 및 방어도 6 획득, 연계 시 피해 6.',kind:'stanceGuard',stance:'iron',block:6,comboDmg:6,type:'검무가 전용',rarity:'일반'}]}
@@ -1687,6 +1794,20 @@ const philipExclusiveSkills=[
  {name:'뜨겁게 타올라라',glyph:'✹',cost:2,desc:'2코스트 7댐을 넣고 화상 10부여.',kind:'philipBurnHot',damage:7,burn:10,type:'필립 전용',rarity:'희귀'},
  {name:'파열감',glyph:'⌖',cost:0,desc:'0코스트 5댐을 넣고 취약 2부여.',kind:'philipRupture',damage:5,burn:0,debuff:'vulnerable',type:'필립 전용',rarity:'고급'}
 ];
+
+const redMistExclusiveSkills=[
+ {name:'타격',glyph:'⚔',cost:1,desc:'공방 일체형 기본기: 피해 6 및 방어도 4 획득.',kind:'redMistHybrid',damage:6,block:4,type:'붉은 안개 전용',rarity:'일반'},
+ {name:'방어',glyph:'▣',cost:1,desc:'방어 중심 스킬: 방어도 9 획득.',kind:'block',block:9,type:'붉은 안개 전용',rarity:'일반'},
+ {name:'횡베기',glyph:'⚔',cost:1,desc:'공방 일체형: 피해 7 및 방어도 5 획득.',kind:'redMistHybrid',damage:7,block:5,type:'붉은 안개 전용',rarity:'일반'},
+ {name:'종베기',glyph:'⚔',cost:1,desc:'공방 일체형: 피해 8 및 방어도 4 획득.',kind:'redMistHybrid',damage:8,block:4,type:'붉은 안개 전용',rarity:'일반'},
+ {name:'찌르기',glyph:'➤',cost:1,desc:'공방 일체형: 피해 9 및 방어도 3 획득.',kind:'redMistHybrid',damage:9,block:3,type:'붉은 안개 전용',rarity:'일반'},
+ {name:'돌진',glyph:'✦',cost:2,desc:'방어 겸 예열기: 방어도 8 획득, 안개기억 +10, 붉은빛 +1.',kind:'redMistDash',damage:0,block:8,type:'붉은 안개 전용',rarity:'고급'},
+ {name:'대절단: 가로',glyph:'♛',cost:3,desc:'고위력 주력기: 피해 18 및 방어도 8 획득.',kind:'redMistHybrid',damage:18,block:8,type:'붉은 안개 전용',rarity:'희귀'}
+];
+const REDMIST_EGO_BLOOM_CARD={name:'에고 개화: 붉은 안개',glyph:'✹',cost:0,desc:'0코스트: E.G.O 개화 활성화(붉은 아우라, 강화 대절단: 가로·대절단: 세로 추가, 모든 공격 영웅급 인식).',kind:'redMistActivateEgo',type:'붉은 안개 E.G.O',rarity:'영웅',volatile:true};
+const REDMIST_ENHANCED_HORIZ={name:'강화된 대절단: 가로',glyph:'♛',cost:3,desc:'[E.G.O 강화] 영웅급 주력기: 피해 26 및 방어도 12 획득.',kind:'redMistHybrid',damage:26,block:12,type:'붉은 안개 E.G.O',rarity:'영웅'};
+const REDMIST_VERT_CUT={name:'대절단: 세로',glyph:'✦',cost:3,desc:'[E.G.O 추가] 영웅급 주력기: 피해 28 및 방어도 10 획득.',kind:'redMistHybrid',damage:28,block:10,type:'붉은 안개 E.G.O',rarity:'영웅'};
+
 const PHILIP_HERO_SKILL={name:'타오르는 일격',glyph:'♛',cost:4,desc:'4코스트 영웅 스킬: 30의 대미지를 넣고 화상 15 부여, 정신력 15 감소.',kind:'philipBlazingStrike',damage:30,burn:15,sanityDelta:-15,type:'필립 영웅 스킬',rarity:'영웅',volatile:true};
 
 const swordsmanExclusiveSkills=[
@@ -2074,6 +2195,9 @@ function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
 
 function makeBaseDeck(character,element='fire'){
+ if(character==='redmist'){
+  return shuffle(chars.redmist.special.map(c=>({...c})));
+ }
  const strike=Array.from({length:4},()=>({name:'타격',glyph:'⚔',cost:1,desc:'적에게 피해 6.',kind:'damage',damage:6,type:'공통 카드',rarity:'기본'}));
  const defend=Array.from({length:4},()=>({name:'방어',glyph:'▣',cost:1,desc:'방어도 6 획득.',kind:'block',block:6,type:'공통 카드',rarity:'기본'}));
  const specials=chars[character].special.map(c=>{
@@ -2291,7 +2415,9 @@ function chooseCharacter(){
    ?'시작 시 불·얼음·번개 원소 선택'
    :isVamp
     ?'피를 소모해 공격하고 흡혈 · 전용 스킬 15종'
-   :key==='philip'
+   :key==='redmist'
+    ?'최대 4코스트 · 안개기억(30 도달 시 E.G.O 개화) & 붉은빛 · 공방 일체형 7종'
+  :key==='philip'
     ?'정신력(-45~+45) & 에고 개화 「물러서지 않을 용기」 · 전용 스킬 7종'
    :isSword
     ?'맹공/철벽 자세 전환 & 연계 · 전용 스킬 30종'
@@ -2370,6 +2496,10 @@ function startRun(key,element='fire'){
   stance:'assault',
   stanceCombo:false,
   stanceDrawUsedTurn:false,
+  mistMemory:0,
+  redLight:0,
+  redMistEgo:false,
+  redMistEgoGrantedThisRun:false,
   sanity:0,
   egoBloom:false,
   philipStunTurns:0,
@@ -2514,10 +2644,18 @@ function startBattle(type){
  game.status.bleed=0;
  game.status.selfBurn=0;
  game.philipStunTurns=0;
+ if(game.character==='redmist'){
+  game.redMistEgo=false;
+  game.mistMemory=typeof game.mistMemory==='number'?game.mistMemory:0;
+  game.redLight=typeof game.redLight==='number'?game.redLight:0;
+ }
  if(game.character==='philip'){
+  game.egoBloom=false;
   game.sanity=Math.max(-45,Math.min(45,typeof game.sanity==='number'?game.sanity:0));
   if(game.passives.some(x=>x.effect==='startBlock'))game.sanity=Math.min(45,game.sanity+5);
-  game.egoBloom=(game.sanity>=45);
+  if(game.sanity>=45){
+   adjustPhilipSanity(0);
+  }
  }
  game.buffs={attack:0};
  if(game.items.some(x=>x.effect==='swordsmanWindStone')){game.stance='assault';game.buffs.attack+=2;}
@@ -2580,6 +2718,69 @@ function renderStatusList(elementId, statuses){
  });
 }
 
+function releasePhilipEgoBloom(){
+ if(!game || game.character!=='philip')return false;
+ const wasBloomed=!!game.egoBloom;
+ game.egoBloom=false;
+ if(Array.isArray(game.hand)){
+  game.hand=game.hand.filter(c=>c.name!==PHILIP_HERO_SKILL.name);
+ }
+ if(Array.isArray(game.discard)){
+  game.discard=game.discard.filter(c=>c.name!==PHILIP_HERO_SKILL.name);
+ }
+ if(Array.isArray(game.drawPile)){
+  game.drawPile=game.drawPile.filter(c=>c.name!==PHILIP_HERO_SKILL.name);
+ }
+ if($('heroGlyph') && game.character==='philip'){
+  $('heroGlyph').innerHTML=getHeroPixelArt('philip');
+ }
+ return wasBloomed;
+}
+
+
+function gainMistMemory(amount){
+ if(!game || game.character!=='redmist')return '';
+ game.mistMemory=(game.mistMemory||0)+amount;
+ let msg=` 안개기억 +${amount} (현재 ${game.mistMemory}/30).`;
+ if(game.mistMemory>=30 && !game.redMistEgo && !game.redMistEgoGrantedThisRun){
+  game.redMistEgoGrantedThisRun=true;
+  if(!game.hand.some(c=>c.name===REDMIST_EGO_BLOOM_CARD.name)){
+   game.hand.push({...REDMIST_EGO_BLOOM_CARD});
+  }
+  msg+=' [안개기억 30 도달!] 0코스트 스킬 [에고 개화: 붉은 안개]가 손패에 무조건 추가되었습니다!';
+ }
+ return msg;
+}
+
+function activateRedMistEgo(){
+ if(!game || game.character!=='redmist')return '';
+ game.redMistEgo=true;
+ $('heroGlyph').innerHTML=getHeroPixelArt('redmist');
+ syncHeroAuraClass();
+ triggerHeroicCardEffect({rarity:'영웅'});
+ [REDMIST_ENHANCED_HORIZ, REDMIST_VERT_CUT].forEach(sk=>{
+  const inHand=game.hand.some(c=>c.name===sk.name);
+  const inDeck=game.deck.some(c=>c.name===sk.name);
+  const inDiscard=game.discard.some(c=>c.name===sk.name);
+  const inDraw=game.drawPile.some(c=>c.name===sk.name);
+  if(!inHand && !inDeck && !inDiscard && !inDraw){
+   game.hand.push({...sk});
+   game.deck.push({...sk});
+  }
+ });
+ return '[E.G.O 개화: 붉은 안개!] 캐릭터 외형 변화 및 붉은 아우라 생성 · [강화된 대절단: 가로]·[대절단: 세로] 추가 · 패시브 [최강의 강림] 활성화(모든 공격이 영웅급 스킬로 인식됨)!';
+}
+
+function getRedMistBonusDamage(card){
+ if(!game || game.character!=='redmist')return 0;
+ let bonus=game.redLight||0;
+ if(game.redMistEgo && card && card.rarity!=='영웅'){
+  // 패시브 '최강의 강림': 모든 공격이 영웅급 스킬로 인식됨 -> 영웅급 추가 피해 +4
+  bonus+=4;
+ }
+ return bonus;
+}
+
 function adjustPhilipSanity(delta){
  if(!game || game.character!=='philip')return '';
  const prev=typeof game.sanity==='number'?game.sanity:0;
@@ -2594,14 +2795,11 @@ function adjustPhilipSanity(delta){
   triggerHeroicCardEffect({rarity:'영웅'});
   note=' [에고 개화: 물러서지 않을 용기 활성화!] 외형이 변하고 모든 카드 대미지 +5 · 화상 +2 부여 및 4코스트 영웅 스킬 [타오르는 일격]이 해금되었습니다!';
  }else if(game.sanity<=-40){
-  if(game.egoBloom){
-   game.egoBloom=false;
-   game.hand=game.hand.filter(c=>c.name!==PHILIP_HERO_SKILL.name);
-   game.discard=game.discard.filter(c=>c.name!==PHILIP_HERO_SKILL.name);
-   $('heroGlyph').innerHTML=getHeroPixelArt('philip');
-  }
+  const hadEgo=releasePhilipEgoBloom();
   game.philipStunTurns=Math.max(game.philipStunTurns||0,1);
-  note=' [정신력 붕괴 (-40 이하)!] 에고 개화가 해제되고 다음 1턴 동안 행동 불가 상태가 됩니다!';
+  note=hadEgo
+   ?' [정신력 붕괴 (-40 이하)!] 에고 개화가 즉시 해제되고 다음 1턴 동안 행동 불가(기절/경직) 상태가 됩니다!'
+   :' [정신력 붕괴 (-40 이하)!] 다음 1턴 동안 행동 불가(기절/경직) 상태가 됩니다!';
  }
  return note;
 }
@@ -2612,6 +2810,7 @@ function checkPhilipSurvivalEscape(){
  if(Math.random()<0.10){
   game.hp=Math.min(game.maxHp,10);
   game.active=false;
+  releasePhilipEgoBloom();
   game.block=0;
   game.status={poison:0,weak:0,vulnerable:0,bleed:0,selfBurn:0};
   showModal(
@@ -2667,6 +2866,12 @@ function renderBattle(){
   const stLabel=game.stance==='iron'?'철벽 자세':'맹공 자세';
   const comboTxt=game.stanceCombo?'연계 활성화!':'자세 전환 대기';
   $('statusInfo').innerHTML=`<span class="stance-pill ${game.stance==='iron'?'iron':'assault'}">${stLabel} · ${comboTxt}</span>`;
+ }else if(game.character==='redmist'){
+  const egoStatus=game.redMistEgo
+   ?'E.G.O 개화 중 (붉은 아우라 · 최강의 강림: 전 공격 영웅급 인식)'
+   :`안개기억 ${game.mistMemory||0}/30 · 붉은빛 +${game.redLight||0}`;
+  $('statusInfo').innerHTML=`<span class="stance-pill ${game.redMistEgo?'redmist-ego':'redmist-normal'}">${egoStatus}</span>`;
+  syncHeroAuraClass();
  }else if(game.character==='philip'){
   const egoTxt=game.egoBloom?'에고 개화: 물러서지 않을 용기 (대미지 +5 · 화상 +2)':'에고 개화 대기 (+45 도달 시 개화)';
   $('statusInfo').innerHTML=`<span class="stance-pill ${game.egoBloom?'philip-ego':'philip-normal'}">정신력 ${game.sanity>0?'+':''}${game.sanity} / 45 · ${egoTxt}</span>`;
@@ -2682,6 +2887,11 @@ function renderBattle(){
   b.className='card';
   b.disabled=!game.active||philipStunned||c.cost>game.energy||(c.manaCost||0)>game.mana;
   let dispDesc=c.desc;
+  if(game.character==='redmist'){
+   const rl=game.redLight||0;
+   if(rl>0)dispDesc+=` [붉은빛: 피해+${rl}]`;
+   if(game.redMistEgo)dispDesc+=` [최강의 강림: 영웅급]`;
+  }
   if(game.character==='philip' && game.egoBloom && c.kind!=='philipBlazingStrike'){
    dispDesc+=` [개화: 대미지+5, 화상+2]`;
   }
@@ -2799,7 +3009,7 @@ function playCard(i){
  const hpCost=c.hpCost||0;
  if(game.character==='philip' && (game.philipStunTurns||0)>0)return;
  if(!c||c.cost>game.energy||(c.manaCost||0)>game.mana||(hpCost>0 && game.hp<=hpCost))return;
- triggerHeroicCardEffect(c);
+ triggerHeroicCardEffect((game.character==='redmist' && game.redMistEgo)?{rarity:'영웅'}:c);
  game.energy-=c.cost;
  if(c.manaCost)game.mana-=c.manaCost;
  if(hpCost>0){
@@ -2808,6 +3018,19 @@ function playCard(i){
  }
  let msg='';
  if(c.kind==='damage'||c.kind==='elementalStrike'||c.kind==='elementalSurge'){
+  if(game.character==='redmist'){
+   let bonus=game.buffs.attack+(game.status.weak>0?-2:0)+getRedMistBonusDamage(c);
+   if(game.redMistEgo && c.rarity!=='영웅')bonus+=4;
+   let d=hitEnemy(Math.max(0,(c.damage||0)+bonus));
+   msg=`${c.name}${game.redMistEgo?' [최강의 강림·영웅급]':''}! ${d} 피해.`;
+   if(c.block){game.block+=c.block;msg+=` 방어도 ${c.block} 획득.`;}
+   if(!c.volatile)game.discard.push(c);
+   game.hand.splice(i,1);
+   $('battleLog').textContent=msg;
+   if(game.enemy.hp<=0){winBattle();return}
+   renderBattle();
+   return;
+  }
   let bonus=game.buffs.attack+(game.status.weak>0?-2:0);
   bonus+=game.passives.filter(x=>x.effect==='damage').reduce((a,x)=>a+x.value,0);
   bonus+=game.passives.filter(x=>x.effect==='knightStrikePlus').reduce((a,x)=>a+x.value,0);
@@ -2831,6 +3054,24 @@ function playCard(i){
   if(c.draw){draw(c.draw);msg+=` 카드 ${c.draw}장 뽑기.`;}
  }
  if(c.kind==='block'){game.block+=c.block;msg=`방어도 ${c.block} 획득.`}
+
+ if(c.kind==='redMistActivateEgo'){
+  msg=activateRedMistEgo();
+ }
+ if(c.kind==='redMistDash'){
+  game.block+=(c.block||8);
+  game.redLight=(game.redLight||0)+1;
+  msg=`${c.name}! 방어도 ${c.block||8} 획득, 붉은빛 +1 (현재 ${game.redLight})${gainMistMemory(10)}`;
+ }
+ if(c.kind==='redMistHybrid'){
+  let bonus=game.buffs.attack+(game.status.weak>0?-2:0);
+  bonus+=game.passives.filter(x=>x.effect==='damage').reduce((a,x)=>a+x.value,0);
+  bonus+=getRedMistBonusDamage(c);
+  if(game.redMistEgo && c.rarity!=='영웅')bonus+=4;
+  let d=hitEnemy(Math.max(0,(c.damage||0)+bonus));
+  game.block+=(c.block||0);
+  msg=`${c.name}${game.redMistEgo?' [최강의 강림·영웅급]':''}! ${d} 피해 및 방어도 ${c.block||0} 획득.`;
+ }
  if(c.kind==='mixed'){
   let bonus=game.buffs.attack+(game.status.weak>0?-2:0)+game.passives.filter(x=>x.effect==='damage').reduce((a,x)=>a+x.value,0);
   if(game.items.some(x=>x.effect==='knightSignet'))bonus+=1;
@@ -2905,9 +3146,10 @@ function playCard(i){
  if(game.character==='philip'){
   if(c.kind==='philipBlazingStrike'){
    msg+=adjustPhilipSanity(c.sanityDelta||-15);
-   game.egoBloom=false;
-   $('heroGlyph').innerHTML=getHeroPixelArt('philip');
+   releasePhilipEgoBloom();
    msg+=' [타오르는 일격 사용 후 에고 개화가 종료됩니다.]';
+  }else if(game.egoBloom){
+   msg+=' (에고 개화 유지 소모: 정신력 -10)'+adjustPhilipSanity(-10);
   }else{
    const costSanityMap={0:5,1:10,2:15,3:20};
    const gainSan=costSanityMap[c.cost]!=null?costSanityMap[c.cost]:Math.min(20,5+(c.cost||0)*5);
@@ -3124,6 +3366,10 @@ function endTurn(){
  else game.block=0;
  if(game.items.some(x=>x.effect==='sanctuaryEcho')&&game.hp<game.maxHp*0.5){game.block+=6;}
  game.turn++;game.buffs.attack=0;game.stanceCombo=false;game.stanceDrawUsedTurn=false;game.energy=game.maxEnergy+(game.items.some(x=>x.effect==='battleEnergy')?1:0);
+ let mistTurnMsg='';
+ if(game.character==='redmist'){
+  mistTurnMsg=gainMistMemory(5);
+ }
  if(game.character==='philip'){
   if((game.philipStunTurns||0)>0){
    game.philipStunTurns--;
@@ -3134,7 +3380,7 @@ function endTurn(){
  }
  if(game.character==='mage')game.mana=Math.min(game.maxMana,game.mana+game.manaRegen+game.passives.filter(x=>x.effect==='manaRegen').reduce((a,x)=>a+x.value,0));
  enemyChooseIntent();draw(5);
- $('battleLog').textContent=msg+' 턴을 종료하고 새로운 손패를 받았습니다.';renderBattle();
+ $('battleLog').textContent=msg+mistTurnMsg+' 턴을 종료하고 새로운 손패를 받았습니다.';renderBattle();
 }
 
 function potionTotal(){return Object.values(game?.potions||{}).reduce((a,b)=>a+b,0)}
@@ -3220,6 +3466,9 @@ function getAllCatalogCards(){
   if(!map.has(c.name))map.set(c.name,c);
  });
  swordsmanExclusiveSkills.forEach(c=>{
+  if(!map.has(c.name))map.set(c.name,c);
+ });
+ redMistExclusiveSkills.forEach(c=>{
   if(!map.has(c.name))map.set(c.name,c);
  });
  philipExclusiveSkills.forEach(c=>{
@@ -3407,6 +3656,7 @@ function openCardBanModal(statusMsg='',charKey=null){
   if(activeChar==='vampire' && c.type==='혈귀 전용') return true;
   if(activeChar==='grailKnight' && c.type==='성배기사 전용') return true;
   if(activeChar==='swordsman' && c.type==='검무가 전용') return true;
+  if(activeChar==='redmist' && (c.type==='붉은 안개 전용' || c.type==='붉은 안개 기본')) return true;
   if(activeChar==='philip' && c.type==='필립 전용') return true;
   return false;
  });
@@ -3485,6 +3735,8 @@ function grantStoryItemByName(name){
 
 function winBattle(){
  game.active=false;
+ if(game.character==='redmist'){game.redMistEgo=false;syncHeroAuraClass();}
+ const philipEgoClearedOnWin=releasePhilipEgoBloom();
  game.battles++;
  const expGain=game.route==='boss'?20:game.route==='elite'?14:8;
  const mRes=gainCharMastery(game.character,expGain);
@@ -3499,7 +3751,7 @@ function winBattle(){
    unlockVampire();
   }
  }
- let extraText='';
+ let extraText=philipEgoClearedOnWin?' · 스테이지 클리어: 에고 개화 자동 해제':'';
  const shardReason=game.route==='boss'?'boss':(game.route==='elite'?'elite':'stage');
  const shardGain=awardCorridorProgressShards(shardReason);
  if(shardGain>0){
@@ -3572,6 +3824,9 @@ function winBattle(){
 
 function clearStageDebuffs(){
  if(!game)return;
+ game.redMistEgo=false;
+ syncHeroAuraClass();
+ releasePhilipEgoBloom();
  game.status={poison:0,weak:0,vulnerable:0};
  game.buffs={attack:0};
  if(game.enemy){
@@ -3979,6 +4234,431 @@ if($('swordsmanSkinBtn'))$('swordsmanSkinBtn').onclick=()=>openSkinModal('swords
 if($('continueRunBtn'))$('continueRunBtn').onclick=continueSavedRun;
 chooseCharacter();
 refreshContinueButton();
+
+// =========================================================================
+// [v5_2 Full Integration] 붉은 안개 72x72 스프라이트 & 발아래~머리위 연기 이펙트
+// =========================================================================
+(function applyRedMistV52Full() {
+  function makeGrid() {
+    return Array.from({ length: 72 }, () => Array(72).fill('.'));
+  }
+
+  function fillEllipse(g, cx, cy, rx, ry, code) {
+    for (let y = Math.max(0, Math.floor(cy - ry - 1)); y <= Math.min(71, Math.ceil(cy + ry + 1)); y++) {
+      for (let x = Math.max(0, Math.floor(cx - rx - 1)); x <= Math.min(71, Math.ceil(cx + rx + 1)); x++) {
+        const dx = (x - cx) / rx;
+        const dy = (y - cy) / ry;
+        if (dx * dx + dy * dy <= 1.0) g[y][x] = code;
+      }
+    }
+  }
+
+  function fillPoly(g, pts, code) {
+    const minY = Math.max(0, Math.floor(Math.min(...pts.map(p => p[1]))));
+    const maxY = Math.min(71, Math.ceil(Math.max(...pts.map(p => p[1]))));
+    for (let y = minY; y <= maxY; y++) {
+      const nodes = [];
+      for (let i = 0; i < pts.length; i++) {
+        const [x1, y1] = pts[i];
+        const [x2, y2] = pts[(i + 1) % pts.length];
+        if ((y1 <= y && y2 > y) || (y2 <= y && y1 > y)) {
+          nodes.push(x1 + ((y - y1) / (y2 - y1)) * (x2 - x1));
+        }
+      }
+      nodes.sort((a, b) => a - b);
+      for (let i = 0; i < nodes.length; i += 2) {
+        if (i + 1 < nodes.length) {
+          const xs = Math.max(0, Math.ceil(nodes[i]));
+          const xe = Math.min(71, Math.floor(nodes[i + 1]));
+          for (let x = xs; x <= xe; x++) g[y][x] = code;
+        }
+      }
+    }
+  }
+
+  function fillLine(g, x0, y0, x1, y1, radius, code) {
+    const dist = Math.hypot(x1 - x0, y1 - y0);
+    const steps = Math.max(1, Math.ceil(dist * 2));
+    for (let s = 0; s <= steps; s++) {
+      const t = s / steps;
+      fillEllipse(g, x0 + (x1 - x0) * t, y0 + (y1 - y0) * t, radius, radius, code);
+    }
+  }
+
+  function addOutline(g, outlineCode) {
+    const copy = g.map(r => r.slice());
+    for (let y = 0; y < 72; y++) {
+      for (let x = 0; x < 72; x++) {
+        if (copy[y][x] === '.') {
+          let touches = false;
+          for (let dy = -1; dy <= 1 && !touches; dy++) {
+            for (let dx = -1; dx <= 1; dx++) {
+              if (dx === 0 && dy === 0) continue;
+              const ny = y + dy, nx = x + dx;
+              if (ny >= 0 && ny < 72 && nx >= 0 && nx < 72 && copy[ny][nx] !== '.') {
+                touches = true;
+                break;
+              }
+            }
+          }
+          if (touches) g[y][x] = outlineCode;
+        }
+      }
+    }
+  }
+
+  function gridToSvg(grid, palette) {
+    const rects = [];
+    for (let y = 0; y < 72; y++) {
+      let x = 0;
+      while (x < 72) {
+        const code = grid[y][x];
+        const color = palette[code];
+        if (!color) { x++; continue; }
+        let w = 1;
+        while (x + w < 72 && grid[y][x + w] === code) w++;
+        rects.push(`<rect x="${x}" y="${y}" width="${w}" height="1" fill="${color}"/>`);
+        x += w;
+      }
+    }
+    return `<svg class="hero-pixel-art" viewBox="0 0 72 72" width="100%" height="100%" shape-rendering="crispEdges">${rects.join('')}</svg>`;
+  }
+
+  function createRedMistSprites72() {
+    const base = makeGrid();
+    const basePalette = {
+      '.': null, 'O': '#0b090b', 'H': '#a62328', 'h': '#d1383c', 'd': '#5d1117',
+      'S': '#deb493', 's': '#c48f6c', 'Y': '#e0a94c', 'y': '#8a581c', 'C': '#222227',
+      'c': '#383842', 'G': '#686b73', 'R': '#c9202b', 'r': '#6b0e15', 'W': '#f2f5fa',
+      'B': '#25a5d8', 'I': '#e3cfa3'
+    };
+    fillPoly(base, [[27, 6], [46, 5], [55, 14], [58, 30], [62, 43], [55, 48], [52, 42], [48, 49], [43, 42], [26, 42], [24, 24]], 'H');
+    fillPoly(base, [[30, 7], [44, 7], [51, 15], [46, 22], [35, 16]], 'h');
+    fillPoly(base, [[49, 25], [59, 41], [54, 47], [48, 38]], 'd');
+    fillPoly(base, [[27, 13], [46, 13], [47, 27], [42, 32], [32, 32], [27, 27]], 'S');
+    fillEllipse(base, 30.5, 24.5, 2.2, 1.0, 's');
+    fillEllipse(base, 43.5, 24.5, 2.2, 1.0, 's');
+    fillPoly(base, [[27, 10], [33, 10], [37, 15], [41, 10], [47, 10], [46, 19], [43, 14], [37, 18], [31, 14], [27, 19]], 'H');
+    fillLine(base, 30, 11, 31, 14, 0.8, 'h');
+    fillLine(base, 44, 11, 43, 14, 0.8, 'h');
+    fillPoly(base, [[26, 14], [23, 25], [22, 41], [26, 45], [28, 36], [28, 19]], 'H');
+    fillPoly(base, [[23, 30], [22, 41], [25, 44], [26, 33]], 'd');
+    fillPoly(base, [[46, 14], [49, 24], [51, 39], [47, 43], [45, 34], [45, 19]], 'H');
+    fillPoly(base, [[48, 28], [50, 39], [47, 42], [46, 31]], 'd');
+    fillLine(base, 29.5, 19.5, 34.5, 20.8, 0.7, 'O');
+    fillLine(base, 44.5, 19.5, 39.5, 20.8, 0.7, 'O');
+    fillPoly(base, [[29.5, 21.5], [34.8, 22.0], [34.5, 24.2], [29.8, 23.8]], 'Y');
+    fillLine(base, 29.5, 21.5, 34.8, 22.0, 0.75, 'O');
+    fillLine(base, 30.0, 24.5, 34.2, 24.8, 0.5, 'y');
+    fillPoly(base, [[44.5, 21.5], [39.2, 22.0], [39.5, 24.2], [44.2, 23.8]], 'Y');
+    fillLine(base, 44.5, 21.5, 39.2, 22.0, 0.75, 'O');
+    fillLine(base, 44.0, 24.5, 39.8, 24.8, 0.5, 'y');
+    fillLine(base, 36.2, 28.2, 37.8, 28.2, 0.55, 'O');
+    fillPoly(base, [[31, 32], [43, 32], [47, 38], [28, 38]], 'C');
+    fillLine(base, 32, 32, 30, 36, 0.9, 'c');
+    fillLine(base, 42, 32, 44, 36, 0.9, 'c');
+    fillLine(base, 34, 36, 39, 43, 0.9, 'c');
+    fillPoly(base, [[43, 33], [49, 36], [48, 43], [40, 43], [40, 39], [45, 39]], 'C');
+    fillEllipse(base, 40.5, 41, 1.8, 1.6, 'C');
+    fillLine(base, 44, 36, 46, 36, 0.7, 'G');
+    fillPoly(base, [[30, 33], [26, 40], [27, 48], [31, 48], [30, 40]], 'C');
+    fillEllipse(base, 29, 49, 1.7, 1.7, 'C');
+    fillPoly(base, [[29, 38], [45, 38], [48, 56], [41, 56], [37, 47], [33, 56], [27, 56]], 'C');
+    fillLine(base, 37, 38, 37, 52, 0.75, 'c');
+    for (const by of [41, 45, 49, 53]) fillEllipse(base, 41.5, by, 1.6, 0.9, 'G');
+    fillPoly(base, [[45, 45], [51, 45], [51, 54], [45, 54]], 'C');
+    fillLine(base, 45, 47, 51, 47, 0.6, 'G');
+    fillPoly(base, [[30, 56], [34, 56], [34, 65], [29, 65]], 'C');
+    fillPoly(base, [[40, 56], [44, 56], [45, 65], [40, 65]], 'C');
+    fillPoly(base, [[27, 65], [34, 65], [34, 68], [27, 68]], 'c');
+    fillPoly(base, [[40, 65], [47, 65], [47, 68], [40, 68]], 'c');
+    fillPoly(base, [[4, 54], [25, 47], [28, 54], [14, 67], [3, 67]], 'R');
+    fillPoly(base, [[10, 56], [24, 50], [25, 55], [14, 64]], 'r');
+    fillEllipse(base, 14.5, 58.5, 3.6, 2.3, 'W');
+    fillEllipse(base, 14.5, 58.5, 1.4, 1.4, 'B');
+    fillPoly(base, [[11, 53], [13, 55], [10, 56]], 'I');
+    fillPoly(base, [[17, 61], [19, 64], [15, 63]], 'I');
+    fillPoly(base, [[4, 64], [13, 64], [11, 68], [3, 68]], 'G');
+    addOutline(base, 'O');
+
+    const ego = makeGrid();
+    const egoPalette = {
+      '.': null, 'O': '#080609', 'K': '#110d14', 'k': '#241822', 'F': '#cf0e22',
+      'f': '#ff3b4a', 'h': '#ff7878', 'E': '#ff1c2e', 'W': '#f5f6fa', 'B': '#1d6bf3',
+      'M': '#787e88', 'm': '#474c54'
+    };
+    fillPoly(ego, [[30, 6], [42, 5], [55, 11], [67, 17], [63, 25], [69, 32], [58, 38], [65, 46], [52, 52], [57, 62], [41, 64], [20, 63], [15, 54], [28, 46], [36, 22]], 'F');
+    fillPoly(ego, [[32, 7], [44, 7], [58, 14], [64, 21], [52, 23], [42, 15]], 'f');
+    fillLine(ego, 46, 12, 62, 18, 1.5, 'h');
+    fillLine(ego, 48, 28, 62, 34, 1.6, 'f');
+    fillLine(ego, 22, 58, 52, 59, 2.2, 'f');
+    fillEllipse(ego, 30, 21, 9.5, 9.2, 'K');
+    fillPoly(ego, [[21, 18], [30, 11], [39, 17], [37, 29], [23, 29]], 'K');
+    fillLine(ego, 23, 15, 36, 16, 1.3, 'k');
+    fillLine(ego, 29, 13, 29, 28, 0.9, 'E');
+    fillLine(ego, 22, 21, 38, 21, 0.9, 'E');
+    fillEllipse(ego, 29, 21, 3.2, 3.2, 'E');
+    fillEllipse(ego, 29, 21, 1.5, 1.5, 'h');
+    fillPoly(ego, [[24, 30], [36, 30], [38, 46], [23, 46]], 'K');
+    fillEllipse(ego, 30, 34, 2.2, 2.2, 'E');
+    fillLine(ego, 25, 38, 35, 38, 0.7, 'E');
+    fillLine(ego, 26, 42, 34, 42, 0.7, 'E');
+    fillPoly(ego, [[24, 46], [29, 46], [28, 65], [22, 65]], 'K');
+    fillPoly(ego, [[31, 46], [36, 46], [38, 65], [32, 65]], 'K');
+    fillLine(ego, 23, 52, 29, 52, 0.7, 'E');
+    fillLine(ego, 31, 52, 37, 52, 0.7, 'E');
+    fillPoly(ego, [[33, 22], [37, 24], [14, 52], [6, 58], [10, 49]], 'M');
+    fillLine(ego, 34, 23, 10, 52, 1.1, 'm');
+    fillLine(ego, 35, 24, 16, 48, 0.9, 'f');
+    fillPoly(ego, [[15, 41], [23, 43], [21, 50], [13, 48]], 'K');
+    fillEllipse(ego, 17.5, 45.5, 2.4, 1.6, 'W');
+    fillEllipse(ego, 17.5, 45.5, 1.1, 1.1, 'B');
+    addOutline(ego, 'O');
+
+    return {
+      redmist: gridToSvg(base, basePalette),
+      redmistEgo: gridToSvg(ego, egoPalette)
+    };
+  }
+
+  class RedMistEffectSystem {
+    constructor() {
+      this.smokeParticles = [];
+      this.verticalCuts = [];
+      this.ambientTimer = 0;
+    }
+
+    onSkillUsed(skillName, isReturningSupreme, targetX, targetY, casterBounds) {
+      if (isReturningSupreme && casterBounds) {
+        this.spawnColumnRedSmoke(casterBounds, 12, 1.0);
+        this.spawnRedSmoke(targetX, targetY, 14, 1.0);
+      }
+      if (typeof skillName === 'string' && skillName.includes('대절단') && skillName.includes('세로')) {
+        this.spawnVerticalGreatSplit(targetX, targetY);
+      }
+    }
+
+    // 발아래(bottomY)에서 머리위(topY)까지 수직 기둥 형태로 피어오르는 붉은 연기
+    spawnColumnRedSmoke(bounds, count = 8, intensity = 0.85) {
+      const centerX = bounds.left + bounds.width * 0.5;
+      const topY = bounds.top - 14;
+      const bottomY = bounds.bottom + 4;
+      const spanY = Math.max(24, bottomY - topY);
+
+      for (let i = 0; i < count; i++) {
+        // 발아래(t ~ 1.0)에서 시작해 머리위(t -> 0.0)로 상승
+        const startT = 0.72 + Math.random() * 0.32;
+        const sy = topY + spanY * Math.min(1.05, startT);
+        const targetTopY = topY - 12 - Math.random() * 16;
+        const travelDist = Math.max(20, sy - targetTopY);
+        const speedY = -(1.15 + Math.random() * 1.45);
+        const lifeFrames = Math.max(24, Math.min(72, Math.abs(travelDist / speedY)));
+        const baseAlpha = 0.68 * intensity;
+
+        this.smokeParticles.push({
+          x: centerX + (Math.random() - 0.5) * Math.max(36, bounds.width * 0.85),
+          y: sy,
+          topLimitY: targetTopY,
+          vx: (Math.random() - 0.5) * 0.95,
+          vy: speedY,
+          radius: (14 + Math.random() * 18) * intensity,
+          alpha: baseAlpha,
+          decay: baseAlpha / lifeFrames
+        });
+      }
+    }
+
+    spawnRedSmoke(cx, cy, count = 8, intensity = 0.85) {
+      for (let i = 0; i < count; i++) {
+        this.smokeParticles.push({
+          x: cx + (Math.random() - 0.5) * 76,
+          y: cy + (Math.random() - 0.5) * 64,
+          topLimitY: cy - 70,
+          vx: (Math.random() - 0.5) * 1.4,
+          vy: -0.65 - Math.random() * 1.35,
+          radius: (15 + Math.random() * 20) * intensity,
+          alpha: 0.68 * intensity,
+          decay: 0.014 + Math.random() * 0.01
+        });
+      }
+    }
+
+    spawnVerticalGreatSplit(targetX, targetY) {
+      this.verticalCuts.push({ x: targetX, y: targetY, alpha: 1.0, width: 28 });
+    }
+
+    updateAndDraw(ctx, canvasHeight, isReturningSupreme, casterBounds) {
+      if (isReturningSupreme && casterBounds) {
+        this.ambientTimer += 1;
+        if (this.ambientTimer % 5 === 0) {
+          this.spawnColumnRedSmoke(casterBounds, 4, 0.86);
+        }
+      } else {
+        this.ambientTimer = 0;
+      }
+
+      for (let i = this.smokeParticles.length - 1; i >= 0; i--) {
+        const p = this.smokeParticles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.radius += 0.28;
+        p.alpha -= p.decay;
+        if (p.alpha <= 0 || (typeof p.topLimitY === 'number' && p.y < p.topLimitY - p.radius * 0.5)) {
+          this.smokeParticles.splice(i, 1);
+          continue;
+        }
+        ctx.save();
+        const grad = ctx.createRadialGradient(p.x, p.y, 2, p.x, p.y, p.radius);
+        grad.addColorStop(0, `rgba(235, 22, 42, ${Math.min(1, p.alpha).toFixed(3)})`);
+        grad.addColorStop(0.55, `rgba(135, 8, 20, ${(p.alpha * 0.55).toFixed(3)})`);
+        grad.addColorStop(1, 'rgba(45, 0, 8, 0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      for (let i = this.verticalCuts.length - 1; i >= 0; i--) {
+        const cut = this.verticalCuts[i];
+        cut.alpha -= 0.045;
+        cut.width *= 0.94;
+        if (cut.alpha <= 0) {
+          this.verticalCuts.splice(i, 1);
+          continue;
+        }
+        const topY = Math.max(0, cut.y - 165);
+        const botY = Math.min(canvasHeight, cut.y + 165);
+
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, cut.alpha);
+
+        ctx.strokeStyle = 'rgba(255, 24, 48, 0.45)';
+        ctx.lineWidth = Math.max(4, cut.width);
+        ctx.beginPath();
+        ctx.moveTo(cut.x, topY);
+        ctx.lineTo(cut.x, botY);
+        ctx.stroke();
+
+        ctx.strokeStyle = '#ff1c38';
+        ctx.lineWidth = 8;
+        ctx.beginPath();
+        ctx.moveTo(cut.x, topY);
+        ctx.lineTo(cut.x, botY);
+        ctx.stroke();
+
+        ctx.strokeStyle = '#ffe5e8';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(cut.x, topY + 10);
+        ctx.lineTo(cut.x, botY - 10);
+        ctx.stroke();
+
+        ctx.restore();
+      }
+    }
+  }
+
+  if (typeof heroPixelArtData === 'object' && heroPixelArtData) {
+    const built = createRedMistSprites72();
+    heroPixelArtData.redmist = built.redmist;
+    heroPixelArtData.redmistEgo = built.redmistEgo;
+    if (Array.isArray(CHARACTER_SKINS?.redmist)) {
+      CHARACTER_SKINS.redmist.forEach(sk => {
+        if (sk.id === 'default') sk.art = built.redmist;
+        if (sk.id === 'redmist_crimson_reaper') sk.art = built.redmistEgo;
+      });
+    }
+  }
+
+  const redMistFx = new RedMistEffectSystem();
+  window.redMistFx = redMistFx;
+
+  function ensureFxCanvas() {
+    const battleEl = document.getElementById('battleScreen');
+    if (!battleEl) return null;
+    if (getComputedStyle(battleEl).position === 'static') {
+      battleEl.style.position = 'relative';
+    }
+    let cvs = document.getElementById('redMistFxCanvas');
+    if (!cvs) {
+      cvs = document.createElement('canvas');
+      cvs.id = 'redMistFxCanvas';
+      cvs.style.position = 'absolute';
+      cvs.style.inset = '0';
+      cvs.style.width = '100%';
+      cvs.style.height = '100%';
+      cvs.style.pointerEvents = 'none';
+      cvs.style.zIndex = '18';
+      battleEl.appendChild(cvs);
+    }
+    const rect = battleEl.getBoundingClientRect();
+    const w = Math.max(1, Math.floor(rect.width));
+    const h = Math.max(1, Math.floor(rect.height));
+    if (cvs.width !== w || cvs.height !== h) {
+      cvs.width = w;
+      cvs.height = h;
+    }
+    return cvs;
+  }
+
+  function getUnitGeometry() {
+    const battleEl = document.getElementById('battleScreen');
+    const heroEl = document.getElementById('heroGlyph');
+    const enemyEl = document.getElementById('enemyGlyph');
+    const bRect = battleEl?.getBoundingClientRect();
+    const hRect = heroEl?.getBoundingClientRect();
+    const eRect = enemyEl?.getBoundingClientRect();
+
+    const casterBounds = (bRect && hRect) ? {
+      left: hRect.left - bRect.left,
+      top: hRect.top - bRect.top,
+      bottom: hRect.bottom - bRect.top,
+      width: hRect.width,
+      height: hRect.height
+    } : { left: 100, top: 110, bottom: 210, width: 80, height: 100 };
+
+    const tx = (bRect && eRect) ? (eRect.left + eRect.width / 2 - bRect.left) : 440;
+    const ty = (bRect && eRect) ? (eRect.top + eRect.height / 2 - bRect.top) : 170;
+    return { casterBounds, tx, ty };
+  }
+
+  if (typeof playCard === 'function' && !playCard.__redMistV52Wrapped) {
+    const origPlayCard = playCard;
+    playCard = function(i) {
+      const card = (typeof game !== 'undefined' && Array.isArray(game.hand)) ? game.hand[i] : null;
+      const res = origPlayCard.apply(this, arguments);
+      if (card && typeof game !== 'undefined' && game.character === 'redmist') {
+        const { casterBounds, tx, ty } = getUnitGeometry();
+        redMistFx.onSkillUsed(card.name, Boolean(game.redMistEgo), tx, ty, casterBounds);
+      }
+      return res;
+    };
+    playCard.__redMistV52Wrapped = true;
+  }
+
+  function fxLoop() {
+    const cvs = ensureFxCanvas();
+    if (cvs) {
+      const ctx = cvs.getContext('2d');
+      ctx.clearRect(0, 0, cvs.width, cvs.height);
+      const isRedMist = (typeof game !== 'undefined' && game && game.character === 'redmist');
+      const isEgo = Boolean(isRedMist && game.redMistEgo);
+      const { casterBounds } = getUnitGeometry();
+      redMistFx.updateAndDraw(ctx, cvs.height, isEgo, casterBounds);
+    }
+    requestAnimationFrame(fxLoop);
+  }
+  fxLoop();
+
+  if (typeof game !== 'undefined' && game && game.character === 'redmist') {
+    const hg = document.getElementById('heroGlyph');
+    if (hg && typeof getHeroPixelArt === 'function') {
+      hg.innerHTML = getHeroPixelArt('redmist');
+    }
+  }
+})();
+
 </script>
 </body>
 </html>
